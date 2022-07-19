@@ -1,6 +1,6 @@
 # Rudder
 
-**TODO: Add description**
+Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations.
 
 ## Installation
 
