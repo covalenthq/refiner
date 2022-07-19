@@ -10,10 +10,12 @@ defmodule Rudder.MixProject do
       deps: deps()
     ]
   end
-
-  # Run "mix help compile.app" to learn about applications.
+  # Configuration for the OTP application.
+  #
+  # Type `mix help compile.app` for more information.
   def application do
     [
+      applications: [:ethereumex],
       extra_applications: [:logger],
       mod: {Rudder.Application, []}
     ]
@@ -24,7 +26,20 @@ defmodule Rudder.MixProject do
     [
       {:httpoison, "~> 1.6"},
       {:jason, "~> 1.1"},
-      {:broadway, "~> 1.0"}
+      {:broadway, "~> 1.0", override: true},
+      {:web3, "~> 0.1.2"},
+      {:ex_abi, "~> 0.5"},
+      {:eth_contract, "~> 0.1.0"},
+      {:off_broadway_redis, "~> 0.4.3"},
+      {:abi, "~> 0.1.13"},
+      {:ethereumex, "~> 0.9"},
+      {:cors_plug, "~> 2.0"},
+      {:phoenix, "~> 1.4.9"},
+      {:phoenix_pubsub, "~> 1.1"},
+      {:gettext, "~> 0.11"},
+      {:plug_cowboy, "~> 2.0"},
+      {:ranch, "~> 1.7.1",
+       [env: :prod, hex: "ranch", repo: "hexpm", optional: false, override: true]}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
