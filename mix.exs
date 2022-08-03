@@ -15,7 +15,7 @@ defmodule Rudder.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      applications: [:ethereumex, :eth_contract],
+      applications: [:ethereumex, :eth_contract, :porcelain],
       extra_applications: [:logger, :runtime_tools],
       mod: {Rudder.Application, []}
     ]
@@ -25,7 +25,8 @@ defmodule Rudder.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.6"},
-      {:poison, "~> 3.1"},
+      {:poison, "~> 5.0"},
+      {:porcelain, "~> 2.0"},
       {:jason, "~> 1.1"},
       {:broadway, "~> 1.0", override: true},
       {:web3, "~> 0.1.2"},
