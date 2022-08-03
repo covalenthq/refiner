@@ -1,0 +1,3 @@
+[submodule "bsp-agent"]
+	path = bsp-agent
+	url = https://github.com/covalenthq/bsp-agent
