@@ -8,7 +8,9 @@
 import Config
 
 config :ethereumex,
-  url: "http://0.0.0.0:8545"
+  client_type: :http,
+  http_headers: [{"Content-Type", "application/json"}],
+  url: "http://127.0.0.1:8545/"
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -16,7 +18,7 @@ config :logger, :console,
   metadata: [:request_id]
 
 # Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
+# config :phoenix, :json_library, Jason
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
