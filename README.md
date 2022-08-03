@@ -21,7 +21,7 @@ be found at <https://hexdocs.pm/rudder>.
 
 # Transform
 
-```
+```bash
 git submodule update --init --recursive
 cd rudder/bsp-agent
 git checkout scripts/extractor-with-files
