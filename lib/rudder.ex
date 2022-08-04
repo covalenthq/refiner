@@ -1,62 +1,70 @@
 alias Porcelain.Result
 
 defmodule Rudder do
-  # block-result: block-specimen.json block-result.json
-  #   ./evm block-specimen-X.json block-result-X.json
 
-  # {
-  #   "input": "block-specimen.json"
-  #   "rules": "./evm block-specimen.json"
-  #   "output": "block-result.json"
-  # }
-
-  def get_json(filename) do
+  defp get_json(filename) do
     with {:ok, body} <- File.read(filename) do
       Poison.decode(body)
     end
   end
 
-  def load_rules(filename) do
-    # load the rules from json file (?) or makefile syntax
-    # rules are written in json for now
-    rules = get_json(filename)
-    elem(rules, 1)
+  defp load_build_file(build_filename) do
+    get_json(build_filename)
   end
 
-  def load_input(rules) do
-    Map.get(rules, "input")
+  defp get_input(formula) do
+    Map.get(formula, "input")
   end
 
-  def load_output_name(rules) do
-    Map.get(rules, "output")
+  defp get_output(formula) do
+    Map.get(formula, "output")
   end
 
-  def load_build_rule(rules) do
-    Map.get(rules, "rules")
+  defp get_rule(formula) do
+    Map.get(formula, "rule")
   end
 
-  def call_rule(build_rule) do
-    # todo: use one of the Porcelain functions that uses message passing instead
+  defp get_exec(formula) do
+    Map.get(formula, "exec")
+  end
+
+  defp get_args(formula) do
+    Map.get(formula, "args")
+  end
+
+  defp async_exec(exec_file, args) do
+    Porcelain.spawn(exec_file, args)
+  end
+
+  defp sync_exec(build_rule) do
     Porcelain.shell(build_rule)
   end
 
-  def apply_rules(rules_filename) do
-    # "meat" of this thing
+  defp write_output(path, result, _modes \\ []) do
+    IO.write!(path, result)
+  end
 
-    rules = load_rules(rules_filename)
+  def build(build_filename) do
+    # load rules file
+    {:ok, formula} = load_build_file(build_filename)
 
-    input = load_input(rules)
+    IO.inspect(formula)
 
-    build_rule = load_build_rule(rules)
+    # get input, outputs and build rules
+    input = get_input(formula)
+    output = get_output(formula)
+    build_rule = get_rule(formula)
 
-    result = call_rule(build_rule)
+    #exec = get_exec(formula)
+    #args = get_args(formula)
 
-    # output = load_output_name(rules_filename)
+    # get result from rule call
+    sync_exec(build_rule)
 
+    #async_exec(exec, args)
+
+    # output = get_output(formula)
     # write_output(output, result)
   end
 
-  def write_output(result) do
-    # write a file
-  end
 end
