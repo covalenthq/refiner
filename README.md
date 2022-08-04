@@ -39,7 +39,7 @@ be found at <https://hexdocs.pm/rudder>.
     Generated rudder app
     Interactive Elixir (1.13.4) - press Ctrl+C to exit (type h() ENTER for help)
 
-    iex(1)> Rudder.apply_rules("rules.json")
+    iex(1)> Rudder.build("rules/rules.json")
     %Porcelain.Result{
     err: nil,
     out: "bsp-extractor command line config:  [binary-file-path:\"./ bin/block-specimens/\" codec-path:\"./bsp-agent/codec/block-ethereum.avsc\" indent-json:\"0\" output-file-path:\"./out/block-results/\"]\n\nfile:  out/block-results/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5-specimen.json bytes:  1563265\n\nfile:  out/block-results/1-15127600-replica-0x14a2d5978dcde0e6988871c1a246bea31e44f73467f7c242f9cd19c30cd5f8b1-specimen.json bytes:  2761078\n\nfile:  out/block-results/1-15127601-replica-0x4757d9272c0f4c5f961667d43265123d22d7459d63f2041866df2962758c6070-specimen.json bytes:  3693996\n\nfile:  out/block-results/
