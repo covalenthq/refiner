@@ -1,4 +1,0 @@
-{
-    "input": "./bin/block-specimens/",
-    "rules": "./evm/extractor --binary-file-path './bin/block-specimens/' --codec-path './bsp-agent/codec/block-ethereum.avsc' --indent-json 0 --output-file-path './out/block-results/'"
-}
