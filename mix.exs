@@ -16,7 +16,7 @@ defmodule Rudder.MixProject do
   def application do
     [
       applications: [:ethereumex, :eth_contract, :porcelain],
-      extra_applications: [:logger, :runtime_tools],
+      extra_applications: [:logger, :runtime_tools, :poison],
       mod: {Rudder.Application, []}
     ]
   end
