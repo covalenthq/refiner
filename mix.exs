@@ -26,8 +26,6 @@ defmodule Rudder.MixProject do
     [
       {:abi, github: "tsutsu/ethereum_abi", branch: "feature-parse-events-from-abi-specifications", override: true},
       {:ethereumex, "~> 0.10.0", override: true},
-      {:ex_abi, "~> 0.5.11"},
-      {:exw3, "~> 0.6"},
       {:httpoison, "~> 1.6"},
       {:poison, "~> 5.0"},
       {:porcelain, "~> 2.0"},

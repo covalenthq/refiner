@@ -34,7 +34,7 @@ defmodule Rudder.EventListener do
   defp extract_submitted_specimens(logs, specimen_url_map) do
     Enum.reduce(logs, specimen_url_map, fn (el, new_specimen_url_map) ->
       event_signature = "(uint64, uint64, bytes32, bytes32, string, uint128)"
-      [chain_id, block_height, block_hash_raw, specimen_hash_raw, url, _submittedStake] = extract_data(el, event_signature)
+      [{chain_id, block_height, block_hash_raw, specimen_hash_raw, url, _submittedStake}] = extract_data(el, event_signature)
 
       # prepare data to generate key
       specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
@@ -88,7 +88,7 @@ defmodule Rudder.EventListener do
 
   defp listen_for_event(specimen_url_map) do
 
-    {:ok, bsp_submitted_logs} = ExW3.Rpc.get_logs(
+    {:ok, bsp_submitted_logs} = Ethereumex.HttpClient.eth_get_logs(
       %{
         address: @proofchain_address,
         fromBlock: "latest",
@@ -97,7 +97,7 @@ defmodule Rudder.EventListener do
     )
     specimen_url_map = extract_submitted_specimens(bsp_submitted_logs, specimen_url_map)
 
-    {:ok, bsp_awarded_logs} = ExW3.Rpc.get_logs(
+    {:ok, bsp_awarded_logs} = Ethereumex.HttpClient.eth_get_logs(
       %{
         address: @proofchain_address,
         fromBlock: "latest",

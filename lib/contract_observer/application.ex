@@ -7,7 +7,7 @@ defmodule Rudder.Application do
         id: Rudder.SourceDiscovery,
         start: {Rudder.SourceDiscovery, :start_link, [[]]}
       },
-      {Rudder.EventListener, []}
+      # {Rudder.EventListener, []}
     ]
 
     opts = [strategy: :one_for_one, name: ContractObserver.Supervisor]
