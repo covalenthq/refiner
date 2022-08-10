@@ -25,8 +25,20 @@ rudder-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
+# Generated beam files
 *.beam
 
+# secrets for rudder app
 /config/*.secret.exs
 
-.elixir_ls/
+#ElixirLS vscode extension
+/.elixir_ls/
+
+# Block specimen files for testing
+/bin
+
+# Processed block specimens post testing
+/out
+
+#VSCode
+/.vscode/
