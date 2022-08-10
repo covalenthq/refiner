@@ -1,4 +1,5 @@
 alias Porcelain.Result
+alias Porcelain.Process, as: Proc
 
 defmodule Rudder do
 
@@ -33,7 +34,7 @@ defmodule Rudder do
   end
 
   defp async_exec(exec_file, args) do
-    Porcelain.spawn(exec_file, args)
+    Porcelain.spawn_shell(exec_file, args)
   end
 
   defp sync_exec(build_rule) do
@@ -41,10 +42,10 @@ defmodule Rudder do
   end
 
   defp write_output(path, result, _modes \\ []) do
-    IO.write!(path, result)
+    IO.write(path, result)
   end
 
-  def build(build_filename) do
+  def build_sync(build_filename) do
     # load rules file
     {:ok, formula} = load_build_file(build_filename)
 
@@ -65,6 +66,23 @@ defmodule Rudder do
 
     # output = get_output(formula)
     # write_output(output, result)
+  end
+
+def build_async(build_filename, args) do
+    # load rules file
+    {:ok, formula} = load_build_file(build_filename)
+
+    instream = SocketStream.new('example.com', 80)
+    opts = [in: instream, out: :stream]
+
+    input = get_input(formula)
+    output = get_output(formula)
+    build_rule = get_rule(formula)
+
+    proc = %Proc{out: outstream} = async_exec(build_rule, args)
+
+    Enum.into(outstream, IO.stream(:stdio, :line))
+    Proc.alive?(proc)   #=> false
   end
 
 end
