@@ -1,21 +1,14 @@
 defmodule Rudder.BlockResultUploader do
+
   use GenServer
 
-  def child_spec(_) do
-    %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, []},
-      type: :worker
-    }
-  end
-
-  def start_link() do
-    GenServer.start_link(__MODULE__, fn -> [] end, name: :block_result_uploader)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   @impl true
-  def init(pinner) do
-    {:ok, pinner}
+  def init(:ok) do
+    {:ok, []}
   end
 
   @impl true
@@ -28,13 +21,23 @@ defmodule Rudder.BlockResultUploader do
       status_code: y
       } = HTTPoison.get!("http://localhost:3001/time?address=#{file_path}")
     {:noreply, [{y, x} | state]}
+    # {:noreply, [file_path | state]}
   end
 
+
   @impl true
-  def handle_call(:pop, _from, state) do
+  def handle_call(:lookup, _from, state) do
     {:reply, state, state}
   end
 
+  # client API
 
+  def lookup() do
+    GenServer.call(Rudder.BlockResultUploader, :lookup)
+  end
+
+  def pin(path) do
+    GenServer.cast(Rudder.BlockResultUploader, {:pin, path})
+  end
 
 end

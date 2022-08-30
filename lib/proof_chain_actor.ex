@@ -1,16 +1,16 @@
 defmodule Rudder.ProofChainActor do
-    def child_spec(_) do
-      %{
-        id: __MODULE__,
-        start: {__MODULE__, :start_link, []},
-        type: :supervisor
-      }
+    use Supervisor
+
+    def start_link(opts) do
+      Supervisor.start_link(__MODULE__, :ok, opts)
     end
 
-    def start_link() do
+    @impl true
+    def init(:ok) do
       children = [
         {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
       ]
-      Supervisor.start_link(children, name: :proof_chain_actor, strategy: :one_for_one)
+
+      Supervisor.init(children, strategy: :one_for_one)
     end
   end

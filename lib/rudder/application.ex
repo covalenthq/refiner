@@ -10,6 +10,7 @@ defmodule Rudder.Application do
     children = [
       # Starts a worker by calling: Rudder.Worker.start_link(arg)
       # {Rudder.Worker, arg}
+      {Rudder.ProofChainActor, name: Rudder.ProofChainActor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -17,4 +18,5 @@ defmodule Rudder.Application do
     opts = [strategy: :one_for_one, name: Rudder.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
 end
