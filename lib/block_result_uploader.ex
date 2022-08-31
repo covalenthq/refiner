@@ -19,7 +19,7 @@ defmodule Rudder.BlockResultUploader do
       request: _,
       request_url: _,
       status_code: y
-      } = HTTPoison.get!("http://localhost:3001/time?address=#{file_path}")
+      } = HTTPoison.get!("http://localhost:3000/pin?address=#{file_path}")
     {:noreply, [{y, x} | state]}
     # {:noreply, [file_path | state]}
   end
