@@ -57,42 +57,39 @@ This should generate the JSON output specimen file (results) to `./out` director
   ```
 
 ## Block Specimen Session Event Listener
-In order to run the listener you need to fork ethereum node, run a script to add the operators and a script that mocks block specimen submissions and session finalizations:
-1. Download [bsp-agent](https://github.com/covalenthq/bsp-agent).
-2. Navigate to the `bsp-agent` folder. 
-3. Add `envrc.local ` file.
-4. Inside `envrc.local` add ERIGON_NODE variable and replace the node's url with yours:
+In order to run the listener you need to fork ethereum node, run a script to add the operators and a script that mocks block specimen submissions and session finalizations using the docker:
+1. Add `.env` file.
+2. Inside `.env` add ERIGON_NODE variable and replace the node's url with yours:
 ```
-export ERIGON_NODE="erogone.node.url"
+export ERIGON_NODE="erigon.node.url"
 ```
-5. Inside a terminal got to the bsp-agent folder and run: 
+3. Inside a terminal got to the rudder folder and run: 
 ``` 
 docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orphans
 ```
-6. Inside a separate terminal run:
+4. Inside a separate terminal run:
 ```
 docker exec -it eth-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
 ```
-7. Inside a third terminal navigate to the `rudder` folder and run:
+5. Inside a third terminal navigate to the `rudder` folder and run:
 ```
 iex -S mix 
 Rudder.ProofChain.BlockSpecimenEventListener.start()
 ```
 
+
 ## ProofChain Contract Interactor 
-In order to run the interactor you need to fork ethereum node, run a script to add the operators:
-1. Download [bsp-agent](https://github.com/covalenthq/bsp-agent).
-2. Navigate to the `bsp-agent` folder. 
-3. Add `envrc.local ` file.
-4. Inside `envrc.local` add ERIGON_NODE variable and replace the node's url with yours:
+In order to run the interactor you need to fork ethereum node and run a script to add the operators using the docker:
+1. Add `.env` file.
+2. Inside `.env` add ERIGON_NODE variable and replace the node's url with yours:
 ```
-export ERIGON_NODE="erogone.node.url"
+export ERIGON_NODE="erigon.node.url"
 ```
-5. Inside a terminal got to the bsp-agent folder and run: 
+3. Inside a terminal got to the rudder folder and run: 
 ``` 
 docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orphans
 ```
-6. Inside a third terminal navigate to the `rudder` folder and run:
+4. Inside a second terminal navigate to the `rudder` folder and run:
 ```
 iex -S mix 
 ```
