@@ -7,16 +7,22 @@
 # General application configuration
 import Config
 
-config :ethereumex,
-  url: "http://0.0.0.0:8545"
 
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-# Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
+config :machine_gun,
+  rpc_pool: %{
+    conn_opts: %{
+      tls_opts: [verify: :verify_none]
+    },
+    pool_size: 32,
+    pool_max_overflow: 0,
+    pool_timeout: 1_200_000
+  }
+
 
 config :porcelain, driver: Porcelain.Driver.Basic
 
