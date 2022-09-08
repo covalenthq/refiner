@@ -55,3 +55,26 @@ This should generate the JSON output specimen file (results) to `./out` director
     cd out/block-results
     cat 1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5-specimen.json
   ```
+
+## Block Specimen Session Event Listener
+In order to run the listener you need to fork ethereum node, run a script to add the operators and a script that mocks block specimen submissions and session finalizations:
+1. Download [bsp-agent](https://github.com/covalenthq/bsp-agent).
+2. Navigate to the `bsp-agent` folder. 
+3. Add `envrc.local ` file.
+4. Inside `envrc.local` add ERIGON_NODE variable and replace the node's url with yours:
+```
+export ERIGON_NODE="erogone.node.url"
+```
+5. Inside a terminal got to the bsp-agent folder and run: 
+``` 
+docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orphans
+```
+6. Inside a separate terminal run:
+```
+docker exec -it eth-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
+```
+7. Inside a third terminal navigate to the `rudder` folder and run:
+```
+iex -S mix 
+Rudder.ProofChain.BlockSpecimenEventListener.start()
+```
