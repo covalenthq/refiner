@@ -58,8 +58,8 @@ This should generate the JSON output specimen file (results) to `./out` director
 
 ## Block Specimen Session Event Listener
 In order to run the listener you need to fork ethereum node, run a script to add the operators and a script that mocks block specimen submissions and session finalizations using the docker:
-1. Add `envrc.local ` file.
-2. Inside `envrc.local` add ERIGON_NODE variable and replace the node's url with yours:
+1. Add `.env` file.
+2. Inside `.env` add ERIGON_NODE variable and replace the node's url with yours:
 ```
 export ERIGON_NODE="erogone.node.url"
 ```
