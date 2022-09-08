@@ -61,7 +61,7 @@ In order to run the listener you need to fork ethereum node, run a script to add
 1. Add `.env` file.
 2. Inside `.env` add ERIGON_NODE variable and replace the node's url with yours:
 ```
-export ERIGON_NODE="erigone.node.url"
+export ERIGON_NODE="erigon.node.url"
 ```
 3. Inside a terminal got to the rudder folder and run: 
 ``` 
