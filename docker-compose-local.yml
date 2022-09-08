@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  node:
+    image: "gcr.io/covalent-project/proofchain:latest"
+    container_name: eth-node
+    restart:  on-failure
+    expose:
+      - 8545:8545
+    entrypoint: ./entrypoint.sh
+    networks:
+      - cqt-net
+    environment:
+      - ERIGON_NODE=${ERIGON_NODE}
+    ports:
+      - 8545:8545
+
+  cqt-virtnet:
+    image: "gcr.io/covalent-project/proofchain:latest"
+    container_name: set-up-contracts
+    restart: on-failure
+    expose:
+      - 8545:8545
+    entrypoint:
+      npm run docker:deploy
+    depends_on:
+      - node
+    networks:
+      - cqt-net
+
+networks:
+  cqt-net:
