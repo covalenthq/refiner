@@ -57,7 +57,7 @@ This should generate the JSON output specimen file (results) to `./out` director
   ```
 
 ## Block Specimen Session Event Listener
-In order to run the listener you need to fork the ethereum node, run a script to add the operators and a script that mocks block specimen submissions and session finalizations:
+In order to run the listener you need to fork ethereum node, run a script to add the operators and a script that mocks block specimen submissions and session finalizations:
 1. Download [bsp-agent](https://github.com/covalenthq/bsp-agent).
 2. Navigate to the `bsp-agent` folder. 
 3. Add `envrc.local ` file.
