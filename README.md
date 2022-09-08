@@ -78,3 +78,30 @@ docker exec -it eth-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
 iex -S mix 
 Rudder.ProofChain.BlockSpecimenEventListener.start()
 ```
+
+## ProofChain Contract Interactor 
+In order to run the interactor you need to fork ethereum node, run a script to add the operators:
+1. Download [bsp-agent](https://github.com/covalenthq/bsp-agent).
+2. Navigate to the `bsp-agent` folder. 
+3. Add `envrc.local ` file.
+4. Inside `envrc.local` add ERIGON_NODE variable and replace the node's url with yours:
+```
+export ERIGON_NODE="erogone.node.url"
+```
+5. Inside a terminal got to the bsp-agent folder and run: 
+``` 
+docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orphans
+```
+6. Inside a third terminal navigate to the `rudder` folder and run:
+```
+iex -S mix 
+```
+
+then
+```
+Rudder.ProofChain.Interactor.test_submit_block_result_proof(block_height)
+```
+or
+```
+Rudder.ProofChain.Interactor.submit_block_result_proof(chain_id, block_height, block_specimen_hash, block_result_hash, url) 
+```
