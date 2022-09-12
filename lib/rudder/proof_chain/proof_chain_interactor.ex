@@ -27,7 +27,7 @@ defmodule Rudder.ProofChain.Interactor do
     test_block_result_hash = "525D191D6492F1E0928d4e816c29778c"
     test_url = "block_result.url"
     chain_id = 1
-    submit_block_result_proof(chain_id, block_height, block_specimen_hash, block_result_hash, url)
+    submit_block_result_proof(chain_id, block_height, test_block_specimen_hash, test_block_result_hash, test_url)
 
   end
 
@@ -37,9 +37,9 @@ defmodule Rudder.ProofChain.Interactor do
        ABI.encode(@submit_brp_selector, [
         chain_id,
         block_height,
-        test_block_specimen_hash,
-        test_block_result_hash,
-        test_url
+        block_specimen_hash,
+        block_result_hash,
+        url
       ])
 
     test_private_key = "8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba"
