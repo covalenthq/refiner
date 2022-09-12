@@ -96,8 +96,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     )
     specimen_url_map = extract_submitted_specimens(bsp_submitted_logs, specimen_url_map)
 
-    # IO.inspect(specimen_url_map)
-
     {:ok, bsp_awarded_logs} = Rudder.Network.EthereumMainnet.eth_getLogs(
       [%{
         address: @proofchain_address,
@@ -105,7 +103,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
         topics: [@bsp_awarded_event_hash]
       }]
     )
-    # IO.inspect(bsp_awarded_logs)
     bsps_to_process = extract_awarded_specimens(bsp_awarded_logs)
 
     specimen_url_map = push_bsps_to_process(bsps_to_process, specimen_url_map)
