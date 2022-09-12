@@ -32,7 +32,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   defp extract_submitted_specimens(logs, specimen_url_map) do
     Enum.reduce(logs, specimen_url_map, fn (el, new_specimen_url_map) ->
-      event_signature = "(uint64, uint64, bytes32, bytes32, string, uint128)"
+      event_signature = "(uint64,uint64,bytes32,bytes32,string,uint128)"
       [chain_id, block_height, block_hash_raw, specimen_hash_raw, url, _submittedStake] = extract_data(el, event_signature)
 
       # prepare data to generate key
