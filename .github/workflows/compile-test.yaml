@@ -12,7 +12,7 @@ env:
 jobs:
   deps:
     name: Get Dependencies
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         elixir: [1.13.4]
@@ -57,7 +57,7 @@ jobs:
   static_code_analysis:
     name: Static Code Analysis
     needs: deps
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         elixir: [1.13.4]
@@ -101,7 +101,7 @@ jobs:
   unit_tests:
     name: Unit Tests
     needs: deps
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -139,7 +139,7 @@ jobs:
 
   # deploy:
   #   name: Deploy
-  #   runs-on: ubuntu-latest
+  #   runs-on: ubuntu-20.04
   #   needs:
   #     - static_code_analysis
   #     - unit_tests
@@ -165,11 +165,10 @@ jobs:
   #         MIGRATIONS: false
 
   # run_tests:
-  #   runs-on: ubuntu-latest
+  #   runs-on: ubuntu-20.04
   #   steps:
   #   # This is an action from github that checks out the code in the repo.
   #   - uses: actions/checkout@v2
   #   # Give it any name you like
   #   - name: "run elixir tests"
   #     uses: Adzz/elixir_run_tests_action@v2.0.0
-  
