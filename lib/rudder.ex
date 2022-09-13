@@ -85,4 +85,8 @@ def build_async(build_filename, args) do
     Proc.alive?(proc)   #=> false
   end
 
+def hello do
+  :world
+end
+
 end

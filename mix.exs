@@ -7,7 +7,8 @@ defmodule Rudder.MixProject do
       version: "0.1.0",
       elixir: "~> 1.13.4",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      preferred_cli_env: ["test.ci": :test]
     ]
   end
   # Configuration for the OTP application.
@@ -46,4 +47,11 @@ defmodule Rudder.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
   end
+
+  defp aliases do
+    [
+      "test.ci": ["test --color --max-cases=10"]
+    ]
+end
+
 end
