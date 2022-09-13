@@ -35,6 +35,7 @@ defmodule Rudder.MixProject do
       {:eth_contract, "~> 0.1.0"},
       {:off_broadway_redis, "~> 0.4.3"},
       {:abi, "~> 0.1.13"},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:ethereumex, "~> 0.9", override: true},
       {:cors_plug, "~> 2.0"},
       {:phoenix, "~> 1.4.9"},
