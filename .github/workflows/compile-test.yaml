@@ -72,7 +72,7 @@ jobs:
           mix local.hex --force
           mix deps.get
           mix deps.compile
-          mix dialyzer --plt
+          # mix dialyzer --plt
 
   static_code_analysis:
     name: Static Code Analysis
@@ -93,11 +93,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup
-        uses: actions/setup-elixir@v1
-        with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
+      - name: Install Elixir
+        run: wget https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.13.4-1~ubuntu~focal_all.deb && sudo dpkg -i 'elixir_1.13.4-1~ubuntu~focal_all.deb'
+    
+      - name: Install hex
+        run: mix local.hex --force
+          
+      - name: Install hex
+        run: mix local.rebar --force
+
+      - name: Install OTP
+        run: |
+          wget -q -O otp.tar.gz https://repo.hex.pm/builds/otp/ubuntu-20.04/OTP-25.0.4.tar.gz
+          mkdir -p .setup-elixir/otp
+          tar zxf otp.tar.gz -C .setup-elixir/otp --strip-components=1
+          rm otp.tar.gz
+          .setup-elixir/otp/Install -minimal $(pwd)/.setup-elixir/otp
+          echo "$(pwd)/.setup-elixir/otp/bin" >> $GITHUB_PATH
 
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v2
@@ -138,11 +150,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup
-        uses: actions/setup-elixir@v1
-        with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
+      - name: Install Elixir
+        run: wget https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.13.4-1~ubuntu~focal_all.deb && sudo dpkg -i 'elixir_1.13.4-1~ubuntu~focal_all.deb'
+    
+      - name: Install hex
+        run: mix local.hex --force
+          
+      - name: Install hex
+        run: mix local.rebar --force
+
+      - name: Install OTP
+        run: |
+          wget -q -O otp.tar.gz https://repo.hex.pm/builds/otp/ubuntu-20.04/OTP-25.0.4.tar.gz
+          mkdir -p .setup-elixir/otp
+          tar zxf otp.tar.gz -C .setup-elixir/otp --strip-components=1
+          rm otp.tar.gz
+          .setup-elixir/otp/Install -minimal $(pwd)/.setup-elixir/otp
+          echo "$(pwd)/.setup-elixir/otp/bin" >> $GITHUB_PATH
 
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v2
