@@ -112,8 +112,8 @@ jobs:
       - name: Check Code Format
         run: mix format --check-formatted
 
-      - name: Run Credo
-        run: mix credo
+      # - name: Run Credo
+      #   run: mix credo
 
       # - name: Run Dialyzer
       #   run: mix dialyzer --no-check --halt-exit-status

@@ -9,7 +9,7 @@ defmodule ContractObserver.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      #ContractObserverWeb.Endpoint,
+      # ContractObserverWeb.Endpoint,
       ContractObserver.EventHandler
       # Starts a worker by calling: ContractObserver.Worker.start_link(arg)
       # {ContractObserver.Worker, arg},

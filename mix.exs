@@ -11,6 +11,7 @@ defmodule Rudder.MixProject do
       preferred_cli_env: ["test.ci": :test]
     ]
   end
+
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
@@ -52,6 +53,5 @@ defmodule Rudder.MixProject do
     [
       "test.ci": ["test --color --max-cases=10"]
     ]
-end
-
+  end
 end
