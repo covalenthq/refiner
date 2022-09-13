@@ -11,7 +11,10 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     encode_bin(:binary.encode_unsigned(n))
   end
 
-  def encode_address(%Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes}, opts \\ []) do
+  def encode_address(
+        %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes},
+        opts \\ []
+      ) do
     if Keyword.get(opts, :raw, false) do
       bytes
     else
@@ -153,11 +156,15 @@ defmodule Rudder.RPC.EthereumClient.Codec do
         nil
 
       {true, {:tuple, _} = return_type, returned_data} ->
-        [decoded_data] = ABI.TypeDecoder.decode_raw(returned_data, [return_type], discard_rest: true)
+        [decoded_data] =
+          ABI.TypeDecoder.decode_raw(returned_data, [return_type], discard_rest: true)
+
         decoded_data
 
       {true, return_type, returned_data} ->
-        [{decoded_data}] = ABI.TypeDecoder.decode_raw(returned_data, [{:tuple, [return_type]}], discard_rest: true)
+        [{decoded_data}] =
+          ABI.TypeDecoder.decode_raw(returned_data, [{:tuple, [return_type]}], discard_rest: true)
+
         decoded_data
     end
   end
@@ -234,7 +241,6 @@ defmodule Rudder.RPC.EthereumClient.Codec do
       namespace: 0,
       parent_hash: decode_sha256(block["parentHash"]),
       height: decode_qty(block["number"]),
-
       uncles: decode_uncles(block["uncles"]),
       extra_data: decode_bin(block["extraData"]),
       miner: decode_address(block["miner"]),
@@ -288,7 +294,6 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     without_nils(
       hash: decode_sha256(tx["hash"]),
       tx_offset: decode_qty(tx["transactionIndex"]) || 0,
-
       namespace: 0,
       from: decode_address(tx["from"]),
       to: decode_address(tx["to"]),
@@ -297,7 +302,6 @@ defmodule Rudder.RPC.EthereumClient.Codec do
       contract_input: decode_evm_argdata(tx["input"]),
       gas_offered: decode_qty(tx["gas"]),
       gas_price: decode_qty(tx["gasPrice"])
-
     )
   end
 
@@ -327,6 +331,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
   def decode_log_topics(nil), do: []
   def decode_log_topics([]), do: []
+
   def decode_log_topics(topics) when is_list(topics),
     do: Enum.map(topics, &decode_log_topic/1)
 
@@ -442,10 +447,12 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     qty
   end
 
-
   def decode_addr_balance(nil), do: nil
+
   def decode_addr_balance(addr_balance_map = %{}) do
-    Map.new(addr_balance_map, fn {addr, balance} -> {decode_address(addr), decode_qty(balance)} end)
+    Map.new(addr_balance_map, fn {addr, balance} ->
+      {decode_address(addr), decode_qty(balance)}
+    end)
   end
 
   def decode_bin(nil), do: nil

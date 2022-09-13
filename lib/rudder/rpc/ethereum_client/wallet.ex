@@ -9,7 +9,8 @@ defmodule Rudder.Wallet do
     |> load()
   end
 
-  def load(raw_private_key) when is_binary(raw_private_key) and byte_size(raw_private_key) == 32 do
+  def load(raw_private_key)
+      when is_binary(raw_private_key) and byte_size(raw_private_key) == 32 do
     {:ok, raw_public_key} = ExSecp256k1.create_public_key(raw_private_key)
     address = pubkey_to_address(raw_public_key)
 
