@@ -7,8 +7,7 @@ defmodule Rudder.MixProject do
       version: "0.1.0",
       elixir: "~> 1.13.4",
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      preferred_cli_env: ["test.ci": :test]
+      deps: deps()
     ]
   end
 
@@ -17,7 +16,7 @@ defmodule Rudder.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      applications: [:ethereumex, :eth_contract, :porcelain],
+      applications: [:porcelain, :machine_gun],
       extra_applications: [:logger, :runtime_tools, :poison],
       mod: {Rudder.Application, []}
     ]
@@ -26,28 +25,49 @@ defmodule Rudder.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:httpoison, "~> 1.6"},
       {:poison, "~> 5.0"},
       {:porcelain, "~> 2.0"},
       {:jason, "~> 1.1"},
       {:broadway, "~> 1.0", override: true},
-      {:web3, "~> 0.1.2"},
-      {:eth_contract, "~> 0.1.0"},
       {:off_broadway_redis, "~> 0.4.3"},
-      {:abi, "~> 0.1.13"},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:ethereumex, "~> 0.9", override: true},
       {:cors_plug, "~> 2.0"},
       {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
-      {:rustler, "~> 0.25.0", override: true},
+      {:rustler, "~> 0.23.0", override: true},
       {:ranch, "~> 1.7.1",
-       [env: :prod, hex: "ranch", repo: "hexpm", optional: false, override: true]}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+       [env: :prod, hex: "ranch", repo: "hexpm", optional: false, override: true]},
+
+      # parsing and encoding
+      {:abi,
+       github: "tsutsu/ethereum_abi",
+       branch: "feature-parse-events-from-abi-specifications",
+       override: true},
+      #  {:libsecp256k1, path: "vendor/libsecp256k1", override: true},
+      {:ex_secp256k1, "~> 0.4.0"},
+      #  {:exleveldb, path: "vendor/exleveldb", override: true},
+      #  {:ex_lmdb, path: "vendor/ex_lmdb", override: true},
+      #  {:keccakf1600, path: "vendor/keccakf1600", override: true},
+      {:ex_keccak, "~> 0.3.0", override: true},
+      {:mnemonic, "~> 0.3"},
+      {:ex_rlp, "~> 0.5.4", override: true},
+
+      # architecture
+      {:confex, "~> 3.3"},
+      {:poolboy, "~> 1.5"},
+
+      # networking
+      {:certifi, "~> 2.9", override: true},
+      {:httpoison, "~> 1.8", override: true},
+      {:machine_gun, "~> 0.1.5"},
+      {:gun, "~> 2.0.0-rc.2", override: true},
+      {:downstream, "~> 1.0"},
+      {:websockex, "~> 0.4.3"},
+
+      # static code analysis
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
 
