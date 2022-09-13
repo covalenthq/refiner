@@ -11,7 +11,7 @@ env:
 
 jobs:
   deps:
-    name: Get Dependencies
+    name: Dependencies
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -28,6 +28,7 @@ jobs:
         with:
           fetch-depth: 0
 
+      # action is broken - https://github.com/actions/setup-elixir/issues/31
       # - name: Setup
       #   uses: actions/setup-elixir@v1
       #   with:
@@ -114,8 +115,8 @@ jobs:
       - name: Run Credo
         run: mix credo
 
-      - name: Run Dialyzer
-        run: mix dialyzer --no-check --halt-exit-status
+      # - name: Run Dialyzer
+      #   run: mix dialyzer --no-check --halt-exit-status
 
   unit_tests:
     name: Unit Tests
