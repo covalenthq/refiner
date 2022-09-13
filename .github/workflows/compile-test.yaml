@@ -72,7 +72,6 @@ jobs:
           mix local.hex --force
           mix deps.get
           mix deps.compile
-          # mix dialyzer --plt
 
   static_code_analysis:
     name: Static Code Analysis
@@ -124,11 +123,11 @@ jobs:
       - name: Check Code Format
         run: mix format --check-formatted
 
-      # - name: Run Credo
-      #   run: mix credo
+      - name: Run Credo
+        run: mix credo
 
-      # - name: Run Dialyzer
-      #   run: mix dialyzer --no-check --halt-exit-status
+      - name: Run Dialyzer
+        run: mix dialyzer --plt
 
   unit_tests:
     name: Unit Tests

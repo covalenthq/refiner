@@ -36,6 +36,7 @@ defmodule Rudder.MixProject do
       {:off_broadway_redis, "~> 0.4.3"},
       {:abi, "~> 0.1.13"},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:ethereumex, "~> 0.9", override: true},
       {:cors_plug, "~> 2.0"},
       {:phoenix, "~> 1.4.9"},
