@@ -39,18 +39,21 @@ defmodule Rudder.MixProject do
       {:ranch, "~> 1.7.1",
        [env: :prod, hex: "ranch", repo: "hexpm", optional: false, override: true]},
 
-       # parsing and encoding
-      {:abi, github: "tsutsu/ethereum_abi", branch: "feature-parse-events-from-abi-specifications", override: true},
+      # parsing and encoding
+      {:abi,
+       github: "tsutsu/ethereum_abi",
+       branch: "feature-parse-events-from-abi-specifications",
+       override: true},
       #  {:libsecp256k1, path: "vendor/libsecp256k1", override: true},
       {:ex_secp256k1, "~> 0.4.0"},
       #  {:exleveldb, path: "vendor/exleveldb", override: true},
       #  {:ex_lmdb, path: "vendor/ex_lmdb", override: true},
-      {:keccakf1600, path: "vendor/keccakf1600", override: true},
+      #  {:keccakf1600, path: "vendor/keccakf1600", override: true},
       {:ex_keccak, "~> 0.3.0", override: true},
       {:mnemonic, "~> 0.3"},
       {:ex_rlp, "~> 0.5.4", override: true},
 
-       # architecture
+      # architecture
       {:confex, "~> 3.3"},
       {:poolboy, "~> 1.5"},
 
@@ -60,7 +63,17 @@ defmodule Rudder.MixProject do
       {:machine_gun, "~> 0.1.5"},
       {:gun, "~> 2.0.0-rc.2", override: true},
       {:downstream, "~> 1.0"},
-      {:websockex, "~> 0.4.3"}
+      {:websockex, "~> 0.4.3"},
+
+      # static code analysis
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      "test.ci": ["test --color --max-cases=10"]
     ]
   end
 end
