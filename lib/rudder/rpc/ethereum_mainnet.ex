@@ -14,7 +14,6 @@ defmodule Rudder.Network.EthereumMainnet do
 
   # alias Rudder.Network.EthereumFoundationTracerAdjunct, as: Tracer
 
-
   def eth_call(call_tx, at_block \\ :latest) do
     if System.get_env("NODE_ETHEREUM_MAINNET_TRACER") do
       Process.put(:worker_3pcalls, Process.get(:worker_3pcalls, 0) + 1)
@@ -23,6 +22,4 @@ defmodule Rudder.Network.EthereumMainnet do
       super(call_tx, at_block)
     end
   end
-
 end
-

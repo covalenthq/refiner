@@ -51,7 +51,13 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
   end
 
   def call(req_uri, req_headers, rpc_method, rpc_params, opts) do
-    case batch_call(req_uri, req_headers, rpc_method, [rpc_params], Keyword.put_new(opts, :max_batch_size, 1)) do
+    case batch_call(
+           req_uri,
+           req_headers,
+           rpc_method,
+           [rpc_params],
+           Keyword.put_new(opts, :max_batch_size, 1)
+         ) do
       {:ok, [resp]} -> resp
       batch_error -> batch_error
     end
@@ -127,10 +133,13 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
   end
 
   defp submit_and_decode_http_reqs([req_body | rest], send_req_body_fn, use_retries, acc) do
-    with {:ok, jsonrpc_resps} <- submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, use_retries),
+    with {:ok, jsonrpc_resps} <-
+           submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, use_retries),
          jsonrpc_results <- Enum.map(jsonrpc_resps, &decode_jsonrpc_resp/1),
          ordered_jsonrpc_results <- collate_jsonrpc_results(jsonrpc_results) do
-      submit_and_decode_http_reqs(rest, send_req_body_fn, use_retries, [ordered_jsonrpc_results | acc])
+      submit_and_decode_http_reqs(rest, send_req_body_fn, use_retries, [
+        ordered_jsonrpc_results | acc
+      ])
     else
       err ->
         err
