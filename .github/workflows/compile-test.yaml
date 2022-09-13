@@ -123,11 +123,11 @@ jobs:
       - name: Check Code Format
         run: mix format --check-formatted
 
-      - name: Run Credo
-        run: mix credo
+      # - name: Run Credo
+      #   run: mix credo
 
-      - name: Run Dialyzer
-        run: mix dialyzer --plt
+      # - name: Run Dialyzer
+      #   run: mix dialyzer --plt
 
   unit_tests:
     name: Unit Tests
@@ -179,39 +179,3 @@ jobs:
 
       - name: Run test
         run: mix test --trace --slowest 10
-
-  # deploy:
-  #   name: Deploy
-  #   runs-on: ubuntu-20.04
-  #   needs:
-  #     - static_code_analysis
-  #     - unit_tests
-  #     - integration_tests
-  #   steps:
-  #     - name: Cancel Previous Runs
-  #       uses: styfle/cancel-workflow-action@0.6.0
-  #       with:
-  #         access_token: ${{ github.token }}
-
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-
-  #     - name: Deploy to staging
-  #       uses: mhanberg/gigalixir-action@v0.4.0
-  #       with:
-  #         GIGALIXIR_USERNAME: ${{ secrets.GIGALIXIR_USERNAME }}
-  #         GIGALIXIR_PASSWORD: ${{ secrets.GIGALIXIR_PASSWORD }}
-  #         GIGALIXIR_APP: my-app
-  #         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  #         MIGRATIONS: false
-
-  # run_tests:
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #   # This is an action from github that checks out the code in the repo.
-  #   - uses: actions/checkout@v2
-  #   # Give it any name you like
-  #   - name: "run elixir tests"
-  #     uses: Adzz/elixir_run_tests_action@v2.0.0
