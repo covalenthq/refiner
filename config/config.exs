@@ -7,7 +7,6 @@
 # General application configuration
 import Config
 
-
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -22,7 +21,6 @@ config :machine_gun,
     pool_max_overflow: 0,
     pool_timeout: 1_200_000
   }
-
 
 config :porcelain, driver: Porcelain.Driver.Basic
 

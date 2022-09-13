@@ -1,5 +1,4 @@
 defmodule Rudder.SHA256 do
-
   defstruct [:bytes]
 
   def sigil_h(maybe_pfx_hexhash, []), do: parse(maybe_pfx_hexhash)
@@ -13,7 +12,8 @@ defmodule Rudder.SHA256 do
     %__MODULE__{bytes: Base.decode16!(hexhash, case: :mixed)}
   end
 
-  def new(raw_hash) when is_binary(raw_hash) and (byte_size(raw_hash) == 32 or byte_size(raw_hash) == 88) do
+  def new(raw_hash)
+      when is_binary(raw_hash) and (byte_size(raw_hash) == 32 or byte_size(raw_hash) == 88) do
     %__MODULE__{bytes: raw_hash}
   end
 
