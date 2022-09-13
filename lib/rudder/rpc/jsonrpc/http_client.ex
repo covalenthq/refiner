@@ -61,11 +61,22 @@ defmodule Rudder.RPC.JSONRPC.HTTPClient do
 
     def long_call(client, rpc_method, rpc_params) do
       # Adapter.call(client.request_uri, client.request_headers, rpc_method, rpc_params)
-      LongCallAdapter.long_call(client.ws_request_uri, client.request_headers, rpc_method, rpc_params)
+      LongCallAdapter.long_call(
+        client.ws_request_uri,
+        client.request_headers,
+        rpc_method,
+        rpc_params
+      )
     end
 
     def batch_call(client, rpc_method, rpc_params_stream, opts \\ []) do
-      Adapter.batch_call(client.request_uri, client.request_headers, rpc_method, rpc_params_stream, opts)
+      Adapter.batch_call(
+        client.request_uri,
+        client.request_headers,
+        rpc_method,
+        rpc_params_stream,
+        opts
+      )
     end
 
     def fetch_digest(client, uri_ref) do

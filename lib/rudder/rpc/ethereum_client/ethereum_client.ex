@@ -17,7 +17,6 @@ defmodule Rudder.RPC.EthereumClient do
         Keyword.fetch!(config(), :chain_id)
       end
 
-
       def client do
         client_module = Keyword.get(config(), :client_module, @default_client_module)
         client_opts = Keyword.get(config(), :client_opts, @default_client_opts)
@@ -43,7 +42,6 @@ defmodule Rudder.RPC.EthereumClient do
             0
         end
       end
-
 
       def request_timeout_millis, do: 1_200_000
 
@@ -170,7 +168,10 @@ defmodule Rudder.RPC.EthereumClient do
       def eth_getBlockByNumber(block_number, opts \\ []) do
         call(
           :eth_getBlockByNumber,
-          [Codec.encode_default_block(block_number), Keyword.get(opts, :transactions, :hashes) == :full],
+          [
+            Codec.encode_default_block(block_number),
+            Keyword.get(opts, :transactions, :hashes) == :full
+          ],
           &Codec.decode_block(&1, __MODULE__)
         )
       end
@@ -192,7 +193,12 @@ defmodule Rudder.RPC.EthereumClient do
       end
 
       def eth_getTransactionByHash(hash, opts \\ []),
-        do: call(:eth_getTransactionByHash, [Codec.encode_sha256(hash)], &Codec.decode_transaction/1)
+        do:
+          call(
+            :eth_getTransactionByHash,
+            [Codec.encode_sha256(hash)],
+            &Codec.decode_transaction/1
+          )
 
       def eth_getTransactionsByBlockNumber(block_number, opts \\ []) do
         call(
@@ -203,7 +209,12 @@ defmodule Rudder.RPC.EthereumClient do
       end
 
       def eth_getTransactionReceipt(hash, opts \\ []),
-        do: call(:eth_getTransactionReceipt, [Codec.encode_sha256(hash)], &Codec.decode_transaction_receipt/1)
+        do:
+          call(
+            :eth_getTransactionReceipt,
+            [Codec.encode_sha256(hash)],
+            &Codec.decode_transaction_receipt/1
+          )
 
       def eth_getTransactionReceiptsByBlockNumber(block_number, opts \\ []) do
         call(
@@ -212,7 +223,6 @@ defmodule Rudder.RPC.EthereumClient do
           &Codec.decode_transaction_receipts/1
         )
       end
-
 
       def eth_gasPrice, do: call(:eth_gasPrice, [], &Codec.decode_qty/1)
 
@@ -232,7 +242,6 @@ defmodule Rudder.RPC.EthereumClient do
         )
       end
 
-
       def eth_call(call_tx, at_block \\ :latest) do
         call(
           :eth_call,
@@ -248,7 +257,6 @@ defmodule Rudder.RPC.EthereumClient do
           &Codec.decode_qty/1
         )
       end
-
 
       def eth_sendTransaction(call_tx, opts \\ []) do
         {:ok, promise_ref} =
@@ -297,7 +305,6 @@ defmodule Rudder.RPC.EthereumClient do
         end
       end
 
-
       defp revive_block_transactions!(block) do
         {txs, block} = pop_or_fetch_txs!(block)
 
@@ -310,7 +317,6 @@ defmodule Rudder.RPC.EthereumClient do
               {:ok, txs, receipts} = rebuild_txs_and_receipts!(block)
               {txs, receipts, block}
           end
-
 
         {txs, logs} =
           Stream.zip(txs, receipts)
@@ -416,7 +422,11 @@ defmodule Rudder.RPC.EthereumClient do
             encoded_txids = Stream.map(txs, fn tx -> [Codec.encode_sha256(tx.hash)] end)
 
             receipts =
-              batch_call(:eth_getTransactionReceipt, encoded_txids, &Codec.decode_transaction_receipt/1)
+              batch_call(
+                :eth_getTransactionReceipt,
+                encoded_txids,
+                &Codec.decode_transaction_receipt/1
+              )
               |> Enum.map(fn {:ok, t} -> t end)
 
             {:ok, receipts}
@@ -425,13 +435,13 @@ defmodule Rudder.RPC.EthereumClient do
         case receipts_result do
           {:ok, receipts} ->
             {receipts, block}
+
           {:server_error, -32000, <<"wrong number of tx events", _::binary>>} ->
             :corrupt_block
         end
       end
 
       defp rebuild_txs_and_receipts!(block), do: :not_implemented
-
 
       def getrawblock(pos_spec, opts \\ [])
       def getrawblock(nil, _opts), do: {:ok, nil}
@@ -479,7 +489,8 @@ defmodule Rudder.RPC.EthereumClient do
       end
 
       def gas_limit(at_block \\ :latest) do
-        with {:ok, blk} <- call(:eth_getBlockByNumber, [Codec.encode_default_block(at_block), false]),
+        with {:ok, blk} <-
+               call(:eth_getBlockByNumber, [Codec.encode_default_block(at_block), false]),
              {:ok, gas_limit_str} <- Map.fetch(blk, "gasLimit") do
           {:ok, Codec.decode_qty(gas_limit_str)}
         else
@@ -490,7 +501,10 @@ defmodule Rudder.RPC.EthereumClient do
       def web3_clientVersion!, do: unwrap!(web3_clientVersion())
       def eth_chainId!, do: unwrap!(eth_chainId())
       def eth_blockNumber!, do: unwrap!(eth_blockNumber())
-      def eth_getBlockByNumber!(block_number, opts \\ []), do: unwrap!(eth_getBlockByNumber(block_number, opts))
+
+      def eth_getBlockByNumber!(block_number, opts \\ []),
+        do: unwrap!(eth_getBlockByNumber(block_number, opts))
+
       def eth_getBlockByHash!(hash, opts \\ []), do: unwrap!(eth_getBlockByHash(hash, opts))
       def eth_getLogs!(opts \\ []), do: unwrap!(eth_getLogs(opts))
       def eth_getTransactionByHash!(hash), do: unwrap!(eth_getTransactionByHash(hash))
@@ -499,10 +513,13 @@ defmodule Rudder.RPC.EthereumClient do
       def eth_getTransactionCount!(ledger_addr, at_block \\ :latest),
         do: unwrap!(eth_getTransactionCount(ledger_addr, at_block))
 
-      def eth_getBalance!(ledger_addr, at_block \\ :latest), do: unwrap!(eth_getBalance(ledger_addr, at_block))
+      def eth_getBalance!(ledger_addr, at_block \\ :latest),
+        do: unwrap!(eth_getBalance(ledger_addr, at_block))
 
       def eth_call!(call_tx, at_block \\ :latest), do: unwrap!(eth_call(call_tx, at_block))
-      def eth_estimateGas!(call_tx, at_block \\ :latest), do: unwrap!(eth_estimateGas(call_tx, at_block))
+
+      def eth_estimateGas!(call_tx, at_block \\ :latest),
+        do: unwrap!(eth_estimateGas(call_tx, at_block))
 
       defoverridable alive?: 0,
                      eth_call: 1,
@@ -510,10 +527,8 @@ defmodule Rudder.RPC.EthereumClient do
                      eth_getTransactionReceiptsByBlockNumber: 1,
                      eth_getTransactionReceiptsByBlockNumber: 2,
                      rebuild_txs_and_receipts!: 1,
-
                      block_sealed_at: 2,
                      request_timeout_millis: 0
-
     end
   end
 end

@@ -3,11 +3,11 @@ defmodule Rudder.PublicKeyHash do
             namespace: 0,
             chain_id: nil,
             bytes: <<0::160>>
-            
+
   alias Rudder.RPC.EthereumClient.Codec, as: EthereumCodec
 
   @codecs_by_format %{
-    ethpub: EthereumCodec,
+    ethpub: EthereumCodec
   }
 
   @zero_address EthereumCodec.decode_address("0x0000000000000000000000000000000000000000")
@@ -113,7 +113,10 @@ end
 defimpl Inspect, for: Rudder.PublicKeyHash do
   import Inspect.Algebra
 
-  def inspect(%Rudder.PublicKeyHash{format: format, namespace: namespace, chain_id: chain_id} = pkh, opts) do
+  def inspect(
+        %Rudder.PublicKeyHash{format: format, namespace: namespace, chain_id: chain_id} = pkh,
+        opts
+      ) do
     {:ok, str_repr} = Rudder.PublicKeyHash.as_string(pkh, hide_prefix: true)
 
     str_repr_doc = str_repr_doc(str_repr, opts)
