@@ -77,7 +77,6 @@ iex -S mix
 Rudder.ProofChain.BlockSpecimenEventListener.start()
 ```
 
-
 ## ProofChain Contract Interactor 
 In order to run the interactor you need to fork ethereum node and run a script to add the operators using the docker:
 1. Add `.env` file.

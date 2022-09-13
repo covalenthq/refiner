@@ -31,7 +31,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   defp extract_submitted_specimens(logs, specimen_url_map) do
     Enum.reduce(logs, specimen_url_map, fn el, new_specimen_url_map ->
-      event_signature = "(uint64, uint64, bytes32, bytes32, string, uint128)"
+      event_signature = "(uint64,uint64,bytes32,bytes32,string,uint128)"
 
       [chain_id, block_height, block_hash_raw, specimen_hash_raw, url, _submittedStake] =
         extract_data(el, event_signature)
@@ -99,8 +99,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
     specimen_url_map = extract_submitted_specimens(bsp_submitted_logs, specimen_url_map)
 
-    # IO.inspect(specimen_url_map)
-
     {:ok, bsp_awarded_logs} =
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
@@ -110,7 +108,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
         }
       ])
 
-    # IO.inspect(bsp_awarded_logs)
     bsps_to_process = extract_awarded_specimens(bsp_awarded_logs)
 
     specimen_url_map = push_bsps_to_process(bsps_to_process, specimen_url_map)
