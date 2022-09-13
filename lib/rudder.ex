@@ -2,7 +2,6 @@ alias Porcelain.Result
 alias Porcelain.Process, as: Proc
 
 defmodule Rudder do
-
   defp get_json(filename) do
     with {:ok, body} <- File.read(filename) do
       Poison.decode(body)
@@ -56,19 +55,19 @@ defmodule Rudder do
     output = get_output(formula)
     build_rule = get_rule(formula)
 
-    #exec = get_exec(formula)
-    #args = get_args(formula)
+    # exec = get_exec(formula)
+    # args = get_args(formula)
 
     # get result from rule call
     sync_exec(build_rule)
 
-    #async_exec(exec, args)
+    # async_exec(exec, args)
 
     # output = get_output(formula)
     # write_output(output, result)
   end
 
-def build_async(build_filename, args) do
+  def build_async(build_filename, args) do
     # load rules file
     {:ok, formula} = load_build_file(build_filename)
 
@@ -82,7 +81,11 @@ def build_async(build_filename, args) do
     proc = %Proc{out: outstream} = async_exec(build_rule, args)
 
     Enum.into(outstream, IO.stream(:stdio, :line))
-    Proc.alive?(proc)   #=> false
+    # => false
+    Proc.alive?(proc)
   end
 
+  def hello do
+    :world
+  end
 end
