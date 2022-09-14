@@ -12,15 +12,17 @@ defmodule Rudder.BlockResultUploader do
 
   @impl true
   def handle_cast({:pin, file_path}, state) do
-    %HTTPoison.Response{
-      body: x,
-      headers: _,
-      request: _,
-      request_url: _,
-      status_code: y
-    } = HTTPoison.get!("http://localhost:3000/pin?address=#{file_path}")
+    x = Finch.build(:get, "http://localhost:3000/pin?address=#{file_path}")
+    |> Finch.request(Rudder.Finch)
+    # %HTTPoison.Response{
+    #   body: x,
+    #   headers: _,
+    #   request: _,
+    #   request_url: _,
+    #   status_code: y
+    # } = HTTPoison.get!("http://localhost:3000/pin?address=#{file_path}")
 
-    {:noreply, [{y, x} | state]}
+    {:noreply, [x | state]}
   end
 
   @impl true
