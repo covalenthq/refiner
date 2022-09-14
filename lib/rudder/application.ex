@@ -14,7 +14,12 @@ defmodule Rudder.Application do
       },
       # Starts a worker by calling: Rudder.Worker.start_link(arg)
       # {Rudder.Worker, arg}
-      {Rudder.ProofChainActor, name: Rudder.ProofChainActor}
+      {Rudder.ProofChainActor, name: Rudder.ProofChainActor},
+      {Finch,
+       name: Rudder.Finch,
+       pools: %{
+         :default => [size: 32]
+       }}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
