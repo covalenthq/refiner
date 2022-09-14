@@ -67,7 +67,10 @@ defmodule Rudder.MixProject do
 
       # static code analysis
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+
+      # avro tools
+      {:avrora, "~> 0.21"}
     ]
   end
 
