@@ -16,8 +16,8 @@ defmodule Rudder.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      applications: [:ethereumex, :eth_contract, :porcelain],
-      extra_applications: [:logger, :runtime_tools, :httpoison],
+      applications: [:porcelain, :machine_gun],
+      extra_applications: [:logger, :runtime_tools, :poison],
       mod: {Rudder.Application, []}
     ]
   end
