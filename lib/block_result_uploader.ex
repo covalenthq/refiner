@@ -1,5 +1,4 @@
 defmodule Rudder.BlockResultUploader do
-
   use GenServer
 
   def start_link(opts) do
@@ -19,10 +18,10 @@ defmodule Rudder.BlockResultUploader do
       request: _,
       request_url: _,
       status_code: y
-      } = HTTPoison.get!("http://localhost:3000/pin?address=#{file_path}")
+    } = HTTPoison.get!("http://localhost:3000/pin?address=#{file_path}")
+
     {:noreply, [{y, x} | state]}
   end
-
 
   @impl true
   def handle_call(:lookup, _from, state) do
@@ -38,5 +37,4 @@ defmodule Rudder.BlockResultUploader do
   def pin(path) do
     GenServer.cast(Rudder.BlockResultUploader, {:pin, path})
   end
-
 end
