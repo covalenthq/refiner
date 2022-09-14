@@ -55,10 +55,6 @@ defmodule Rudder.RPC.EthereumClient do
         end
       end
 
-      def batch_load_lag_source_by do
-        Keyword.get(config(), :batch_load_lag_source_by, 0)
-      end
-
       def configured? do
         with kws when is_list(kws) <- config(),
              config <- Map.new(kws) do
@@ -93,37 +89,6 @@ defmodule Rudder.RPC.EthereumClient do
         case {resp, decode_fun} do
           {{:ok, value}, f} when is_function(f, 1) -> {:ok, f.(value)}
           _ -> resp
-        end
-      end
-
-      def batch_call(rpc_method, params_stream, decode_fun \\ nil, opts \\ []) do
-        default_opts = [
-          max_batch_size: 100,
-          keepalive: true,
-          request_timeout: request_timeout_millis()
-        ]
-
-        opts_with_defaults = Keyword.merge(default_opts, opts)
-
-        batch_resp =
-          client()
-          |> Ingestor.RPC.JSONRPC.Client.batch_call(
-            rpc_method,
-            params_stream,
-            opts_with_defaults
-          )
-
-        case {batch_resp, decode_fun} do
-          {{:ok, resps}, f} when is_function(f, 1) ->
-            enum_mod = if length(resps) >= 100, do: Stream, else: Enum
-
-            enum_mod.map(resps, fn
-              {:ok, val} -> {:ok, decode_fun.(val)}
-              any -> any
-            end)
-
-          _ ->
-            batch_resp
         end
       end
 
@@ -305,144 +270,6 @@ defmodule Rudder.RPC.EthereumClient do
         end
       end
 
-      defp revive_block_transactions!(block) do
-        {txs, block} = pop_or_fetch_txs!(block)
-
-        {txs, receipts, block} =
-          case pop_or_fetch_receipts!(block, txs) do
-            {receipts, block} ->
-              {txs, receipts, block}
-
-            :corrupt_block ->
-              {:ok, txs, receipts} = rebuild_txs_and_receipts!(block)
-              {txs, receipts, block}
-          end
-
-        {txs, logs} =
-          Stream.zip(txs, receipts)
-          |> Stream.with_index()
-          |> Stream.map(fn {{tx, receipt}, tx_offset} ->
-            {logs, receipt} = Map.pop(receipt, :log_events)
-
-            merged_tx =
-              Map.merge(tx, receipt)
-              |> Map.put(:tx_offset, tx_offset)
-
-            log_tx_denormal_cols = %{
-              tx_offset: tx_offset,
-              tx_hash: tx.hash
-            }
-
-            merged_logs = Enum.map(logs, &Map.merge(&1, log_tx_denormal_cols))
-
-            {merged_tx, merged_logs}
-          end)
-          |> Enum.unzip()
-
-        logs =
-          List.flatten(logs)
-          |> Codec.linearize_log_offsets()
-
-        tx_block_denormal_cols = %{
-          signed_at: block.signed_at
-        }
-
-        txs = Enum.map(txs, &Map.merge(&1, tx_block_denormal_cols))
-
-        log_block_denormal_cols = %{
-          block_height: block.height,
-          block_signed_at: block.signed_at
-        }
-
-        logs =
-          Enum.filter(logs, &(not Map.get(&1, :removed, false)))
-          |> Enum.map(&Map.merge(&1, log_block_denormal_cols))
-
-        block =
-          Map.put(block, :transactions, txs)
-          |> Map.put(:log_events, logs)
-
-        block
-      end
-
-      defp revive_block_transactions({:ok, block}) do
-        new_block = revive_block_transactions!(block)
-        {:ok, new_block}
-      end
-
-      defp revive_block_transactions(err), do: err
-
-      defp pop_or_fetch_txs!(%{transactions: txs} = block) when is_list(txs) do
-        block = Map.delete(block, :transactions)
-        txs = Enum.uniq_by(txs, &Map.delete(&1, :tx_offset))
-        {txs, block}
-      end
-
-      defp pop_or_fetch_txs!(%{transaction_ids: []} = block) do
-        block = Map.delete(block, :transaction_ids)
-        {[], block}
-      end
-
-      defp pop_or_fetch_txs!(%{transaction_ids: txids} = block) when is_list(txids) do
-        txids = Enum.uniq(txids)
-
-        txs =
-          if false do
-            {:ok, txs} = eth_getTransactionsByBlockNumber(block.height)
-            txs
-          else
-            encoded_txids = Stream.map(txids, fn txid -> [Codec.encode_sha256(txid)] end)
-
-            batch_call(:eth_getTransactionByHash, encoded_txids, &Codec.decode_transaction/1)
-            |> Enum.map(fn {:ok, t} -> t end)
-          end
-
-        block = Map.delete(block, :transaction_ids)
-        {txs, block}
-      end
-
-      defp pop_or_fetch_txs(block) do
-        {[], block}
-      end
-
-      defp pop_or_fetch_receipts!(%{receipts: rcpts} = block, _txs) when is_list(rcpts) do
-        block = Map.delete(block, :receipts)
-        {rcpts, block}
-      end
-
-      defp pop_or_fetch_receipts!(block, []) do
-        {[], block}
-      end
-
-      defp pop_or_fetch_receipts!(block, txs) do
-        receipts_result =
-          if false do
-            eth_getTransactionReceiptsByBlockNumber(block.height)
-          else
-            encoded_txids = Stream.map(txs, fn tx -> [Codec.encode_sha256(tx.hash)] end)
-
-            receipts =
-              batch_call(
-                :eth_getTransactionReceipt,
-                encoded_txids,
-                &Codec.decode_transaction_receipt/1
-              )
-              |> Enum.map(fn {:ok, t} -> t end)
-
-            {:ok, receipts}
-          end
-
-        case receipts_result do
-          {:ok, receipts} ->
-            {receipts, block}
-
-          {:server_error, -32000, <<"wrong number of tx events", _::binary>>} ->
-            :corrupt_block
-        end
-      end
-
-      defp rebuild_txs_and_receipts!(block), do: :not_implemented
-
       def getrawblock(pos_spec, opts \\ [])
       def getrawblock(nil, _opts), do: {:ok, nil}
 
@@ -526,7 +353,6 @@ defmodule Rudder.RPC.EthereumClient do
                      eth_call: 2,
                      eth_getTransactionReceiptsByBlockNumber: 1,
                      eth_getTransactionReceiptsByBlockNumber: 2,
-                     rebuild_txs_and_receipts!: 1,
                      block_sealed_at: 2,
                      request_timeout_millis: 0
     end
