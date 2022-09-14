@@ -11,6 +11,5 @@ defmodule Rudder.BlockResultUploaderTest do
 
     Rudder.BlockResultUploader.pin("temp.txt")
     assert [{200, _}] = Rudder.BlockResultUploader.lookup()
-
   end
 end
