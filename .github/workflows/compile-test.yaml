@@ -73,109 +73,14 @@ jobs:
           mix deps.get
           mix deps.compile
 
-  static_code_analysis:
-    name: Static Code Analysis
-    needs: deps
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        elixir: [1.13.4]
-        otp: [25]
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.6.0
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Install Elixir
-        run: wget https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.13.4-1~ubuntu~focal_all.deb && sudo dpkg -i 'elixir_1.13.4-1~ubuntu~focal_all.deb'
-    
-      - name: Install hex
-        run: mix local.hex --force
-          
-      - name: Install hex
-        run: mix local.rebar --force
-
-      - name: Install OTP
-        run: |
-          wget -q -O otp.tar.gz https://repo.hex.pm/builds/otp/ubuntu-20.04/OTP-25.0.4.tar.gz
-          mkdir -p .setup-elixir/otp
-          tar zxf otp.tar.gz -C .setup-elixir/otp --strip-components=1
-          rm otp.tar.gz
-          .setup-elixir/otp/Install -minimal $(pwd)/.setup-elixir/otp
-          echo "$(pwd)/.setup-elixir/otp/bin" >> $GITHUB_PATH
-
-      - name: Retrieve Cached Dependencies
-        uses: actions/cache@v2
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build
-            priv/plts
-          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
-
       - name: Check Code Format
         run: mix format --check-formatted
 
-      # - name: Run Credo
+      # - name: Run Credo (SCA)
       #   run: mix credo
 
-      # - name: Run Dialyzer
+      # - name: Run Dialyzer (SCA)
       #   run: mix dialyzer --plt
-
-  unit_tests:
-    name: Unit Tests
-    needs: deps
-    runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
-      matrix:
-        elixir: [1.13.4]
-        otp: [25]
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.6.0
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Install Elixir
-        run: wget https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.13.4-1~ubuntu~focal_all.deb && sudo dpkg -i 'elixir_1.13.4-1~ubuntu~focal_all.deb'
-    
-      - name: Install hex
-        run: mix local.hex --force
-          
-      - name: Install hex
-        run: mix local.rebar --force
-
-      - name: Install OTP
-        run: |
-          wget -q -O otp.tar.gz https://repo.hex.pm/builds/otp/ubuntu-20.04/OTP-25.0.4.tar.gz
-          mkdir -p .setup-elixir/otp
-          tar zxf otp.tar.gz -C .setup-elixir/otp --strip-components=1
-          rm otp.tar.gz
-          .setup-elixir/otp/Install -minimal $(pwd)/.setup-elixir/otp
-          echo "$(pwd)/.setup-elixir/otp/bin" >> $GITHUB_PATH
-
-      - name: Retrieve Cached Dependencies
-        uses: actions/cache@v2
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build
-            priv/plts
-          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}
 
       - name: Run test
         run: mix test --trace --slowest 10
