@@ -35,11 +35,7 @@
                            },
                            {
                               "name":"TotalDifficulty",
-                              "type":{
-                                 "type":"bytes",
-                                 "logicalType":"decimal",
-                                 "precision":1000
-                              }
+                              "type":"double"
                            },
                            {
                               "name":"Header",
@@ -80,19 +76,11 @@
                                     },
                                     {
                                        "name":"difficulty",
-                                       "type":{
-                                          "type":"bytes",
-                                          "logicalType":"decimal",
-                                          "precision":1000
-                                       }
+                                       "type":"double"
                                     },
                                     {
                                        "name":"number",
-                                       "type":{
-                                          "type":"bytes",
-                                          "logicalType":"decimal",
-                                          "precision":1000
-                                       }
+                                       "type":"int"
                                     },
                                     {
                                        "name":"gasLimit",
@@ -123,11 +111,7 @@
                                     },
                                     {
                                        "name":"baseFeePerGas",
-                                       "type":{
-                                          "type":"bytes",
-                                          "logicalType":"decimal",
-                                          "precision":1000
-                                       }
+                                       "type":"double"
                                     }
                                  ]
                               }
@@ -169,11 +153,7 @@
                                        },
                                        {
                                           "name":"chainId",
-                                          "type":{
-                                             "type":"bytes",
-                                             "logicalType":"decimal",
-                                             "precision":1000
-                                          }
+                                          "type":"long"
                                        },
                                        {
                                           "name":"nonce",
@@ -181,27 +161,15 @@
                                        },
                                        {
                                           "name":"gasPrice",
-                                          "type":{
-                                             "type":"bytes",
-                                             "logicalType":"decimal",
-                                             "precision":1000
-                                          }
+                                          "type":"long"
                                        },
                                        {
                                           "name":"gasTipCap",
-                                          "type":{
-                                             "type":"bytes",
-                                             "logicalType":"decimal",
-                                             "precision":1000
-                                          }
+                                          "type":"long"
                                        },
                                        {
                                           "name":"gasFeeCap",
-                                          "type":{
-                                             "type":"bytes",
-                                             "logicalType":"decimal",
-                                             "precision":1000
-                                          }
+                                          "type":"long"
                                        },
                                        {
                                           "name":"gas",
@@ -209,11 +177,7 @@
                                        },
                                        {
                                           "name":"from",
-                                          "type":[
-                                             "null",
-                                             "string"
-                                          ],
-                                          "default":"null"
+                                          "type":"string"
                                        },
                                        {
                                           "name":"to",
@@ -224,48 +188,8 @@
                                           "default":"null"
                                        },
                                        {
-                                          "name":"v",
-                                          "type":[
-                                             "null",
-                                             {
-                                                "type":"bytes",
-                                                "logicalType":"decimal",
-                                                "precision":1000
-                                             }
-                                          ],
-                                          "default":"null"
-                                       },
-                                       {
-                                          "name":"r",
-                                          "type":[
-                                             "null",
-                                             {
-                                                "type":"bytes",
-                                                "logicalType":"decimal",
-                                                "precision":1000
-                                             }
-                                          ],
-                                          "default":"null"
-                                       },
-                                       {
-                                          "name":"s",
-                                          "type":[
-                                             "null",
-                                             {
-                                                "type":"bytes",
-                                                "logicalType":"decimal",
-                                                "precision":1000
-                                             }
-                                          ],
-                                          "default":"null"
-                                       },
-                                       {
                                           "name":"value",
-                                          "type":{
-                                             "type":"bytes",
-                                             "logicalType":"decimal",
-                                             "precision":1000
-                                          }
+                                          "type":"double"
                                        },
                                        {
                                           "name":"input",
@@ -277,11 +201,14 @@
                            },
                            {
                               "name":"uncles",
-                              "type":{
-                                 "type":"array",
-                                 "items":"Header"
-                              },
-                              "default": []
+                              "type":[
+                                 "null",
+                                 {
+                                    "type":"array",
+                                    "items":"Header"
+                                 }
+                              ],
+                              "default":null
                            },
                            {
                               "name":"Receipts",
@@ -397,11 +324,7 @@
                                                 },
                                                 {
                                                    "name":"Balance",
-                                                   "type":{
-                                                      "type":"bytes",
-                                                      "logicalType":"decimal",
-                                                      "precision":1000
-                                                   }
+                                                   "type":"double"
                                                 },
                                                 {
                                                    "name":"CodeHash",
@@ -465,7 +388,7 @@
                                              "fields":[
                                                 {
                                                    "name":"BlockNumber",
-                                                   "type":"double"
+                                                   "type":"int"
                                                 },
                                                 {
                                                    "name":"BlockHash",
@@ -500,7 +423,7 @@
       {
          "name":"codecVersion",
          "type":"double",
-         "default":0.3
+         "default":0.2
       }
    ]
 }
