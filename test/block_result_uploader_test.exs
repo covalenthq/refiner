@@ -6,10 +6,30 @@ defmodule Rudder.BlockResultUploaderTest do
     %{blockResultUploader: blockResultUploader}
   end
 
-  test "uploader uploades", %{blockResultUploader: blockResultUploader} do
+  test "ipfs contains cid", %{blockResultUploader: blockResultUploader} do
     assert Rudder.BlockResultUploader.lookup() == []
 
     Rudder.BlockResultUploader.pin("temp.txt")
-    assert [{200, _}] = Rudder.BlockResultUploader.lookup()
+    cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+
+    x = Finch.build(:get, "https://dweb.link/ipfs/#{cid}")
+    |> Finch.request(Rudder.Finch, receive_timeout: 50_000)
+
+    assert x != {:error, _}
+
+  end
+
+  test "ipfs contains cid", %{blockResultUploader: blockResultUploader} do
+    assert Rudder.BlockResultUploader.lookup() == []
+
+    Rudder.BlockResultUploader.pin("temp.txt")
+    cid = Rudder.BlockResultUploader.lookup()
+    cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+
+    x = Finch.build(:get, "https://dweb.link/ipfs/#{cid}")
+    |> Finch.request(Rudder.Finch, receive_timeout: 50_000)
+
+    assert x != {:error, _}
+
   end
 end

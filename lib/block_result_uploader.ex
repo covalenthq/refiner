@@ -14,15 +14,8 @@ defmodule Rudder.BlockResultUploader do
   def handle_cast({:pin, file_path}, state) do
     x = Finch.build(:get, "http://localhost:3000/pin?address=#{file_path}")
     |> Finch.request(Rudder.Finch)
-    # %HTTPoison.Response{
-    #   body: x,
-    #   headers: _,
-    #   request: _,
-    #   request_url: _,
-    #   status_code: y
-    # } = HTTPoison.get!("http://localhost:3000/pin?address=#{file_path}")
-
-    {:noreply, [x | state]}
+    {:ok, %Finch.Response{body: y, headers: _, status: _}} = x
+    {:noreply, y} # state is the latest cid if there was no error
   end
 
   @impl true
@@ -39,4 +32,12 @@ defmodule Rudder.BlockResultUploader do
   def pin(path) do
     GenServer.cast(Rudder.BlockResultUploader, {:pin, path})
   end
+
+  # def check() do
+  #   cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+
+  #   x = Finch.build(:get, "https://dweb.link/ipfs/#{cid}")
+  #   |> Finch.request(Rudder.Finch, receive_timeout: 50_000)
+  #   x
+  # end
 end
