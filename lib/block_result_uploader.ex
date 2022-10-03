@@ -12,10 +12,13 @@ defmodule Rudder.BlockResultUploader do
 
   @impl true
   def handle_cast({:pin, file_path}, state) do
-    x = Finch.build(:get, "http://localhost:3000/pin?address=#{file_path}")
-    |> Finch.request(Rudder.Finch)
+    x =
+      Finch.build(:get, "http://localhost:3000/pin?address=#{file_path}")
+      |> Finch.request(Rudder.Finch)
+
     {:ok, %Finch.Response{body: y, headers: _, status: _}} = x
-    {:noreply, y} # state is the latest cid if there was no error
+    # state is the latest cid if there was no error
+    {:noreply, y}
   end
 
   @impl true
