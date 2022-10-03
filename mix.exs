@@ -16,7 +16,7 @@ defmodule Rudder.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      applications: [:porcelain, :machine_gun],
+      applications: [:porcelain],
       extra_applications: [:logger, :runtime_tools, :poison],
       mod: {Rudder.Application, []}
     ]
@@ -28,7 +28,6 @@ defmodule Rudder.MixProject do
       # {:httpoison, "~> 1.8"},
       {:poison, "~> 5.0"},
       {:porcelain, "~> 2.0"},
-      {:jason, "~> 1.1"},
       {:broadway, "~> 1.0", override: true},
       {:off_broadway_redis, "~> 0.4.3"},
       {:cors_plug, "~> 2.0"},
@@ -45,14 +44,11 @@ defmodule Rudder.MixProject do
        github: "tsutsu/ethereum_abi",
        branch: "feature-parse-events-from-abi-specifications",
        override: true},
-      #  {:libsecp256k1, path: "vendor/libsecp256k1", override: true},
       {:ex_secp256k1, "~> 0.4.0"},
-      #  {:exleveldb, path: "vendor/exleveldb", override: true},
-      #  {:ex_lmdb, path: "vendor/ex_lmdb", override: true},
-      #  {:keccakf1600, path: "vendor/keccakf1600", override: true},
       {:ex_keccak, "~> 0.3.0", override: true},
       {:mnemonic, "~> 0.3"},
       {:ex_rlp, "~> 0.5.4", override: true},
+      {:jason, "~> 1.3"},
 
       # architecture
       {:confex, "~> 3.3"},
@@ -60,9 +56,7 @@ defmodule Rudder.MixProject do
 
       # networking
       {:certifi, "~> 2.9", override: true},
-      {:httpoison, "~> 1.8", override: true},
-      {:machine_gun, "~> 0.1.5"},
-      {:gun, "~> 2.0.0-rc.2", override: true},
+      {:finch, "~> 0.13.0"},
       {:downstream, "~> 1.0"},
       {:websockex, "~> 0.4.3"},
 

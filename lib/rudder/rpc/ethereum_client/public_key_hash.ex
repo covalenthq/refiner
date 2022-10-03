@@ -26,14 +26,6 @@ defmodule Rudder.PublicKeyHash do
     {:ok, EthereumCodec.decode_address(hex)}
   end
 
-  def parse(bin) when is_binary(bin) and byte_size(bin) == 21 do
-    {:ok, BitcoinCodec.decode_address(bin)}
-  end
-
-  def parse(b58c) when is_binary(b58c) and byte_size(b58c) >= 26 and byte_size(b58c) <= 53 do
-    {:ok, BitcoinCodec.decode_address(b58c)}
-  end
-
   def parse(_), do: :error
 
   def parse!(v) do
@@ -43,10 +35,6 @@ defmodule Rudder.PublicKeyHash do
 
   def parse_raw(bin) when is_binary(bin) and byte_size(bin) == 20 do
     {:ok, EthereumCodec.decode_address(bin)}
-  end
-
-  def parse_raw(bin) when is_binary(bin) and byte_size(bin) == 21 do
-    {:ok, BitcoinCodec.decode_address(bin)}
   end
 
   def parse_raw(_), do: :error
