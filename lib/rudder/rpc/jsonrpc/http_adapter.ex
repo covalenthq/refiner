@@ -3,180 +3,89 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
 
   @http_retries 5
 
-  def download(req_uri, req_headers, io_device) do
-    download_task = Task.async(Downstream.Download, :stream, [io_device])
-
-    own_host = :proplists.get_value("host", req_headers)
-
-    req_headers =
-      case req_uri.host do
-        ^own_host -> req_headers
-        _other_host -> []
-      end
-
-    HTTPoison.get!(req_uri, req_headers, hackney: [pool: false], stream_to: download_task.pid)
-
-    {:ok, http_resp} = Task.await(download_task, :infinity)
-
-    case http_resp do
-      %Downstream.Response{status_code: s} = resp when s >= 200 and s < 400 -> {:ok, resp}
-      %Downstream.Error{} = err -> {:error, err}
-    end
-  end
-
-  def fetch_digest(req_uri, req_headers) do
-    own_host = :proplists.get_value("host", req_headers)
-
-    req_headers =
-      case req_uri.host do
-        ^own_host -> req_headers
-        _other_host -> []
-      end
-
-    case HTTPoison.get(req_uri, req_headers) do
-      {:ok, %HTTPoison.Response{body: digest_asc}} ->
-        digest =
-          String.trim(digest_asc)
-          |> Base.decode16!(case: :mixed)
-
-        {:ok, digest}
-
-      other ->
-        other
-    end
-  end
-
   def delete(req_uri, req_headers) do
-    HTTPoison.delete(req_uri, req_headers)
+    Finch.build(
+      :delete,
+      req_uri,
+      req_headers
+    )
+    |> Finch.request(Rudder.Finch)
   end
 
   def call(req_uri, req_headers, rpc_method, rpc_params, opts) do
-    case batch_call(
-           req_uri,
-           req_headers,
-           rpc_method,
-           [rpc_params],
-           Keyword.put_new(opts, :max_batch_size, 1)
-         ) do
-      {:ok, [resp]} -> resp
-      batch_error -> batch_error
-    end
-  end
-
-  def batch_call(req_uri, req_headers, rpc_method, rpc_params_stream, opts) do
-    max_batch_size = Keyword.get(opts, :max_batch_size, 100)
     with_keepalive = Keyword.get(opts, :keepalive, true)
     request_timeout = Keyword.get(opts, :request_timeout, 1_200_000)
 
     req_rpc_method = to_string(rpc_method)
 
-    req_bodies =
-      Stream.with_index(rpc_params_stream)
-      |> Stream.map(fn {rpc_params, i} ->
-        %{
-          "jsonrpc" => "2.0",
-          "method" => req_rpc_method,
-          "params" => rpc_params,
-          "id" => i + 1
-        }
-      end)
+    req_body =
+      Jason.encode_to_iodata!(%{
+        "jsonrpc" => "2.0",
+        "method" => req_rpc_method,
+        "params" => rpc_params,
+        "id" => 1
+      })
 
-    req_bodies =
-      case max_batch_size do
-        1 ->
-          req_bodies
+    request =
+      Finch.build(
+        :post,
+        req_uri,
+        req_headers,
+        req_body,
+        [
+          {"request-timeout", request_timeout},
+          {"follow-redirect", true},
+          {"pool-group", :rpc_pool}
+        ]
+      )
 
-        n when n > 1 ->
-          Stream.chunk_every(req_bodies, n)
-      end
-
-    req_bodies = Enum.to_list(req_bodies)
-
-    send_req_body_fn =
-      if with_keepalive do
-        fn req_body ->
-          MachineGun.post(
-            req_uri,
-            Jason.encode_to_iodata!(req_body),
-            req_headers,
-            %{
-              request_timeout: request_timeout,
-              follow_redirect: true,
-              pool_group: :rpc_pool
-            }
-          )
-        end
-      else
-        fn req_body ->
-          HTTPoison.post(
-            req_uri,
-            Jason.encode_to_iodata!(req_body),
-            req_headers,
-            follow_redirect: true,
-            timeout: request_timeout,
-            recv_timeout: request_timeout,
-            hackney: [pool: false, ssl: [verify: :verify_none]]
-          )
-        end
-      end
-
-    submit_and_decode_http_reqs(req_bodies, send_req_body_fn, @http_retries, [])
-  end
-
-  defp submit_and_decode_http_reqs([], _send_req_body_fn, _use_retries, acc) do
-    jsonrpc_results =
-      Enum.reverse(acc)
-      |> Enum.map(&List.wrap/1)
-      |> Enum.concat()
-
-    {:ok, jsonrpc_results}
-  end
-
-  defp submit_and_decode_http_reqs([req_body | rest], send_req_body_fn, use_retries, acc) do
     with {:ok, jsonrpc_resps} <-
-           submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, use_retries),
+           submit_and_decode_http_req_with_retry(request, @http_retries),
          jsonrpc_results <- Enum.map(jsonrpc_resps, &decode_jsonrpc_resp/1),
-         ordered_jsonrpc_results <- collate_jsonrpc_results(jsonrpc_results) do
-      submit_and_decode_http_reqs(rest, send_req_body_fn, use_retries, [
-        ordered_jsonrpc_results | acc
-      ])
+         [jsonrpc_result] <- collate_jsonrpc_results(jsonrpc_results) do
+      jsonrpc_result
     else
       err ->
         err
     end
   end
 
-  defp submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, retries_left)
+  def collate_jsonrpc_results(jsonrpc_results) do
+    Enum.sort(jsonrpc_results)
+    |> Enum.map(&elem(&1, 1))
+  end
 
-  defp submit_and_decode_http_req_with_retry(_req_body, _send_req_body_fn, 0),
+  defp submit_and_decode_http_req_with_retry(req_body, retries_left)
+
+  defp submit_and_decode_http_req_with_retry(_req_body, 0),
     do: raise(Rudder.RPCError, "retries exceeded")
 
-  defp submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, retries_left) do
-    case decode_http_resp(send_req_body_fn.(req_body)) do
+  defp submit_and_decode_http_req_with_retry(req_body, retries_left) do
+    case decode_http_resp(Finch.request(req_body, Rudder.Finch)) do
       :connection_closed ->
-        submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, retries_left - 1)
+        submit_and_decode_http_req_with_retry(req_body, retries_left - 1)
 
       :timeout ->
-        submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, retries_left - 1)
+        submit_and_decode_http_req_with_retry(req_body, retries_left - 1)
 
       :gateway_error ->
         Process.sleep(10_000)
-        submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, retries_left)
+        submit_and_decode_http_req_with_retry(req_body, retries_left)
 
       :overload ->
         Process.sleep(10_000)
-        submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, retries_left)
+        submit_and_decode_http_req_with_retry(req_body, retries_left)
 
       :rate_limited ->
         Process.sleep(5000)
-        submit_and_decode_http_req_with_retry(req_body, send_req_body_fn, retries_left - 1)
+        submit_and_decode_http_req_with_retry(req_body, retries_left - 1)
 
       other ->
         other
     end
   end
 
-  def decode_http_resp({:ok, %{status_code: http_resp_code, body: http_resp_body}})
+  def decode_http_resp({:ok, %{status: http_resp_code, body: http_resp_body}})
       when http_resp_code >= 200 and http_resp_code < 300 do
     case Jason.decode!(http_resp_body) do
       %{"error" => %{"code" => batch_error_code, "message" => batch_error_msg}} ->
@@ -190,34 +99,28 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
     end
   end
 
-  def decode_http_resp({:ok, %{status_code: http_resp_code, body: http_resp_body}}),
+  def decode_http_resp({:ok, %{status: http_resp_code, body: http_resp_body}}),
     do: batch_error(http_resp_code, http_resp_body)
 
-  def decode_http_resp({:error, %MachineGun.Error{reason: :request_timeout}}),
+  def decode_http_resp({:error, %Finch.Error{reason: :request_timeout}}),
     do: :timeout
 
-  def decode_http_resp({:error, %MachineGun.Error{reason: :normal}}),
+  def decode_http_resp({:error, %Finch.Error{reason: :normal}}),
     do: :connection_closed
 
-  def decode_http_resp({:error, %MachineGun.Error{reason: {:stop, {:goaway, _, _, _}, _}}}),
+  def decode_http_resp({:error, %Finch.Error{reason: {:stop, {:goaway, _, _, _}, _}}}),
     do: :connection_closed
 
-  def decode_http_resp({:error, %MachineGun.Error{reason: {:stream_error, :internal_error, _}}}),
+  def decode_http_resp({:error, %Finch.Error{reason: {:stream_error, :internal_error, _}}}),
     do: :connection_closed
 
-  def decode_http_resp({:error, %MachineGun.Error{reason: :closed}}),
+  def decode_http_resp({:error, %Finch.Error{reason: :closed}}),
     do: :connection_closed
 
-  def decode_http_resp({:error, %MachineGun.Error{reason: {:closed, _}}}),
+  def decode_http_resp({:error, %Finch.Error{reason: {:closed, _}}}),
     do: :connection_closed
 
-  def decode_http_resp({:error, %MachineGun.Error{} = e}),
-    do: raise(Rudder.RPCError, e)
-
-  def decode_http_resp({:error, %HTTPoison.Error{reason: :timeout}}),
-    do: :timeout
-
-  def decode_http_resp({:error, %HTTPoison.Error{} = e}),
+  def decode_http_resp({:error, %Finch.Error{} = e}),
     do: raise(Rudder.RPCError, e)
 
   def decode_jsonrpc_resp(%{"id" => seq, "error" => %{"code" => code, "message" => msg}}),
@@ -225,11 +128,6 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
 
   def decode_jsonrpc_resp(%{"id" => seq, "result" => result}),
     do: {seq, {:ok, result}}
-
-  def collate_jsonrpc_results(jsonrpc_results) do
-    Enum.sort(jsonrpc_results)
-    |> Enum.map(&elem(&1, 1))
-  end
 
   # raise on logic errors; return on environment errors; return if unsure
   def batch_error(401, _), do: :forbidden
@@ -256,7 +154,6 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
     :rate_limited
   end
 
-  # for aurora
   def batch_error(400, ""), do: :gateway_error
 
   def batch_error(code, msg) when code >= 400 and code < 500 do

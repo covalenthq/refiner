@@ -12,6 +12,11 @@ defmodule Rudder.Application do
         id: Rudder.SourceDiscovery,
         start: {Rudder.SourceDiscovery, :start_link, [[]]}
       },
+      {Finch,
+       name: Rudder.Finch,
+       pools: %{
+         :default => [size: 32]
+       }}
       # Starts a worker by calling: Rudder.Worker.start_link(arg)
       # {Rudder.Worker, arg}
       {Rudder.ProofChainActor, name: Rudder.ProofChainActor},
