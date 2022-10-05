@@ -2,6 +2,10 @@
 
 Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations.
 
+The happy path for `rudder` is made up of loosely coupled (some maintain state and some don't) actor processes, that can be called upon to fulfill responsiblities at different sections in the refinement/transformation process - under one umberalla supervisor process, that can bring them back up in case of a failure.
+
+![Rudder Pipeline](./temp/Rudder.jpg)
+
 ## Install
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
