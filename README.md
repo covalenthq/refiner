@@ -21,16 +21,16 @@ be found at <https://hexdocs.pm/rudder>.
 
 ## Block Specimen Transform (avro binary specimen -> json specimen using `Go` binary)
 
-1. Generate transformer plugin / binary.
+1. Check if the transformer plugin exists.
 
   ```bash
-    git submodule update --init --recursive
-    cd rudder/bsp-agent
-    git checkout scripts/extractor-with-files
-    go build scripts/extractor.go && mv extractor ../evm/
+    cd rudder/evm
+    drwxr-xr-x   3 pranay  staff        96 Oct  4 10:33 .
+    drwxr-xr-x  28 pranay  staff       896 Oct  5 11:59 ..
+    -rwxr-xr-x   1 pranay  staff  17503704 Oct  4 10:33 extractor
   ```
 
-2. Apply transform rules.
+2. Start application and apply transform rules.
 
   ```elixir
     iex -S mix
