@@ -1,45 +1,49 @@
 defmodule Rudder.Avro.DecodeBlockSpecimen do
   use GenServer
 
-  @impl true
-  def init(_) do
-    start()
-    {:ok, []}
-  end
-
   @schema_name "block-ethereum"
-  @file_path "./bin/block-specimen/"
+
+  def init(state) do
+    start()
+    {:ok, state}
+  end
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def start() do
-    block_specimen = <<>>
-    decode_block_specimen_binary(block_specimen)
+    {:ok, _pid} = Avrora.start_link()
   end
 
-  defp get_avro_schema do
+  def list do
+    GenServer.call(__MODULE__, :list)
+  end
+
+  def handle_call(:list, _from, state) do
+    {:reply, state, state}
+  end
+
+  def get_schema do
     {:ok, schema} = Avrora.Storage.File.get(@schema_name)
+    schema.full_name
   end
 
-  defp decode_block_specimen_binary(file) do
-    {:ok, pid} = Avrora.start_link()
-
-    {:ok, files} = File.ls(@file_path)
-
-    # {:ok, schema} = Avrora.Storage.File.get(@schema_name)
-
-    {:ok, decoded} = Avrora.decode(files, schema_name: @schema_name)
+  def decode(binary) do
+    Avrora.decode_plain(binary, schema_name: @schema_name)
   end
 
-  def stream_block_specimen_files do
-    File.ls(@file_path)
+  def decode_file(file_path) do
+    {:ok, binary} = File.read(file_path)
+    decode(binary)
+  end
+
+  def decode_dir(dir_path) do
+    Rudder.Util.file_open()
     |> Enum.map(fn file ->
       file
-      |> File.stream!()
-      |> Stream.map(&String.strip/1)
-    end)
+      |> File.read()
+      |> Stream.map(&Rudder.Avro.DecodeBlockSpecimen.decode/1) end)
     |> List.flatten()
     |> Enum.sort()
   end
