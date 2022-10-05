@@ -17,5 +17,4 @@ defmodule Rudder.Util do
   def file_open(path) do
     Path.wildcard(path)
   end
-
 end

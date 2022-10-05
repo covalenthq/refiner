@@ -11,13 +11,12 @@ defmodule Rudder.Application do
       %{
         id: Rudder.SourceDiscovery,
         start: {Rudder.SourceDiscovery, :start_link, [[]]}
-      }
+      },
       %{
         id: Rudder.Avro.DecodeBlockSpecimen,
         start: {Rudder.Avro.DecodeBlockSpecimen, :start_link, [[]]}
-      }
-      Rudder.Avro.Client
       },
+      Rudder.Avro.Client,
       {Finch,
        name: Rudder.Finch,
        pools: %{
