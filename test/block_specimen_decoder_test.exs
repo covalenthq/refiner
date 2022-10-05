@@ -40,12 +40,62 @@ defmodule Rudder.BlockSpecimenDecoderTest do
     assert decoded_specimen_hash == expected_hash
   end
 
-  test "Rudder.Avro.BlockSpecimenDecoder.decode_files/1 lazily decodes directory", %{blockSpecimenDecoder: blockSpecimenDecoder} do
-
+  test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 decodes entire directory", %{
+    blockSpecimenDecoder: blockSpecimenDecoder
+  } do
     dir_path = "./test-data/*"
 
-    expected_start_block = 15127599
-    expected_end_block = 15127603
+    expected_start_block = 15_127_599
+    expected_last_block = 15_127_603
 
     expected_start_hash = "0x8f858356c48b270221814f8c1b2eb804a5fbd3ac7774b527f2fe0605be03fb37"
+    expected_last_hash = "0x9119289fc6a4a0c2b404019d7e16a7e850590f37312109b97c1fd4e940accfd3"
+
+    decode_specimen_stream = Rudder.Avro.BlockSpecimenDecoder.decode_dir(dir_path)
+
+    start_block_stream = List.first(decode_specimen_stream)
+    last_block_stream = List.last(decode_specimen_stream)
+
+    {:ok, decoded_start_block} =
+      start_block_stream
+      |> Enum.to_list()
+      |> List.keytake(:ok, 0)
+      |> elem(0)
+      |> elem(1)
+      |> Map.fetch("startBlock")
+
+    {:ok, [head | _tail]} =
+      start_block_stream
+      |> Enum.to_list()
+      |> List.keytake(:ok, 0)
+      |> elem(0)
+      |> elem(1)
+      |> Map.fetch("replicaEvent")
+
+    decoded_start_hash = Map.get(head, "hash")
+
+    {:ok, decoded_last_block} =
+      last_block_stream
+      |> Enum.to_list()
+      |> List.keytake(:ok, 0)
+      |> elem(0)
+      |> elem(1)
+      |> Map.fetch("startBlock")
+
+    {:ok, [head | _tail]} =
+      last_block_stream
+      |> Enum.to_list()
+      |> List.keytake(:ok, 0)
+      |> elem(0)
+      |> elem(1)
+      |> Map.fetch("replicaEvent")
+
+    decoded_last_hash = Map.get(head, "hash")
+
+    assert decoded_start_block == expected_start_block
+    assert decoded_start_hash == expected_start_hash
+
+    assert decoded_last_block == expected_last_block
+    assert decoded_last_hash == expected_last_hash
+  end
 end
