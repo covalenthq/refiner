@@ -10,10 +10,9 @@ defmodule Rudder.BlockResultUploaderTest do
       "-jwt",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGMxQkE4ODRFNzczMjBBODQ2NDk4QjI1RDZmNWI4NWU1YkRENDViMTYiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjE4OTk5MzE3NTAsIm5hbWUiOiJyZWZpbmVyLWlwZnMtcGlubmVyIn0.aX1F8S-dIGFKLa4vjQv8FEH-z_T3AU5z5DNyBUKRLOA"
     ])
+
     blockResultUploader = start_supervised!(Rudder.BlockResultUploader)
     %{blockResultUploader: blockResultUploader}
-
-
   end
 
   # test "ipfs contains cid", %{blockResultUploader: blockResultUploader} do
