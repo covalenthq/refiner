@@ -1,4 +1,4 @@
-defmodule Rudder.Avro.DecodeBlockSpecimen do
+defmodule Rudder.Avro.BlockSpecimenDecoder do
   use GenServer
 
   @schema_name "block-ethereum"
@@ -43,7 +43,7 @@ defmodule Rudder.Avro.DecodeBlockSpecimen do
     |> Enum.map(fn file ->
       file
       |> File.read()
-      |> Stream.map(&Rudder.Avro.DecodeBlockSpecimen.decode/1)
+      |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode/1)
     end)
     |> List.flatten()
     |> Enum.sort()
