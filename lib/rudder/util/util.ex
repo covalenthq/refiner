@@ -1,5 +1,4 @@
 defmodule Rudder.Util do
-
   def typeof(a) do
     cond do
       is_float(a) -> "float"
