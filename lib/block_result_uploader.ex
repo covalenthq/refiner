@@ -26,6 +26,7 @@ defmodule Rudder.BlockResultUploader do
     {err, data} =
       Finch.build(:get, "https://dweb.link/ipfs/#{cid}")
       |> Finch.request(Rudder.Finch, receive_timeout: 50_000)
+
     {:reply, {err, data}, state}
   end
 
@@ -47,5 +48,4 @@ defmodule Rudder.BlockResultUploader do
   def fetch(cid) do
     GenServer.call(Rudder.BlockResultUploader, {:fetch, cid})
   end
-
 end
