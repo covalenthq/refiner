@@ -21,16 +21,16 @@ be found at <https://hexdocs.pm/rudder>.
 
 ## Block Specimen Transform (avro binary specimen -> json specimen using `Go` binary)
 
-1. Generate transformer plugin / binary.
+1. Check if the transformer plugin exists.
 
   ```bash
-    git submodule update --init --recursive
-    cd rudder/bsp-agent
-    git checkout scripts/extractor-with-files
-    go build scripts/extractor.go && mv extractor ../evm/
+    cd rudder/evm
+    drwxr-xr-x   3 pranay  staff        96 Oct  4 10:33 .
+    drwxr-xr-x  28 pranay  staff       896 Oct  5 11:59 ..
+    -rwxr-xr-x   1 pranay  staff  17503704 Oct  4 10:33 extractor
   ```
 
-2. Apply transform rules.
+2. Start application and apply transform rules.
 
   ```elixir
     iex -S mix
@@ -107,43 +107,23 @@ iex(4)> iex(3)> Rudder.Avro.DecodeBlockSpecimen.decode_file("test-data/1-1512759
 iex(6)> Rudder.Avro.DecodeBlockSpecimen.decode_dir("test-data/*")
 [
   #Stream<[
-    enum: {:ok,
-     <<2, 132, 1, 48, 120, 50, 54, 98, 54, 97, 100, 55, 53, 102,
-       52, 50, 57, 49, 102, 52, 50, 102, 99, 100, 57, 51, 101,
-       55, 55, 48, 51, 102, 54, 55, 102, 102, 57, 102, 51, 97,
-       97, 55, 49, 102, 97, 53, ...>>},
+    enum: ["test-data/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5"],
     funs: [#Function<47.127921642/1 in Stream.map/2>]
   ]>,
   #Stream<[
-    enum: {:ok,
-     <<2, 132, 1, 48, 120, 56, 102, 56, 53, 56, 51, 53, 54, 99,
-       52, 56, 98, 50, 55, 48, 50, 50, 49, 56, 49, 52, 102, 56,
-       99, 49, 98, 50, 101, 98, 56, 48, 52, 97, 53, 102, 98, 100,
-       51, 97, 99, ...>>},
+    enum: ["test-data/1-15127600-replica-0x14a2d5978dcde0e6988871c1a246bea31e44f73467f7c242f9cd19c30cd5f8b1"],
     funs: [#Function<47.127921642/1 in Stream.map/2>]
   ]>,
   #Stream<[
-    enum: {:ok,
-     <<2, 132, 1, 48, 120, 57, 49, 49, 57, 50, 56, 57, 102, 99,
-       54, 97, 52, 97, 48, 99, 50, 98, 52, 48, 52, 48, 49, 57,
-       100, 55, 101, 49, 54, 97, 55, 101, 56, 53, 48, 53, 57, 48,
-       102, 51, ...>>},
+    enum: ["test-data/1-15127601-replica-0x4757d9272c0f4c5f961667d43265123d22d7459d63f2041866df2962758c6070"],
     funs: [#Function<47.127921642/1 in Stream.map/2>]
   ]>,
   #Stream<[
-    enum: {:ok,
-     <<2, 132, 1, 48, 120, 57, 56, 100, 52, 52, 97, 101, 101, 54,
-       97, 97, 97, 99, 49, 53, 50, 101, 53, 51, 102, 53, 51, 52,
-       54, 51, 55, 53, 56, 100, 97, 99, 56, 54, 101, 53, 57, 54,
-       49, ...>>},
+    enum: ["test-data/1-15127602-replica-0xce9ed851812286e05cd34684c9ce3836ea62ebbfc3764c8d8a131f0fd054ca35"],
     funs: [#Function<47.127921642/1 in Stream.map/2>]
   ]>,
   #Stream<[
-    enum: {:ok,
-     <<2, 132, 1, 48, 120, 98, 51, 48, 51, 101, 50, 97, 57, 99,
-       50, 53, 56, 99, 97, 57, 49, 55, 54, 101, 98, 57, 48, 57,
-       52, 98, 51, 49, 57, 100, 53, 50, 55, 98, 51, 49, 54, 52,
-       ...>>},
+    enum: ["test-data/1-15127603-replica-0x5fb7802a8b0f1853bd3e9e8a8646df603e6c57d8da7df62ed46bfec1a6a074c4"],
     funs: [#Function<47.127921642/1 in Stream.map/2>]
   ]>
 ]
