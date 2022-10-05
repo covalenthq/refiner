@@ -41,9 +41,8 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
   def decode_dir(dir_path) do
     Rudder.Util.file_open(dir_path)
     |> Enum.map(fn file ->
-      file
-      |> File.read()
-      |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode/1)
+      [file]
+      |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_file/1)
     end)
     |> List.flatten()
     |> Enum.sort()
