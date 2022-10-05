@@ -11,8 +11,12 @@ defmodule Rudder.Application do
       %{
         id: Rudder.SourceDiscovery,
         start: {Rudder.SourceDiscovery, :start_link, [[]]}
-      },
-      Rudder.Avro.Client
+      }
+      # %{
+      #   id: Rudder.Avro.DecodeBlockSpecimen,
+      #   start: {Rudder.Avro.DecodeBlockSpecimen, :start_link, [[]]}
+      # }
+      # Rudder.Avro.Client
       # Starts a worker by calling: Rudder.Worker.start_link(arg)
       # {Rudder.Worker, arg}
     ]
