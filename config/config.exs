@@ -12,16 +12,6 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-config :machine_gun,
-  rpc_pool: %{
-    conn_opts: %{
-      tls_opts: [verify: :verify_none]
-    },
-    pool_size: 32,
-    pool_max_overflow: 0,
-    pool_timeout: 1_200_000
-  }
-
 config :porcelain, driver: Porcelain.Driver.Basic
 
 # Import environment specific config. This must remain at the bottom
