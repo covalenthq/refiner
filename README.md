@@ -76,16 +76,8 @@ This should generate the JSON output specimen file (results) to `./out` director
 
 ```elixir
 
-iex(4)> {:ok, file0} = File.read("./bin/block-specimens/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5")
-{:ok,
- <<2, 132, 1, 48, 120, 56, 102, 56, 53, 56, 51, 53, 54, 99, 52, 56, 98,
-   50, 55, 48, 50, 50, 49, 56, 49, 52, 102, 56, 99, 49, 98, 50, 101,
-   98, 56, 48, 52, 97, 53, 102, 98, 100, 51, 97, 99, 55, 55, 55, ...>>}
-
-iex(5)> {:ok, pid} = Rudder.Avro.Client.start_link()
-{:ok, #PID<0.333.0>}
-
-iex(6)> {:ok, decoded0} = Rudder.Avro.Client.decode_plain(file0, schema_name: "block-ethereum") [debug] reading schema `block-ethereum` from the file /Users/pranay/Documents/covalent/elixir-projects/rudder/priv/schemas/block-ethereum.avsc
+iex(4)> iex(3)> Rudder.Avro.DecodeBlockSpecimen.decode_file("test-data/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5")
+[debug] reading schema `block-ethereum` from the file /Users/pranay/Documents/covalent/elixir-projects/rudder/priv/schemas/block-ethereum.avsc
 {:ok,
  %{
    "codecVersion" => 0.2,
@@ -95,11 +87,67 @@ iex(6)> {:ok, decoded0} = Rudder.Avro.Client.decode_plain(file0, schema_name: "b
      %{
        "data" => %{
          "Hash" => "0x8f858356c48b270221814f8c1b2eb804a5fbd3ac7774b527f2fe0605be03fb37",
+         "Header" => %{
+           "baseFeePerGas" => 14761528828.0,
+           "difficulty" => 1.1506847309002466e16,
+           "extraData" => "SGl2ZW9uIHVzLWhlYXZ5",
+           "gasLimit" => 29999972,
+           ...
+           ..
+           .
+           
 ```
-
 4. Please note the above extractor process only extract a single specimen
 
-5. A stream of specimens files can be passed instead to the avro decode process
+
+```elixir
+iex(6)> Rudder.Avro.DecodeBlockSpecimen.decode_dir("test-data/*")
+[
+  #Stream<[
+    enum: {:ok,
+     <<2, 132, 1, 48, 120, 50, 54, 98, 54, 97, 100, 55, 53, 102,
+       52, 50, 57, 49, 102, 52, 50, 102, 99, 100, 57, 51, 101,
+       55, 55, 48, 51, 102, 54, 55, 102, 102, 57, 102, 51, 97,
+       97, 55, 49, 102, 97, 53, ...>>},
+    funs: [#Function<47.127921642/1 in Stream.map/2>]
+  ]>,
+  #Stream<[
+    enum: {:ok,
+     <<2, 132, 1, 48, 120, 56, 102, 56, 53, 56, 51, 53, 54, 99,
+       52, 56, 98, 50, 55, 48, 50, 50, 49, 56, 49, 52, 102, 56,
+       99, 49, 98, 50, 101, 98, 56, 48, 52, 97, 53, 102, 98, 100,
+       51, 97, 99, ...>>},
+    funs: [#Function<47.127921642/1 in Stream.map/2>]
+  ]>,
+  #Stream<[
+    enum: {:ok,
+     <<2, 132, 1, 48, 120, 57, 49, 49, 57, 50, 56, 57, 102, 99,
+       54, 97, 52, 97, 48, 99, 50, 98, 52, 48, 52, 48, 49, 57,
+       100, 55, 101, 49, 54, 97, 55, 101, 56, 53, 48, 53, 57, 48,
+       102, 51, ...>>},
+    funs: [#Function<47.127921642/1 in Stream.map/2>]
+  ]>,
+  #Stream<[
+    enum: {:ok,
+     <<2, 132, 1, 48, 120, 57, 56, 100, 52, 52, 97, 101, 101, 54,
+       97, 97, 97, 99, 49, 53, 50, 101, 53, 51, 102, 53, 51, 52,
+       54, 51, 55, 53, 56, 100, 97, 99, 56, 54, 101, 53, 57, 54,
+       49, ...>>},
+    funs: [#Function<47.127921642/1 in Stream.map/2>]
+  ]>,
+  #Stream<[
+    enum: {:ok,
+     <<2, 132, 1, 48, 120, 98, 51, 48, 51, 101, 50, 97, 57, 99,
+       50, 53, 56, 99, 97, 57, 49, 55, 54, 101, 98, 57, 48, 57,
+       52, 98, 51, 49, 57, 100, 53, 50, 55, 98, 51, 49, 54, 52,
+       ...>>},
+    funs: [#Function<47.127921642/1 in Stream.map/2>]
+  ]>
+]
+
+```
+
+5. A stream of specimens files can be passed instead to the avro decode process for lazy eval
 
 ## Block Specimen Session Event Listener
 
