@@ -40,12 +40,12 @@ defmodule Rudder.BlockSpecimenDecoderTest do
     assert decoded_specimen_hash == expected_hash
   end
 
-  # test "Rudder.Avro.BlockSpecimenDecoder.decode_files/1 decodes multiple files", %{blockSpecimenDecoder: blockSpecimenDecoder} do
+  test "Rudder.Avro.BlockSpecimenDecoder.decode_files/1 lazily decodes directory", %{blockSpecimenDecoder: blockSpecimenDecoder} do
 
-  #   dir_path = "./test-data/*"
+    dir_path = "./test-data/*"
 
-  #   expected_start_block = 15127599
-  #   expected_end_block = 15127603
+    expected_start_block = 15127599
+    expected_end_block = 15127603
 
-  #   expected_start_hash = "0x8f858356c48b270221814f8c1b2eb804a5fbd3ac7774b527f2fe0605be03fb37"
+    expected_start_hash = "0x8f858356c48b270221814f8c1b2eb804a5fbd3ac7774b527f2fe0605be03fb37"
 end
