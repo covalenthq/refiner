@@ -17,7 +17,6 @@ defmodule Rudder.RPC.EthereumClient do
         Keyword.fetch!(config(), :chain_id)
       end
 
-
       def client do
         client_module = Keyword.get(config(), :client_module, @default_client_module)
         client_opts = Keyword.get(config(), :client_opts, @default_client_opts)
@@ -44,7 +43,6 @@ defmodule Rudder.RPC.EthereumClient do
         end
       end
 
-
       def request_timeout_millis, do: 1_200_000
 
       def sealer do
@@ -55,10 +53,6 @@ defmodule Rudder.RPC.EthereumClient do
           :error ->
             nil
         end
-      end
-
-      def batch_load_lag_source_by do
-        Keyword.get(config(), :batch_load_lag_source_by, 0)
       end
 
       def configured? do
@@ -95,37 +89,6 @@ defmodule Rudder.RPC.EthereumClient do
         case {resp, decode_fun} do
           {{:ok, value}, f} when is_function(f, 1) -> {:ok, f.(value)}
           _ -> resp
-        end
-      end
-
-      def batch_call(rpc_method, params_stream, decode_fun \\ nil, opts \\ []) do
-        default_opts = [
-          max_batch_size: 100,
-          keepalive: true,
-          request_timeout: request_timeout_millis()
-        ]
-
-        opts_with_defaults = Keyword.merge(default_opts, opts)
-
-        batch_resp =
-          client()
-          |> Ingestor.RPC.JSONRPC.Client.batch_call(
-            rpc_method,
-            params_stream,
-            opts_with_defaults
-          )
-
-        case {batch_resp, decode_fun} do
-          {{:ok, resps}, f} when is_function(f, 1) ->
-            enum_mod = if length(resps) >= 100, do: Stream, else: Enum
-
-            enum_mod.map(resps, fn
-              {:ok, val} -> {:ok, decode_fun.(val)}
-              any -> any
-            end)
-
-          _ ->
-            batch_resp
         end
       end
 
@@ -170,7 +133,10 @@ defmodule Rudder.RPC.EthereumClient do
       def eth_getBlockByNumber(block_number, opts \\ []) do
         call(
           :eth_getBlockByNumber,
-          [Codec.encode_default_block(block_number), Keyword.get(opts, :transactions, :hashes) == :full],
+          [
+            Codec.encode_default_block(block_number),
+            Keyword.get(opts, :transactions, :hashes) == :full
+          ],
           &Codec.decode_block(&1, __MODULE__)
         )
       end
@@ -192,7 +158,12 @@ defmodule Rudder.RPC.EthereumClient do
       end
 
       def eth_getTransactionByHash(hash, opts \\ []),
-        do: call(:eth_getTransactionByHash, [Codec.encode_sha256(hash)], &Codec.decode_transaction/1)
+        do:
+          call(
+            :eth_getTransactionByHash,
+            [Codec.encode_sha256(hash)],
+            &Codec.decode_transaction/1
+          )
 
       def eth_getTransactionsByBlockNumber(block_number, opts \\ []) do
         call(
@@ -203,7 +174,12 @@ defmodule Rudder.RPC.EthereumClient do
       end
 
       def eth_getTransactionReceipt(hash, opts \\ []),
-        do: call(:eth_getTransactionReceipt, [Codec.encode_sha256(hash)], &Codec.decode_transaction_receipt/1)
+        do:
+          call(
+            :eth_getTransactionReceipt,
+            [Codec.encode_sha256(hash)],
+            &Codec.decode_transaction_receipt/1
+          )
 
       def eth_getTransactionReceiptsByBlockNumber(block_number, opts \\ []) do
         call(
@@ -212,7 +188,6 @@ defmodule Rudder.RPC.EthereumClient do
           &Codec.decode_transaction_receipts/1
         )
       end
-
 
       def eth_gasPrice, do: call(:eth_gasPrice, [], &Codec.decode_qty/1)
 
@@ -232,7 +207,6 @@ defmodule Rudder.RPC.EthereumClient do
         )
       end
 
-
       def eth_call(call_tx, at_block \\ :latest) do
         call(
           :eth_call,
@@ -248,7 +222,6 @@ defmodule Rudder.RPC.EthereumClient do
           &Codec.decode_qty/1
         )
       end
-
 
       def eth_sendTransaction(call_tx, opts \\ []) do
         {:ok, promise_ref} =
@@ -297,142 +270,6 @@ defmodule Rudder.RPC.EthereumClient do
         end
       end
 
-
-      defp revive_block_transactions!(block) do
-        {txs, block} = pop_or_fetch_txs!(block)
-
-        {txs, receipts, block} =
-          case pop_or_fetch_receipts!(block, txs) do
-            {receipts, block} ->
-              {txs, receipts, block}
-
-            :corrupt_block ->
-              {:ok, txs, receipts} = rebuild_txs_and_receipts!(block)
-              {txs, receipts, block}
-          end
-
-
-        {txs, logs} =
-          Stream.zip(txs, receipts)
-          |> Stream.with_index()
-          |> Stream.map(fn {{tx, receipt}, tx_offset} ->
-            {logs, receipt} = Map.pop(receipt, :log_events)
-
-            merged_tx =
-              Map.merge(tx, receipt)
-              |> Map.put(:tx_offset, tx_offset)
-
-            log_tx_denormal_cols = %{
-              tx_offset: tx_offset,
-              tx_hash: tx.hash
-            }
-
-            merged_logs = Enum.map(logs, &Map.merge(&1, log_tx_denormal_cols))
-
-            {merged_tx, merged_logs}
-          end)
-          |> Enum.unzip()
-
-        logs =
-          List.flatten(logs)
-          |> Codec.linearize_log_offsets()
-
-        tx_block_denormal_cols = %{
-          signed_at: block.signed_at
-        }
-
-        txs = Enum.map(txs, &Map.merge(&1, tx_block_denormal_cols))
-
-        log_block_denormal_cols = %{
-          block_height: block.height,
-          block_signed_at: block.signed_at
-        }
-
-        logs =
-          Enum.filter(logs, &(not Map.get(&1, :removed, false)))
-          |> Enum.map(&Map.merge(&1, log_block_denormal_cols))
-
-        block =
-          Map.put(block, :transactions, txs)
-          |> Map.put(:log_events, logs)
-
-        block
-      end
-
-      defp revive_block_transactions({:ok, block}) do
-        new_block = revive_block_transactions!(block)
-        {:ok, new_block}
-      end
-
-      defp revive_block_transactions(err), do: err
-
-      defp pop_or_fetch_txs!(%{transactions: txs} = block) when is_list(txs) do
-        block = Map.delete(block, :transactions)
-        txs = Enum.uniq_by(txs, &Map.delete(&1, :tx_offset))
-        {txs, block}
-      end
-
-      defp pop_or_fetch_txs!(%{transaction_ids: []} = block) do
-        block = Map.delete(block, :transaction_ids)
-        {[], block}
-      end
-
-      defp pop_or_fetch_txs!(%{transaction_ids: txids} = block) when is_list(txids) do
-        txids = Enum.uniq(txids)
-
-        txs =
-          if false do
-            {:ok, txs} = eth_getTransactionsByBlockNumber(block.height)
-            txs
-          else
-            encoded_txids = Stream.map(txids, fn txid -> [Codec.encode_sha256(txid)] end)
-
-            batch_call(:eth_getTransactionByHash, encoded_txids, &Codec.decode_transaction/1)
-            |> Enum.map(fn {:ok, t} -> t end)
-          end
-
-        block = Map.delete(block, :transaction_ids)
-        {txs, block}
-      end
-
-      defp pop_or_fetch_txs(block) do
-        {[], block}
-      end
-
-      defp pop_or_fetch_receipts!(%{receipts: rcpts} = block, _txs) when is_list(rcpts) do
-        block = Map.delete(block, :receipts)
-        {rcpts, block}
-      end
-
-      defp pop_or_fetch_receipts!(block, []) do
-        {[], block}
-      end
-
-      defp pop_or_fetch_receipts!(block, txs) do
-        receipts_result =
-          if false do
-            eth_getTransactionReceiptsByBlockNumber(block.height)
-          else
-            encoded_txids = Stream.map(txs, fn tx -> [Codec.encode_sha256(tx.hash)] end)
-
-            receipts =
-              batch_call(:eth_getTransactionReceipt, encoded_txids, &Codec.decode_transaction_receipt/1)
-              |> Enum.map(fn {:ok, t} -> t end)
-
-            {:ok, receipts}
-          end
-
-        case receipts_result do
-          {:ok, receipts} ->
-            {receipts, block}
-          {:server_error, -32000, <<"wrong number of tx events", _::binary>>} ->
-            :corrupt_block
-        end
-      end
-
-      defp rebuild_txs_and_receipts!(block), do: :not_implemented
-
-
       def getrawblock(pos_spec, opts \\ [])
       def getrawblock(nil, _opts), do: {:ok, nil}
 
@@ -479,7 +316,8 @@ defmodule Rudder.RPC.EthereumClient do
       end
 
       def gas_limit(at_block \\ :latest) do
-        with {:ok, blk} <- call(:eth_getBlockByNumber, [Codec.encode_default_block(at_block), false]),
+        with {:ok, blk} <-
+               call(:eth_getBlockByNumber, [Codec.encode_default_block(at_block), false]),
              {:ok, gas_limit_str} <- Map.fetch(blk, "gasLimit") do
           {:ok, Codec.decode_qty(gas_limit_str)}
         else
@@ -490,7 +328,10 @@ defmodule Rudder.RPC.EthereumClient do
       def web3_clientVersion!, do: unwrap!(web3_clientVersion())
       def eth_chainId!, do: unwrap!(eth_chainId())
       def eth_blockNumber!, do: unwrap!(eth_blockNumber())
-      def eth_getBlockByNumber!(block_number, opts \\ []), do: unwrap!(eth_getBlockByNumber(block_number, opts))
+
+      def eth_getBlockByNumber!(block_number, opts \\ []),
+        do: unwrap!(eth_getBlockByNumber(block_number, opts))
+
       def eth_getBlockByHash!(hash, opts \\ []), do: unwrap!(eth_getBlockByHash(hash, opts))
       def eth_getLogs!(opts \\ []), do: unwrap!(eth_getLogs(opts))
       def eth_getTransactionByHash!(hash), do: unwrap!(eth_getTransactionByHash(hash))
@@ -499,21 +340,21 @@ defmodule Rudder.RPC.EthereumClient do
       def eth_getTransactionCount!(ledger_addr, at_block \\ :latest),
         do: unwrap!(eth_getTransactionCount(ledger_addr, at_block))
 
-      def eth_getBalance!(ledger_addr, at_block \\ :latest), do: unwrap!(eth_getBalance(ledger_addr, at_block))
+      def eth_getBalance!(ledger_addr, at_block \\ :latest),
+        do: unwrap!(eth_getBalance(ledger_addr, at_block))
 
       def eth_call!(call_tx, at_block \\ :latest), do: unwrap!(eth_call(call_tx, at_block))
-      def eth_estimateGas!(call_tx, at_block \\ :latest), do: unwrap!(eth_estimateGas(call_tx, at_block))
+
+      def eth_estimateGas!(call_tx, at_block \\ :latest),
+        do: unwrap!(eth_estimateGas(call_tx, at_block))
 
       defoverridable alive?: 0,
                      eth_call: 1,
                      eth_call: 2,
                      eth_getTransactionReceiptsByBlockNumber: 1,
                      eth_getTransactionReceiptsByBlockNumber: 2,
-                     rebuild_txs_and_receipts!: 1,
-
                      block_sealed_at: 2,
                      request_timeout_millis: 0
-
     end
   end
 end

@@ -88,11 +88,21 @@ defmodule Rudder.RPC.EthereumClient.Transaction do
 
   def hash(tx, with_signature?)
   def hash(%__MODULE__{v: v, r: r, s: s} = tx, true), do: hash2(tx, [v, r, s])
-  def hash(%__MODULE__{chain_id: chain_id} = tx, false) when is_integer(chain_id), do: hash2(tx, [chain_id, <<>>, <<>>])
+
+  def hash(%__MODULE__{chain_id: chain_id} = tx, false) when is_integer(chain_id),
+    do: hash2(tx, [chain_id, <<>>, <<>>])
+
   def hash(%__MODULE__{} = tx, false), do: hash2(tx, [])
 
   defp hash2(
-         %__MODULE__{nonce: nonce, gas_price: gas_price, gas_limit: gas_limit, to: to, value: value, data: data},
+         %__MODULE__{
+           nonce: nonce,
+           gas_price: gas_price,
+           gas_limit: gas_limit,
+           to: to,
+           value: value,
+           data: data
+         },
          rest
        ) do
     ([nonce, gas_price, gas_limit, to, value, data] ++ rest)
@@ -101,7 +111,10 @@ defmodule Rudder.RPC.EthereumClient.Transaction do
     |> ExKeccak.hash_256()
   end
 
-  def signed_by(%__MODULE__{chain_id: chain_id} = tx, %Wallet{address: sender_address, private_key: sender_privkey}) do
+  def signed_by(%__MODULE__{chain_id: chain_id} = tx, %Wallet{
+        address: sender_address,
+        private_key: sender_privkey
+      }) do
     msg_hash = hash(tx, false)
 
     {:ok, {signature, recovery}} = ExSecp256k1.sign_compact(msg_hash, sender_privkey)
