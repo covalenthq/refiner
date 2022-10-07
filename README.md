@@ -159,7 +159,7 @@ docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orpha
 4. Inside a separate terminal run:
 
 ```bash
-docker exec -it eth-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
+docker exec -it eth-test-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
 ```
 
 5. Inside a third terminal navigate to the `rudder` folder and run:
@@ -219,7 +219,7 @@ docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orpha
 ```
 6. Inside a separate terminal run:
 ```
-docker exec -it eth-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
+docker exec -it eth-test-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
 ```
 7. Inside a third terminal navigate to the `rudder` folder and run:
 ```
