@@ -8,12 +8,15 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
   end
 
   @proofchain_address "0xCF3d5540525D191D6492F1E0928d4e816c29778c"
-  @brp_submitted_event_hash "0x57b0cb34d2ff9ed661f8b3c684aaee6cbf0bda5da02f4044205556817fa8e76c"
+  @brp_submitted_event_hash "0x8741f5bf89731b15f24deb1e84e2bbd381947f009ee378a2daa15ed8abfb9485"
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
+  def start() do
+    listen_for_event()
+  end
 
   defp extract_submitted_specimens(logs) do
    specimen_hashes_set =  Enum.reduce(logs, MapSet.new(), fn el, specimen_hashes ->
