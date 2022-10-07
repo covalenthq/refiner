@@ -22,10 +22,7 @@ defmodule Rudder.Application do
        pools: %{
          :default => [size: 32]
        }},
-       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
-      # Starts a worker by calling: Rudder.Worker.start_link(arg)
-      # {Rudder.Worker, arg}
-      {Rudder.ProofChainActor, name: Rudder.ProofChainActor}
+       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
