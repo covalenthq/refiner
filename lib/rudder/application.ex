@@ -12,6 +12,16 @@ defmodule Rudder.Application do
         id: Rudder.SourceDiscovery,
         start: {Rudder.SourceDiscovery, :start_link, [[]]}
       },
+      %{
+        id: Rudder.Avro.BlockSpecimenDecoder,
+        start: {Rudder.Avro.BlockSpecimenDecoder, :start_link, [[]]}
+      },
+      Rudder.Avro.Client,
+      {Finch,
+       name: Rudder.Finch,
+       pools: %{
+         :default => [size: 32]
+       }}
       # Starts a worker by calling: Rudder.Worker.start_link(arg)
       # {Rudder.Worker, arg}
     ]

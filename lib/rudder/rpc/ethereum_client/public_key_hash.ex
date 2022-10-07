@@ -3,11 +3,11 @@ defmodule Rudder.PublicKeyHash do
             namespace: 0,
             chain_id: nil,
             bytes: <<0::160>>
-            
+
   alias Rudder.RPC.EthereumClient.Codec, as: EthereumCodec
 
   @codecs_by_format %{
-    ethpub: EthereumCodec,
+    ethpub: EthereumCodec
   }
 
   @zero_address EthereumCodec.decode_address("0x0000000000000000000000000000000000000000")
@@ -26,14 +26,6 @@ defmodule Rudder.PublicKeyHash do
     {:ok, EthereumCodec.decode_address(hex)}
   end
 
-  def parse(bin) when is_binary(bin) and byte_size(bin) == 21 do
-    {:ok, BitcoinCodec.decode_address(bin)}
-  end
-
-  def parse(b58c) when is_binary(b58c) and byte_size(b58c) >= 26 and byte_size(b58c) <= 53 do
-    {:ok, BitcoinCodec.decode_address(b58c)}
-  end
-
   def parse(_), do: :error
 
   def parse!(v) do
@@ -43,10 +35,6 @@ defmodule Rudder.PublicKeyHash do
 
   def parse_raw(bin) when is_binary(bin) and byte_size(bin) == 20 do
     {:ok, EthereumCodec.decode_address(bin)}
-  end
-
-  def parse_raw(bin) when is_binary(bin) and byte_size(bin) == 21 do
-    {:ok, BitcoinCodec.decode_address(bin)}
   end
 
   def parse_raw(_), do: :error
@@ -113,7 +101,10 @@ end
 defimpl Inspect, for: Rudder.PublicKeyHash do
   import Inspect.Algebra
 
-  def inspect(%Rudder.PublicKeyHash{format: format, namespace: namespace, chain_id: chain_id} = pkh, opts) do
+  def inspect(
+        %Rudder.PublicKeyHash{format: format, namespace: namespace, chain_id: chain_id} = pkh,
+        opts
+      ) do
     {:ok, str_repr} = Rudder.PublicKeyHash.as_string(pkh, hide_prefix: true)
 
     str_repr_doc = str_repr_doc(str_repr, opts)

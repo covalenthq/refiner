@@ -37,7 +37,7 @@ defmodule Rudder.RPC.JSONRPC.HTTPClient do
 
     other_headers = [
       {"host", host_header},
-      {"user-agent", "covalent/ingestor"},
+      {"user-agent", "covalent/rudder"},
       {"content-type", "application/json"}
     ]
 
@@ -61,19 +61,12 @@ defmodule Rudder.RPC.JSONRPC.HTTPClient do
 
     def long_call(client, rpc_method, rpc_params) do
       # Adapter.call(client.request_uri, client.request_headers, rpc_method, rpc_params)
-      LongCallAdapter.long_call(client.ws_request_uri, client.request_headers, rpc_method, rpc_params)
-    end
-
-    def batch_call(client, rpc_method, rpc_params_stream, opts \\ []) do
-      Adapter.batch_call(client.request_uri, client.request_headers, rpc_method, rpc_params_stream, opts)
-    end
-
-    def fetch_digest(client, uri_ref) do
-      Adapter.fetch_digest(URI.merge(client.request_uri, uri_ref), client.request_headers)
-    end
-
-    def download(client, uri_ref, io_device) do
-      Adapter.download(URI.merge(client.request_uri, uri_ref), client.request_headers, io_device)
+      LongCallAdapter.long_call(
+        client.ws_request_uri,
+        client.request_headers,
+        rpc_method,
+        rpc_params
+      )
     end
 
     def delete(client, uri_ref) do
