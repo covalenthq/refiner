@@ -1,12 +1,71 @@
 # Rudder
 
-Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations.
+Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations. It listens for events on ProofChain for finalized block specimens which further get processed into block results, uploaded to IPFS and the proof of the job performed gets submitted to the ProofChain.
 
 ![Rudder Pipeline](./temp/Rudder.jpg)
 
 The happy path for `rudder` is made up of loosely coupled (some maintain state and some don't) actor processes, that can be called upon to fulfill responsiblities at different sections in the refinement/transformation process - under one umberalla supervisor process, that can bring them back up in case of a failure.
 
+## Rudder Pipeline Components Explained
 
+### Block Specimen Proof Event and Block Result Proof Event Listeners
+
+The listeners watch the ProofChain for Block Specimen Proof (BSP) sessions to be finalized and for Block Result Proof (BRP) sessions to be started. In the first case once a BSP session is finalized the BSP Listener pulls all the `storageURLs` for the winning `specimenHash`. In case of listening for BRP sessions, once someone starts a Block Result Proof session, the BRP Listener pulls the specimen hash for which the BRP was submitted. Further the specimen hashes and storage URLs are passed to Block Specimen Discovery.
+
+ 1. **BlockSpecimenProofEventListener** listens for the following events:
+ ```
+ event BlockSpecimenProductionProofSubmitted(
+        uint64 chainId,
+        uint64 blockHeight,
+        bytes32 blockHash,
+        bytes32 specimenHash,
+        string storageURL, // URL of specimen storage
+        uint128 submittedStake
+    );
+ ```
+ and 
+ ```
+ event BlockSpecimenRewardAwarded(
+        uint64 indexed chainId, 
+        uint64 indexed blockHeight, 
+        bytes32 indexed blockhash, 
+        bytes32 specimenhash
+     );
+ ```
+ 
+ 2. **BlockResultProofEventListener** listens for:
+ ```
+ event BlockResultProductionProofSubmitted(
+        uint64 chainId, 
+        uint64 blockHeight,
+        bytes32 specimenHash, 
+        bytes32 resultHash, 
+        string storageURL, 
+        uint128 submittedStake
+      );
+```
+
+### Work Item Generation Supervisor
+Once an event listener pushes a specimen hash to Work Item Generation Supervisor it would spawn the Work Item Generation Pipeline process for the given specimen. Currently this is just an idea and the listeners can directly spawn the Pipeline witout a supervisor, but would be logically correct?
+
+### Work Item Generation Pipeline
+The idea is that it would run in one process that takes the specimen hash and outputs a work item. The following steps need to be done:
+1. A specimen hash would be pushed to the **Block Specimen Discoverer** that would pull the actual specimen based on its hash either from local storage or IPFS. 
+2. The specimen comes in `avro` format and needs to be converted to `json'. This is done by the **Block Specimen Decoder**. 
+3. **Work Item Factory** checks for the latest job blueprint and attaches it together withe specimen. The job blueprint will need to be provided to the Block Processor (Processing Engine) which is done later in another process. 
+
+
+### Work Items Queue 
+This would contain all the work items that are waiting to be processed. This won't be implemented in the initial version.
+
+### Scheduler
+This would track what work items have been processed and push new work items from the Queue into the Block Processor. This won't be implemented in the initial version.
+
+### Block Processor
+**Block Processor** is the engine that takes block specimen with a blueprint as input and converts it into a trace/block result. 
+
+### Block Result Uploader 
+This is another process that would upload the whole Trace / Block Result to IPFS then generated its' hash and upload it to the ProofChain. 
 
 ## Install
 
