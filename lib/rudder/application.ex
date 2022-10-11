@@ -22,7 +22,7 @@ defmodule Rudder.Application do
        pools: %{
          :default => [size: 32]
        }},
-       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader},
+      {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

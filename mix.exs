@@ -25,7 +25,6 @@ defmodule Rudder.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      
       {:poison, "~> 5.0"},
       {:porcelain, "~> 2.0"},
       {:broadway, "~> 1.0", override: true},
