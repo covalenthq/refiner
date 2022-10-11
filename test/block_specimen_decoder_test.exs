@@ -40,8 +40,8 @@ defmodule Rudder.BlockSpecimenDecoderTest do
     assert decoded_specimen_hash == expected_hash
   end
 
-  test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 streams directory files", %{
-    blockSpecimenDecoder: blockSpecimenDecoder
+  test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 streams directory binary files", %{
+    blockSpecimenDecoder: _blockSpecimenDecoder
   } do
     dir_path = "./test-data/*"
 
@@ -100,7 +100,7 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   end
 
   test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 decodes all binary files", %{
-    blockSpecimenDecoder: blockSpecimenDecoder
+    blockSpecimenDecoder: _blockSpecimenDecoder
   } do
     dir_path = "./test-data/*"
 
@@ -108,7 +108,7 @@ defmodule Rudder.BlockSpecimenDecoderTest do
 
     decode_specimen_stream = Rudder.Avro.BlockSpecimenDecoder.decode_dir(dir_path)
 
-    # stream resolved earlier
+    # stream resolved earlier to full specimen list
     resolved_stream = decode_specimen_stream |> Enum.map(fn x -> Enum.to_list(x) end)
     resolved_specimens = length(resolved_stream)
 
