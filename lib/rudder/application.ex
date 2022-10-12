@@ -22,6 +22,7 @@ defmodule Rudder.Application do
        pools: %{
          :default => [size: 32]
        }},
+      {Rudder.IPFSInteractor, name: Rudder.IPFSInteractor},
       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
     ]
 
