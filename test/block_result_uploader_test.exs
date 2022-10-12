@@ -3,6 +3,7 @@ defmodule Rudder.BlockResultUploaderTest do
 
   setup do
     Porcelain.spawn("./server", [
+      "sudo",
       "-port",
       "3000",
       "-file",
