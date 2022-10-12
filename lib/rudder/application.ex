@@ -21,9 +21,8 @@ defmodule Rudder.Application do
        name: Rudder.Finch,
        pools: %{
          :default => [size: 32]
-       }}
-      # Starts a worker by calling: Rudder.Worker.start_link(arg)
-      # {Rudder.Worker, arg}
+       }},
+      {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
