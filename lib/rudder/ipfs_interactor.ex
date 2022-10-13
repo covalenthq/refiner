@@ -25,11 +25,10 @@ defmodule Rudder.IPFSInteractor do
   def handle_call({:pin, file_path}, _from, state) do
     {:ok, %Finch.Response{body: cid, headers: _, status: _}} =
       Finch.build(:get, "http://localhost:3000/pin?address=#{file_path}")
-    |> Finch.request(Rudder.Finch)
-    
+      |> Finch.request(Rudder.Finch)
+
     {:reply, {:ok, cid}, state}
   end
-
 
   @impl true
   def handle_call({:fetch, cid}, _from, state) do
@@ -53,11 +52,7 @@ defmodule Rudder.IPFSInteractor do
   #   {:reply, state, state}
   # end
 
-  # client API
-
   # def lookup() do
   #   GenServer.call(Rudder.IPFSInteractor, :lookup)
   # end
-
-
 end
