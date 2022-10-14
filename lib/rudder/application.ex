@@ -12,16 +12,13 @@ defmodule Rudder.Application do
         id: Rudder.SourceDiscovery,
         start: {Rudder.SourceDiscovery, :start_link, [[]]}
       },
-      %{
-        id: Rudder.Avro.BlockSpecimenDecoder,
-        start: {Rudder.Avro.BlockSpecimenDecoder, :start_link, [[]]}
-      },
-      Rudder.Avro.Client,
       {Finch,
        name: Rudder.Finch,
        pools: %{
          :default => [size: 32]
        }},
+      Rudder.Avro.Client,
+      {Rudder.Avro.BlockSpecimenDecoder, name: Rudder.Avro.BlockSpecimenDecoder},
       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
     ]
 
