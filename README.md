@@ -53,21 +53,39 @@ be found at <https://hexdocs.pm/rudder>.
   "output" => "./out/block-results/",
   "rule" => "./evm/extractor --binary-file-path './test-data/' --codec-path './priv/schemas/block-ethereum.avsc' --indent-json 0 --output-file-path './out/block-results/'"
 }
-%Porcelain.Result{
-  err: nil,
-  out: "bsp-extractor command line config:  [binary-file-path:\"./test-data/\" codec-path:\"./priv/schemas/block-ethereum.avsc\" indent-json:\"0\" output-file-path:\"./out/block-results/\"]\n\nfile:  out/block-results/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5-specimen.json bytes:  1563265\n\nfile:  out/block-results/1-15127600-replica-0x14a2d5978dcde0e6988871c1a246bea31e44f73467f7c242f9cd19c30cd5f8b1-specimen.json bytes:  2761078\n\nfile:  out/block-results/1-15127601-replica-0x4757d9272c0f4c5f961667d43265123d22d7459d63f2041866df2962758c6070-specimen.json bytes:  3693996\n\nfile:  out/block-results/1-15127602-replica-0xce9ed851812286e05cd34684c9ce3836ea62ebbfc3764c8d8a131f0fd054ca35-specimen.json bytes:  4492753\n\nfile:  out/block-results/1-15127603-replica-0x5fb7802a8b0f1853bd3e9e8a8646df603e6c57d8da7df62ed46bfec1a6a074c4-specimen.json bytes:  1684665\n",
-  status: 0
-}
+%Porcelain.Result{err: nil, out: "", status: 0}
   ```
 
-This should generate the JSON output specimen file (results) to `./out` directory as seen above.
+This should generate the JSON output specimen file (results) to the output directory as seen above.
 
 3. View generated/transformed files from binary block specimens
 
   ```bash
-    cd out/block-results
-    cat 1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5-specimen.json
+➜ cd out/block-results
+➜ ls
+15548376.result.json   15557220.result.json   15582840.result.json
+15548376.segment.json  15557220.segment.json  15582840.segment.json
+15548376.specimen.json 15557220.specimen.json 15582840.specimen.json
   ```
+
+## Block Processor
+
+The block processor (`lib/rudder/evm`) takes block_id and block specimen json string and gives the block result. The stateless EVM needed to do this is written in golang, which is invoked via Porcelain in elixir.
+
+```elixir
+iex(87)> {:ok, contents} = File.read("./out/block-results/15548376.specimen.json")
+
+iex(107)> API.sync_queue({"15548376", contents})                             
+child spec id is 15548376
+reaches here all right
+15548376 will be processed now
+INFO[10-14|11:43:33.399] Wrote file                               file=evm-out/15548376-result.json
+                      {:success, "15548376"}
+```
+
+The gap above is that the `extractor` used for decoding is for codec version 0.2 and an older version of extractor which doesn't play with the stateless evm tool. Additionally, the specimen needs to be extracted from replica structure (json) before being passed to the `sync_queue` API.
+
+
 
 ## Block Specimen Extractor (`Elixir` native)
 
@@ -204,17 +222,3 @@ or
 ```elixir
 Rudder.ProofChain.Interactor.submit_block_result_proof(chain_id, block_height, block_specimen_hash, block_result_hash, url) 
 ```
-
-
-## Block Processor
-
-The block processor (`lib/rudder/evm`) takes block_id and block specimen json string and gives the block result. The stateless EVM needed to do this is written in golang, which is invoked via Porcelain in elixir.
-
-```elixir
-iex(87)> replica_fp="test-data/1-15127602-replica-0xce9ed851812286e05cd34684c9ce3836ea62ebbfc3764c8d8a131f0fd054ca35"
-
-iex(87)> [replica_fp] |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_file/1) |> Enum.map(fn {:ok, contents} -> {Integer.to_string(Enum.random('0123456789abcdef')), Poison.encode!(contents)} end) |> Enum.map(&Rudder.BlockProcessor.API.sync_queue/1)
-
-```
-
-The gap above is that the `extractor` used for decoding is for codec version 0.2 and an older version of extractor which doesn't play with the stateless evm tool. Additionally, the specimen needs to be extracted from replica structure (json) before being passed to the `sync_queue` API.
