@@ -9,6 +9,9 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     {:ok, state}
   end
 
+  @doc """
+  Starts the block specimen decoder.
+  """
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -26,20 +29,40 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     {:reply, state, state}
   end
 
+  @doc """
+  Looks up AVRO schema stored in priv/schema using @schema name.
+
+  Returns schema name `"com.covalenthq.brp.avro.ReplicationSegment"` if the schema exists, `:error` otherwise.
+  """
   def get_schema do
     {:ok, schema} = Avrora.Storage.File.get(@schema_name)
     schema.full_name
   end
 
+  @doc """
+  Decodes `<<binary>>` using AVRO schema.
+
+  Returns `:ok, %{decoded}` if the decoding is successful, `:error` otherwise.
+  """
   def decode(binary) do
     Avrora.decode_plain(binary, schema_name: @schema_name)
   end
 
+  @doc """
+  Decodes binary file @`file_path` using AVRO schema.
+
+  Returns `:ok, %{decoded}` if the decoding is successful, `:error` otherwise.
+  """
   def decode_file(file_path) do
     {:ok, binary} = File.read(file_path)
     decode(binary)
   end
 
+  @doc """
+  Decodes all binary files @`dir_path` using AVRO schema.
+
+  Returns `:ok, %{stream}` for lazy eval if successful, `:error` otherwise.
+  """
   def decode_dir(dir_path) do
     Rudder.Util.file_open(dir_path)
     |> Enum.map(fn file ->
