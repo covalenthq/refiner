@@ -44,3 +44,5 @@ rudder-*.tar
 /.vscode/
 
 .envrc_local
+
+evm-out/
