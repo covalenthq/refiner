@@ -12,8 +12,8 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
   @doc """
   Starts the block specimen decoder.
   """
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   def start() do
