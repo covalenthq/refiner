@@ -7,8 +7,8 @@ defmodule Rudder.IPFSInteractorTest do
         "sudo ./server  -port 3000 -jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGMxQkE4ODRFNzczMjBBODQ2NDk4QjI1RDZmNWI4NWU1YkRENDViMTYiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjE4OTk5MzE3NTAsIm5hbWUiOiJyZWZpbmVyLWlwZnMtcGlubmVyIn0.aX1F8S-dIGFKLa4vjQv8FEH-z_T3AU5z5DNyBUKRLOA"
       )
 
-    # wait 3 seconds for ipfs to start
-    :timer.sleep(3000)
+    # wait 30 seconds for ipfs to start
+    :timer.sleep(30000)
     iPFSInteractor = start_supervised!(Rudder.IPFSInteractor)
 
     on_exit(fn ->
