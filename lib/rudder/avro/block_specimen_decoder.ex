@@ -3,6 +3,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
 
   @schema_name "block-ethereum"
 
+  @impl true
   def init(state) do
     start()
     {:ok, state}
@@ -20,6 +21,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     GenServer.call(__MODULE__, :list)
   end
 
+  @impl true
   def handle_call(:list, _from, state) do
     {:reply, state, state}
   end

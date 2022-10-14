@@ -17,7 +17,7 @@ defmodule Rudder.MixProject do
   def application do
     [
       applications: [:porcelain],
-      extra_applications: [:logger, :runtime_tools, :poison],
+      extra_applications: [:logger, :runtime_tools, :poison, :avrora],
       mod: {Rudder.Application, []}
     ]
   end
@@ -65,12 +65,6 @@ defmodule Rudder.MixProject do
 
       # avro tools
       {:avrora, "~> 0.21"}
-    ]
-  end
-
-  defp aliases do
-    [
-      "test.ci": ["test --color --max-cases=10"]
     ]
   end
 end
