@@ -42,3 +42,5 @@ rudder-*.tar
 
 #VSCode
 /.vscode/
+
+evm-out/
