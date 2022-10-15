@@ -1,5 +1,5 @@
 defmodule Rudder.Avro.BlockSpecimenDecoder do
-  use GenServer
+  use GenServer, restart: :temporary
 
   @schema_name "block-ethereum"
 
