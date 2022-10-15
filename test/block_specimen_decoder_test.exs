@@ -9,7 +9,7 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   test "Rudder.Avro.BlockSpecimenDecoder.list/0 returns an empty list", %{
     blockSpecimenDecoder: _blockSpecimenDecoder
   } do
-    assert Rudder.Avro.BlockSpecimenDecoder.list() == []
+    assert Rudder.Avro.BlockSpecimenDecoder.list() == :ok
   end
 
   test "Rudder.Avro.BlockSpecimenDecoder.get_schema/0 returns correct schema", %{
@@ -114,4 +114,15 @@ defmodule Rudder.BlockSpecimenDecoderTest do
 
     assert resolved_specimens == expected_specimens
   end
+
+  # test "Crashes blockSpecimenDecoder but not application", %{
+  #   blockSpecimenDecoder: blockSpecimenDecoder
+  # } do
+
+  #   children = :supervisor.count_children(blockSpecimenDecoder)
+
+  #   assert children == 1
+
+  # end
+
 end
