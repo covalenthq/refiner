@@ -23,10 +23,10 @@ defmodule Rudder.BlockSpecimenDecoderTest do
     blockSpecimenDecoder: _blockSpecimenDecoder
   } do
     specimen_path =
-      "./test-data/block-specimens/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5"
+      "./test-data/encoded/1-15548376-replica-0xdc137623c4a82c51478c74093a5b01bb6332ee0afecc9913c1f33f7fe9781ba1"
 
-    expected_start_block = 15_127_599
-    expected_hash = "0x8f858356c48b270221814f8c1b2eb804a5fbd3ac7774b527f2fe0605be03fb37"
+    expected_start_block = 15_548_376
+    expected_hash = "0x0f9f25ab9792530bdc0441fc66bb60011e11b3bef067c545582dcbe5b9635be1"
 
     {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimenDecoder.decode_file(specimen_path)
 
@@ -43,13 +43,13 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 streams directory binary files", %{
     blockSpecimenDecoder: _blockSpecimenDecoder
   } do
-    dir_path = "./test-data/block-specimens/*"
+    dir_path = "./test-data/encoded/*"
 
-    expected_start_block = 15_127_599
-    expected_last_block = 15_127_603
+    expected_start_block = 15_548_376
+    expected_last_block = 15_582_840
 
-    expected_start_hash = "0x8f858356c48b270221814f8c1b2eb804a5fbd3ac7774b527f2fe0605be03fb37"
-    expected_last_hash = "0x9119289fc6a4a0c2b404019d7e16a7e850590f37312109b97c1fd4e940accfd3"
+    expected_start_hash = "0x0f9f25ab9792530bdc0441fc66bb60011e11b3bef067c545582dcbe5b9635be1"
+    expected_last_hash = "0xfbc9d4bb10a28dd4aa8103a8fd708fa1be64fa1a9207c477133b1a3c336a9cd3"
 
     decode_specimen_stream = Rudder.Avro.BlockSpecimenDecoder.decode_dir(dir_path)
 
@@ -102,9 +102,9 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 decodes all binary files", %{
     blockSpecimenDecoder: _blockSpecimenDecoder
   } do
-    dir_path = "./test-data/block-specimens/*"
+    dir_path = "./test-data/encoded/*"
 
-    expected_specimens = 5
+    expected_specimens = 3
 
     decode_specimen_stream = Rudder.Avro.BlockSpecimenDecoder.decode_dir(dir_path)
 
