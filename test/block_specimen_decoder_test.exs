@@ -124,5 +124,4 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   #   assert children == 1
 
   # end
-
 end
