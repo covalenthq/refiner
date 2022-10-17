@@ -75,5 +75,4 @@ defmodule Rudder.BlockResultUploaderTest do
 
     assert err != :error
   end
-
 end
