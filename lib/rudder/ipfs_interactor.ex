@@ -13,7 +13,7 @@ defmodule Rudder.IPFSInteractor do
   # @impl true
   # def handle_cast({:pin, file_path}, _state) do
   #   x =
-  #     Finch.build(:get, "http://localhost:3000/pin?address=#{file_path}")
+  #     Finch.build(:get, "http://localhost:3000/pin?filePath=#{file_path}")
   #     |> Finch.request(Rudder.Finch)
 
   #   {:ok, %Finch.Response{body: y, headers: _, status: _}} = x
@@ -24,7 +24,7 @@ defmodule Rudder.IPFSInteractor do
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
     {:ok, %Finch.Response{body: cid, headers: _, status: _}} =
-      Finch.build(:get, "http://localhost:3000/pin?address=#{file_path}")
+      Finch.build(:get, "http://localhost:3000/pin?filePath=#{file_path}")
       |> Finch.request(Rudder.Finch)
 
     {:reply, {:ok, cid}, state}
