@@ -31,37 +31,48 @@ defmodule Rudder.BlockResultUploaderTest do
     %{blockResultUploader: blockResultUploader, iPFSInteractor: iPFSInteractor}
   end
 
-  test "uploads block result to ipfs and sends the block result hash to proof chain", %{
-    blockResultUploader: blockResultUploader,
-    iPFSInteractor: iPFSInteractor
-  } do
-    expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+  # test "uploads block result to ipfs and sends the block result hash to proof chain", %{
+  #   blockResultUploader: blockResultUploader,
+  #   iPFSInteractor: iPFSInteractor
+  # } do
+  #   expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
 
-    expected_block_result_hash =
-      <<31, 26, 22, 170, 43, 54, 255, 231, 162, 119, 199, 183, 64, 168, 246, 27, 81, 121, 116,
-        216, 76, 76, 0, 53, 139, 112, 13, 157, 133, 247, 226, 242>>
+  #   expected_block_result_hash =
+  #     <<31, 26, 22, 170, 43, 54, 255, 231, 162, 119, 199, 183, 64, 168, 246, 27, 81, 121, 116,
+  #       216, 76, 76, 0, 53, 139, 112, 13, 157, 133, 247, 226, 242>>
 
-    {:ok, cid, block_result_hash} =
-      Rudder.BlockResultUploader.upload_block_result(
-        1,
-        1,
-        "525D191D6492F1E0928d4e816c29778c",
-        "./test/test_file_to_upload.txt"
-      )
+  #   {:ok, cid, block_result_hash} =
+  #     Rudder.BlockResultUploader.upload_block_result(
+  #       1,
+  #       1,
+  #       "525D191D6492F1E0928d4e816c29778c",
+  #       "./test/test_file_to_upload.txt"
+  #     )
 
-    assert cid = expected_cid
-    assert block_result_hash = expected_block_result_hash
-  end
+  #   assert cid = expected_cid
+  #   assert block_result_hash = expected_block_result_hash
+  # end
 
-  test "ipfs contains cid with known cid", %{
+  # test "ipfs contains cid with known cid", %{
+  #   iPFSInteractor: iPFSInteractor,
+  #   blockResultUploader: blockResultUploader
+  # } do
+  #   {:ok, current_dir} = File.cwd()
+  #   file_path = current_dir <> "/test/test_file_to_upload.txt"
+  #   {err, cid} = Rudder.IPFSInteractor.pin(file_path)
+  #   expected_cid = "QmeeXyy9mwfXxpwwP1odEd4Eo3X4gPsjrDDWjbUnSYtwTH"
+
+  #   assert cid = expected_cid
+  # end
+
+  test "the server works", %{
     iPFSInteractor: iPFSInteractor,
     blockResultUploader: blockResultUploader
   } do
-    {:ok, current_dir} = File.cwd()
-    file_path = current_dir <> "/test/test_file_to_upload.txt"
-    {err, cid} = Rudder.IPFSInteractor.pin(file_path)
-    expected_cid = "QmeeXyy9mwfXxpwwP1odEd4Eo3X4gPsjrDDWjbUnSYtwTH"
+    {err, _} =
+      Finch.build(:get, "http://localhost:3001/pin")
+      |> Finch.request(Rudder.Finch)
 
-    assert cid = expected_cid
+    assert err != :error
   end
 end
