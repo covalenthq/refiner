@@ -26,8 +26,8 @@ defmodule Rudder.MixProject do
   defp deps do
     [
       {:poison, "~> 5.0"},
-      {:porcelain, "~> 2.0"},
       {:broadway, "~> 1.0", override: true},
+      {:erlexec, "~> 2.0"},
       {:off_broadway_redis, "~> 0.4.3"},
       {:cors_plug, "~> 2.0"},
       {:phoenix, "~> 1.4.9"},
