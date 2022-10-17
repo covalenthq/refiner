@@ -1,4 +1,3 @@
-
 # defmodule Rudder do
 #   defp get_json(filename) do
 #     with {:ok, body} <- File.read(filename) do
