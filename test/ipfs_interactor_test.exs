@@ -8,7 +8,7 @@ defmodule Rudder.IPFSInteractorTest do
       )
 
     # wait 30 seconds for ipfs to start
-    :timer.sleep(30000)
+    :timer.sleep(10000)
     iPFSInteractor = start_supervised!(Rudder.IPFSInteractor)
 
     on_exit(fn ->
