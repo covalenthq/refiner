@@ -1,5 +1,3 @@
-alias Porcelain.Result
-alias Porcelain.Process, as: Proc
 
 defmodule Rudder do
   defp get_json(filename) do
@@ -32,13 +30,13 @@ defmodule Rudder do
     Map.get(formula, "args")
   end
 
-  defp async_exec(exec_file, args) do
-    Porcelain.spawn_shell(exec_file, args)
-  end
+  # defp async_exec(exec_file, args) do
+  #   Porcelain.spawn_shell(exec_file, args)
+  # end
 
-  defp sync_exec(build_rule) do
-    Porcelain.shell(build_rule)
-  end
+  # defp sync_exec(build_rule) do
+  #   Porcelain.shell(build_rule)
+  # end
 
   defp write_output(path, result, _modes \\ []) do
     IO.write(path, result)
