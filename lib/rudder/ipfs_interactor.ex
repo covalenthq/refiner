@@ -13,7 +13,7 @@ defmodule Rudder.IPFSInteractor do
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
     {:ok, %Finch.Response{body: cid, headers: _, status: _}} =
-      Finch.build(:get, "http://localhost:3001/pin?address=#{file_path}")
+      Finch.build(:get, "http://localhost:3001/pin?filePath=#{file_path}")
       |> Finch.request(Rudder.Finch)
 
     {:reply, {:ok, cid}, state}

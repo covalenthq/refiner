@@ -18,7 +18,7 @@ defmodule Rudder.BlockResultUploaderTest do
 
     {:ok, docker_compose_process, _} = :exec.run_link(start_proofchain_command, [])
 
-    # wait 10 seconds for ipfs and docker container to start
+    # wait 20 seconds for ipfs and docker container to start
     :timer.sleep(20000)
 
     blockResultUploader = start_supervised!(Rudder.BlockResultUploader)
@@ -38,11 +38,11 @@ defmodule Rudder.BlockResultUploaderTest do
     blockResultUploader: blockResultUploader,
     iPFSInteractor: iPFSInteractor
   } do
-    expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+    expected_cid = "QmNt34B27bxqh895sXjnTEE8A3m5a4Bx6cobwg4BczrsGQ"
 
     expected_block_result_hash =
-      <<31, 26, 22, 170, 43, 54, 255, 231, 162, 119, 199, 183, 64, 168, 246, 27, 81, 121, 116,
-        216, 76, 76, 0, 53, 139, 112, 13, 157, 133, 247, 226, 242>>
+      <<3, 75, 152, 63, 79, 210, 203, 120, 23, 170, 198, 170, 197, 60, 162, 239, 213, 222, 38,
+        232, 103, 76, 199, 41, 238, 191, 219, 250, 109, 168, 136, 237>>
 
     {:ok, cid, block_result_hash} =
       Rudder.BlockResultUploader.upload_block_result(
@@ -52,8 +52,8 @@ defmodule Rudder.BlockResultUploaderTest do
         "./test/test_file_to_upload.txt"
       )
 
-    assert cid = expected_cid
-    assert block_result_hash = expected_block_result_hash
+    assert cid == expected_cid
+    assert block_result_hash == expected_block_result_hash
   end
 
   test "ipfs contains cid with known cid", %{
@@ -63,9 +63,10 @@ defmodule Rudder.BlockResultUploaderTest do
     {:ok, current_dir} = File.cwd()
     file_path = current_dir <> "/test/test_file_to_upload.txt"
     {err, cid} = Rudder.IPFSInteractor.pin(file_path)
-    expected_cid = "QmeeXyy9mwfXxpwwP1odEd4Eo3X4gPsjrDDWjbUnSYtwTH"
+    expected_cid = "QmNt34B27bxqh895sXjnTEE8A3m5a4Bx6cobwg4BczrsGQ"
+    IO.inspect({err, cid})
 
-    assert cid = expected_cid
+    assert cid == expected_cid
   end
 
   test "the server works", %{
