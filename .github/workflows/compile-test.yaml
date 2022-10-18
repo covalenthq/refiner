@@ -81,6 +81,8 @@ jobs:
 
       # - name: Run Dialyzer (SCA)
       #   run: mix dialyzer --plt
+      - name: Run mock ProofChain
+        run: docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
 
       - name: Run test
         run: mix test --trace --slowest 10
