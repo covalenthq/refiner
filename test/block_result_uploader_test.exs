@@ -7,8 +7,7 @@ defmodule Rudder.BlockResultUploaderTest do
     {:ok, current_dir} = File.cwd()
 
     start_server_command =
-      "sudo " <>
-        current_dir <>
+      current_dir <>
         "/server  -port 3001 -jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGMxQkE4ODRFNzczMjBBODQ2NDk4QjI1RDZmNWI4NWU1YkRENDViMTYiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjE4OTk5MzE3NTAsIm5hbWUiOiJyZWZpbmVyLWlwZnMtcGlubmVyIn0.aX1F8S-dIGFKLa4vjQv8FEH-z_T3AU5z5DNyBUKRLOA"
 
     {:ok, ipfs_node_process, _} = :exec.run_link(start_server_command, [])
@@ -27,8 +26,8 @@ defmodule Rudder.BlockResultUploaderTest do
     on_exit(fn ->
       :exec.kill(ipfs_node_process, 0)
       :exec.kill(docker_compose_process, 0)
-      :exec.run("sudo rm ~/.ipfs/datastore/LOCK", [])
-      :exec.run("sudo rm ~/.ipfs/repo.lock", [])
+      :exec.run("rm ~/.ipfs/datastore/LOCK", [])
+      :exec.run("rm ~/.ipfs/repo.lock", [])
     end)
 
     %{blockResultUploader: blockResultUploader, iPFSInteractor: iPFSInteractor}
