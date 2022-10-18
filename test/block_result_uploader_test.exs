@@ -2,7 +2,8 @@ defmodule Rudder.BlockResultUploaderTest do
   use ExUnit.Case, async: true
 
   setup_all do
-    :exec.start()
+    r = :exec.start()
+    IO.inspect(r)
     {:ok, current_dir} = File.cwd()
 
     start_server_command =
