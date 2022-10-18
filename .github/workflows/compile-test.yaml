@@ -81,6 +81,14 @@ jobs:
 
       # - name: Run Dialyzer (SCA)
       #   run: mix dialyzer --plt
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.CR_USER }}
+          password: ${{ secrets.CR_PAT }}
+          
       - name: Run mock ProofChain
         run: docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
 
