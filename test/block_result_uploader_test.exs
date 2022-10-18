@@ -18,7 +18,7 @@ defmodule Rudder.BlockResultUploaderTest do
     {:ok, docker_compose_process, _} = :exec.run_link(start_proofchain_command, [])
 
     # wait 10 seconds for ipfs and docker container to start
-    :timer.sleep(10000)
+    :timer.sleep(20000)
 
     blockResultUploader = start_supervised!(Rudder.BlockResultUploader)
     iPFSInteractor = start_supervised!(Rudder.IPFSInteractor)
