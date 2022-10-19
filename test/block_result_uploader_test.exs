@@ -26,7 +26,7 @@ defmodule Rudder.BlockResultUploaderTest do
   #     <<3, 75, 152, 63, 79, 210, 203, 120, 23, 170, 198, 170, 197, 60, 162, 239, 213, 222, 38,
   #       232, 103, 76, 199, 41, 238, 191, 219, 250, 109, 168, 136, 237>>
 
-  #   {:ok, cid, block_result_hash} =
+  #   {error, cid, block_result_hash} =
   #     Rudder.BlockResultUploader.upload_block_result(
   #       1,
   #       1,
@@ -35,6 +35,7 @@ defmodule Rudder.BlockResultUploaderTest do
   #     )
   #     IO.inspect(block_result_hash)
 
+  #   assert error == :ok
   #   assert cid == expected_cid
   #   assert block_result_hash == expected_block_result_hash
   # end

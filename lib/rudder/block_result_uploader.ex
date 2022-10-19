@@ -16,19 +16,24 @@ defmodule Rudder.BlockResultUploader do
         _from,
         state
       ) do
-    {:ok, cid} = Rudder.IPFSInteractor.pin(file_path)
-    block_result_hash = hash_block_result_file(file_path)
 
-    :ok =
-      Rudder.ProofChain.Interactor.submit_block_result_proof(
-        chain_id,
-        block_height,
-        block_specimen_hash,
-        block_result_hash,
-        cid
-      )
+    case Rudder.IPFSInteractor.pin(file_path) do
+      {:ok, cid} ->
+        block_result_hash = hash_block_result_file(file_path)
 
-    {:reply, {:ok, cid, block_result_hash}, state}
+        :ok =
+          Rudder.ProofChain.Interactor.submit_block_result_proof(
+            chain_id,
+            block_height,
+            block_specimen_hash,
+            block_result_hash,
+            cid
+          )
+
+        {:reply, {:ok, cid, block_result_hash}, state}
+      {:error, error} ->
+        {:reply, {:error, error, ""}, state}
+    end
   end
 
   def upload_block_result(chain_id, block_height, block_specimen_hash, file_path) do
