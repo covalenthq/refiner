@@ -12,17 +12,26 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
-    {:ok, %Finch.Response{body: cid, headers: _, status: _}} =
-      Finch.build(:get, "http://localhost:3001/pin?filePath=#{file_path}")
+    {:ok, %Finch.Response{body: body, headers: _, status: _}} =
+      Finch.build(
+        :get, "http://localhost:3001/pin?filePath=#{file_path}"
+        )
       |> Finch.request(Rudder.Finch)
 
-    {:reply, {:ok, cid}, state}
+    body_map = body |> Poison.decode!
+
+    case body_map do
+      %{"error" => error} -> {:reply, {:error, error}, state}
+      %{"cid" => cid} -> {:reply, {:ok, cid}, state}
+    end
   end
 
   @impl true
   def handle_call({:fetch, cid}, _from, state) do
     {err, data} =
-      Finch.build(:get, "https://dweb.link/ipfs/#{cid}")
+      Finch.build(
+        :get, "https://dweb.link/ipfs/#{cid}"
+        )
       |> Finch.request(Rudder.Finch, receive_timeout: 50_000)
 
     {:reply, {err, data}, state}
@@ -36,12 +45,4 @@ defmodule Rudder.IPFSInteractor do
     GenServer.call(Rudder.IPFSInteractor, {:fetch, cid})
   end
 
-  # @impl true
-  # def handle_call(:lookup, _from, state) do
-  #   {:reply, state, state}
-  # end
-
-  # def lookup() do
-  #   GenServer.call(Rudder.IPFSInteractor, :lookup)
-  # end
 end
