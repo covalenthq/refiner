@@ -23,7 +23,7 @@ defmodule Rudder.BlockSpecimenDecoderTest do
     blockSpecimenDecoder: _blockSpecimenDecoder
   } do
     specimen_path =
-      "./test-data/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5"
+      "./test-data/block-specimens/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5"
 
     expected_start_block = 15_127_599
     expected_hash = "0x8f858356c48b270221814f8c1b2eb804a5fbd3ac7774b527f2fe0605be03fb37"
@@ -43,7 +43,7 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 streams directory binary files", %{
     blockSpecimenDecoder: _blockSpecimenDecoder
   } do
-    dir_path = "./test-data/*"
+    dir_path = "./test-data/block-specimens/*"
 
     expected_start_block = 15_127_599
     expected_last_block = 15_127_603
@@ -102,7 +102,7 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 decodes all binary files", %{
     blockSpecimenDecoder: _blockSpecimenDecoder
   } do
-    dir_path = "./test-data/*"
+    dir_path = "./test-data/block-specimens/*"
 
     expected_specimens = 5
 
