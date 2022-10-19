@@ -49,6 +49,7 @@ defmodule Rudder.BlockResultUploaderTest do
     expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
     IO.inspect({err, cid})
 
+    assert err == :ok
     assert cid == expected_cid
   end
 
