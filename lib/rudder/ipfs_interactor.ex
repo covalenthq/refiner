@@ -16,6 +16,8 @@ defmodule Rudder.IPFSInteractor do
       Finch.build(:get, "http://localhost:3001/pin?filePath=#{file_path}")
       |> Finch.request(Rudder.Finch)
 
+IO.inspect(cid)
+  # {\"cid\": \"QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY\"}
     {:reply, {:ok, cid}, state}
   end
 
