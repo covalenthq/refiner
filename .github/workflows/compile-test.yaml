@@ -82,5 +82,15 @@ jobs:
       # - name: Run Dialyzer (SCA)
       #   run: mix dialyzer --plt
 
+      - name: Login to GCR
+        uses: docker/login-action@v2
+        with:
+          registry: gcr.io
+          username: _json_key
+          password: ${{ secrets.GCR_JSON_KEY }}
+      
+      - name: Run Docker Compose
+        run: docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
+        
       - name: Run test
         run: mix test --trace --slowest 10
