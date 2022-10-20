@@ -16,7 +16,6 @@ defmodule Rudder.BlockResultUploader do
         _from,
         state
       ) do
-
     case Rudder.IPFSInteractor.pin(file_path) do
       {:ok, cid} ->
         block_result_hash = hash_block_result_file(file_path)
@@ -31,6 +30,7 @@ defmodule Rudder.BlockResultUploader do
           )
 
         {:reply, {:ok, cid, block_result_hash}, state}
+
       {:error, error} ->
         {:reply, {:error, error, ""}, state}
     end
