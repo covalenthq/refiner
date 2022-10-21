@@ -9,8 +9,8 @@ defmodule Rudder.BlockResultUploaderTest do
   end
 
   test "uploads block result to ipfs and sends the block result hash to proof chain", %{
-    blockResultUploader: blockResultUploader,
-    iPFSInteractor: iPFSInteractor
+    blockResultUploader: _blockResultUploader,
+    iPFSInteractor: _iPFSInteractor
   } do
     expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
 
@@ -34,10 +34,10 @@ defmodule Rudder.BlockResultUploaderTest do
   end
 
   test "ipfs contains cid with known cid", %{
-    iPFSInteractor: iPFSInteractor,
-    blockResultUploader: blockResultUploader
+    iPFSInteractor: _iPFSInteractor,
+    blockResultUploader: _blockResultUploader
   } do
-    {:ok, current_dir} = File.cwd()
+    {:ok, _current_dir} = File.cwd()
     {err, cid} = Rudder.IPFSInteractor.pin("./temp.txt")
     expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
 
@@ -46,8 +46,8 @@ defmodule Rudder.BlockResultUploaderTest do
   end
 
   test "the server works", %{
-    iPFSInteractor: iPFSInteractor,
-    blockResultUploader: blockResultUploader
+    iPFSInteractor: _iPFSInteractor,
+    blockResultUploader: _blockResultUploader
   } do
     {err, _} =
       Finch.build(:get, "http://localhost:3001/pin")
