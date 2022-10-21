@@ -19,19 +19,26 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
   end
 
   defp extract_submitted_specimens(logs) do
-   specimen_hashes_set =  Enum.reduce(logs, MapSet.new(), fn el, specimen_hashes ->
-      event_signature = "(uint64,uint64,bytes32,bytes32,string,uint128)"
+    specimen_hashes_set =
+      Enum.reduce(logs, MapSet.new(), fn el, specimen_hashes ->
+        event_signature = "(uint64,uint64,bytes32,bytes32,string,uint128)"
 
-      [_chain_id, _block_height, specimen_hash_raw, _block_result_hash_raw, _url, _submittedStake] =
-        Rudder.ProofChain.Utils.extract_data(el, event_signature)
+        [
+          _chain_id,
+          _block_height,
+          specimen_hash_raw,
+          _block_result_hash_raw,
+          _url,
+          _submittedStake
+        ] = Rudder.Utils.extract_data(el, event_signature)
 
-      specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
+        specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
 
-      MapSet.put(specimen_hashes, specimen_hash)
-    end)
+        MapSet.put(specimen_hashes, specimen_hash)
+      end)
+
     MapSet.to_list(specimen_hashes_set)
   end
-
 
   defp listen_for_event() do
     {:ok, brp_submitted_logs} =
@@ -48,7 +55,6 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
     Enum.each(unique_submitted_specimens, fn specimen_hash ->
       GenServer.cast(Rudder.SourceDiscovery, {:push, specimen_hash})
     end)
-
 
     :timer.sleep(1000)
     listen_for_event()
