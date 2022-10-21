@@ -18,9 +18,9 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
     listen_for_event()
   end
 
-  defp extract_submitted_specimens(logs) do
+  defp extract_submitted_specimens(log_events) do
     specimen_hashes_set =
-      Enum.reduce(logs, MapSet.new(), fn el, specimen_hashes ->
+      Enum.reduce(log_events, MapSet.new(), fn log_event, specimen_hashes ->
         event_signature = "(uint64,uint64,bytes32,bytes32,string,uint128)"
 
         [
@@ -30,7 +30,7 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
           _block_result_hash_raw,
           _url,
           _submittedStake
-        ] = Rudder.Utils.extract_data(el, event_signature)
+        ] = Rudder.Util.extract_data(log_event, event_signature)
 
         specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
 
