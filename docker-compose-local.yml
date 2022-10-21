@@ -3,7 +3,7 @@ version: '3'
 services:
   node:
     image: "gcr.io/covalent-project/proofchain:latest"
-    container_name: eth-node
+    container_name: eth-test-node
     restart:  on-failure
     expose:
       - 8545:8545
