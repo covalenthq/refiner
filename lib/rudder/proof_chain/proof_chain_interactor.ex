@@ -86,7 +86,7 @@ defmodule Rudder.ProofChain.Interactor do
 
     with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
       IO.inspect(res)
-      true
+      :ok
     end
   end
 end
