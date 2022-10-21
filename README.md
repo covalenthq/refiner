@@ -223,6 +223,7 @@ In order to run the listener you need to fork ethereum node, run a script to add
 2. Navigate to the `bsp-agent` folder.
 3. Add `envrc.local ` file.
 4. Inside `envrc.local` add ERIGON_NODE variable and replace the node's url with yours:
+
 ```
 export ERIGON_NODE="erogone.node.url"
 ```

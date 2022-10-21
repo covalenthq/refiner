@@ -45,5 +45,6 @@ rudder-*.tar
 
 .envrc_local
 
+evm-out/
 # Env-vars
 .env
