@@ -22,12 +22,12 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   defp extract_submitted_specimens([], specimen_url_map), do: specimen_url_map
 
-  defp extract_submitted_specimens(logs, specimen_url_map) do
-    Enum.reduce(logs, specimen_url_map, fn el, new_specimen_url_map ->
+  defp extract_submitted_specimens(log_events, specimen_url_map) do
+    Enum.reduce(log_events, specimen_url_map, fn log_event, new_specimen_url_map ->
       event_signature = "(uint64,uint64,bytes32,bytes32,string,uint128)"
 
       [chain_id, block_height, block_hash_raw, specimen_hash_raw, url, _submittedStake] =
-        Rudder.Utils.extract_data(el, event_signature)
+        Rudder.Util.extract_data(log_event, event_signature)
 
       # prepare data to generate key
       specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
@@ -45,10 +45,12 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   defp extract_awarded_specimens([]), do: []
 
-  defp extract_awarded_specimens(logs) do
-    Enum.reduce(logs, [], fn el, keys ->
-      {:ok, [_event_hash, chain_id_raw, block_height_raw, block_hash]} = Map.fetch(el, "topics")
-      [specimen_hash_raw] = Rudder.Utils.extract_data(el, "(bytes32)")
+  defp extract_awarded_specimens(log_events) do
+    Enum.reduce(log_events, [], fn log_event, keys ->
+      {:ok, [_event_hash, chain_id_raw, block_height_raw, block_hash]} =
+        Map.fetch(log_event, "topics")
+
+      [specimen_hash_raw] = Rudder.Util.extract_data(log_event, "(bytes32)")
 
       # prepare data to generate key
       specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
