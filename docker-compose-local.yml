@@ -34,6 +34,8 @@ services:
     restart:  on-failure
     expose:
       - 3001:3001
+    ports:
+      - 3001:3001
     entrypoint: ./entry.sh
 
 networks:
