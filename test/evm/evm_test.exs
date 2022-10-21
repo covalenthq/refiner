@@ -1,13 +1,11 @@
 Code.require_file("helpers.exs", "test/evm/helpers")
 
 defmodule SupervisionTreeTest do
-  use ExUnit.Case
-  #  import Mox
-  # use TestHelper
+  use ExUnit.Case, async: false
+  @moduletag :spawn
 
-  alias Rudder.BlockProcessor.Executor
-  alias Rudder.BlockProcessor.InputParams
-  alias Rudder.BlockProcessor.EVMParams
+  alias Rudder.BlockProcessor.Worker.Executor
+  alias Rudder.BlockProcessor.Struct
 
   alias TestHelper.EVMInputGenerator
   alias TestHelper.SupervisorUtils
@@ -24,12 +22,12 @@ defmodule SupervisionTreeTest do
 
     contents = get_sample_specimen!()
 
-    inp = %InputParams{block_id: block_id, contents: contents, sender: self()}
+    inp = %Struct.InputParams{block_id: block_id, contents: contents, sender: self()}
     # TODO: use relative paths
-    evm = %EVMParams{evm_exec_path: EVMInputGenerator.get_evm_path()}
+    evm = %Struct.EVMParams{evm_exec_path: EVMInputGenerator.get_evm_path()}
 
     _ =
-      TestHelper.SupervisorUtils.start_link_supervised!(%{
+      SupervisorUtils.start_link_supervised!(%{
         id: "sample",
         start: {Executor, :start_link, [inp, evm]},
         type: :worker,
@@ -37,7 +35,7 @@ defmodule SupervisionTreeTest do
       })
 
     receive do
-      %Rudder.BlockProcessor.ExecResult{
+      %Struct.ExecResult{
         block_id: ^block_id,
         status: status,
         output_path: _,
@@ -60,9 +58,14 @@ defmodule SupervisionTreeTest do
 
     contents = get_sample_specimen!()
 
-    inp = %InputParams{block_id: block_id, contents: "[" <> contents <> "]", sender: self()}
+    inp = %Struct.InputParams{
+      block_id: block_id,
+      contents: "[" <> contents <> "]",
+      sender: self()
+    }
+
     # TODO: use relative paths
-    evm = %EVMParams{evm_exec_path: EVMInputGenerator.get_evm_path()}
+    evm = %Struct.EVMParams{evm_exec_path: EVMInputGenerator.get_evm_path()}
 
     _ =
       TestHelper.SupervisorUtils.start_link_supervised!(%{
@@ -73,7 +76,7 @@ defmodule SupervisionTreeTest do
       })
 
     receive do
-      %Rudder.BlockProcessor.ExecResult{
+      %Struct.ExecResult{
         block_id: ^block_id,
         status: status,
         output_path: _,
@@ -95,9 +98,9 @@ defmodule SupervisionTreeTest do
     block_id = "1234_f_"
     contents = get_sample_specimen!()
 
-    inp = %InputParams{block_id: block_id, contents: contents, sender: self()}
+    inp = %Struct.InputParams{block_id: block_id, contents: contents, sender: self()}
     # TODO: use relative paths
-    evm = %EVMParams{evm_exec_path: "./blahblahrandomness/evm"}
+    evm = %Struct.EVMParams{evm_exec_path: "./blahblahrandomness/evm"}
 
     Process.flag(:trap_exit, true)
 
