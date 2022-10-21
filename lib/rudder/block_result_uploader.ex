@@ -12,7 +12,13 @@ defmodule Rudder.BlockResultUploader do
 
   @impl true
   def handle_call(
-        {:upload_block_result, {chain_id, block_height, block_specimen_hash, file_path}},
+        {:upload_block_result,
+         %Rudder.BlockResultMetadata{
+           chain_id: chain_id,
+           block_height: block_height,
+           block_specimen_hash: block_specimen_hash,
+           file_path: file_path
+         }},
         _from,
         state
       ) do
@@ -36,10 +42,10 @@ defmodule Rudder.BlockResultUploader do
     end
   end
 
-  def upload_block_result(chain_id, block_height, block_specimen_hash, file_path) do
+  def upload_block_result(block_result_metadata) do
     GenServer.call(
       Rudder.BlockResultUploader,
-      {:upload_block_result, {chain_id, block_height, block_specimen_hash, file_path}}
+      {:upload_block_result, block_result_metadata}
     )
   end
 

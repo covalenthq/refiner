@@ -18,13 +18,15 @@ defmodule Rudder.BlockResultUploaderTest do
       <<135, 41, 140, 194, 243, 31, 186, 115, 24, 30, 162, 169, 230, 239, 16, 220, 226, 30, 217,
         94, 152, 189, 172, 156, 78, 21, 4, 234, 22, 244, 134, 228>>
 
+    block_result_metadata = %Rudder.BlockResultMetadata{
+      chain_id: 1,
+      block_height: 1,
+      block_specimen_hash: "525D191D6492F1E0928d4e816c29778c",
+      file_path: "./temp.txt"
+    }
+
     {error, cid, block_result_hash} =
-      Rudder.BlockResultUploader.upload_block_result(
-        1,
-        1,
-        "525D191D6492F1E0928d4e816c29778c",
-        "./temp.txt"
-      )
+      Rudder.BlockResultUploader.upload_block_result(block_result_metadata)
 
     assert error == :ok
     assert cid == expected_cid
