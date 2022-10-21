@@ -89,8 +89,8 @@ jobs:
           username: _json_key
           password: ${{ secrets.GCR_JSON_KEY }}
       
-      - name: Run Docker Compose
-        run: docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
+#       - name: Run Docker Compose
+#         run: docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
         
-      - name: Run test
-        run: mix test --trace --slowest 10
+#       - name: Run test
+#         run: mix test --trace --slowest 10
