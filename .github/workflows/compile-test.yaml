@@ -83,4 +83,4 @@ jobs:
       #   run: mix dialyzer --plt
 
       - name: Run test
-        run: mix test --trace --slowest 10
+        run: mix test --trace --slowest 10 --exclude spawn:true

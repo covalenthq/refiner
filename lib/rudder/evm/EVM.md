@@ -25,24 +25,6 @@ There should be some way to update the code.
 Also, some persistence of request queue (like mnesia??) so that restarts of PoolSupervisor can resume from unprocessed blocks.
 
 
-test/evm has 2 evm executables - evm and evm-with-exit12. The latter is a special executable which just exits with status code 12.
-
-
-
-
-
-
-
-
-
-----
-Rough notes
-
-
-stash, executor - transient
-stateful executor - temporary
-server - transient
-
-
-
-[block specimen -> tracing -> block result -> contract snapshots] 
+test/evm has 2 evm executables which are used in unit tests - 
+evm : normal evm which is used in production...it's a symlinked version of $REPO_ROOT/evm/evm 
+evm-with-exit12 : The latter is a special executable which just exits with status code 12.
