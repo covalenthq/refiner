@@ -25,6 +25,19 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/rudder>.
 
+## Test
+
+To start mock ProofChain and IPFS-Pinner in Terminal 1 run:
+
+```
+docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
+```
+
+Wait a minute then in Terminal 2 run:
+```
+mix test
+```
+
 ## Block Specimen Transformer (using `Go` binary)
 
 1. Check if the transformer plugin exists.
