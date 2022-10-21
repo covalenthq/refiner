@@ -126,7 +126,6 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
   def decode_http_resp({:error, %Mint.TransportError{reason: :econnrefused} = e}),
     do: raise(Rudder.RPCError, e)
 
-
   def decode_jsonrpc_resp(%{"id" => seq, "error" => %{"code" => code, "message" => msg}}),
     do: {seq, req_error(code, msg)}
 
