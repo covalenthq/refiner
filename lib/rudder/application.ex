@@ -17,6 +17,7 @@ defmodule Rudder.Application do
        pools: %{
          :default => [size: 32]
        }},
+      {Rudder.IPFSInteractor, name: Rudder.IPFSInteractor},
       Rudder.Avro.Client,
       {Rudder.Avro.BlockSpecimenDecoder, name: Rudder.Avro.BlockSpecimenDecoder},
       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
