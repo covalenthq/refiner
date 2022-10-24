@@ -25,6 +25,19 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/rudder>.
 
+## Test
+
+To start mock ProofChain and IPFS-Pinner in Terminal 1 run:
+
+```
+docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
+```
+
+Wait a minute then in Terminal 2 run:
+```
+mix test
+```
+
 ## Block Specimen Transformer (using `Go` binary)
 
 1. Check if the transformer plugin exists.
@@ -102,7 +115,7 @@ iex(4)> iex(3)> Rudder.Avro.BlockSpecimenDecoder.decode_file("test-data/1-151275
            ...
            ..
            .
-           
+
 ```
 
 4. Please note the above extractor process only extract a single specimen
@@ -150,7 +163,7 @@ In order to run the listener you need to fork ethereum node, run a script to add
 export ERIGON_NODE="erigon.node.url"
 ```
 
-3. Inside a terminal got to the rudder folder and run: 
+3. Inside a terminal got to the rudder folder and run:
 
 ```bash
 docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orphans
@@ -159,13 +172,13 @@ docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orpha
 4. Inside a separate terminal run:
 
 ```bash
-docker exec -it eth-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
+docker exec -it eth-test-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
 ```
 
 5. Inside a third terminal navigate to the `rudder` folder and run:
 
 ```elixir
-iex -S mix 
+iex -S mix
 Rudder.ProofChain.BlockSpecimenEventListener.start()
 ```
 
@@ -181,7 +194,7 @@ In order to run the interactor you need to fork ethereum node and run a script t
 export ERIGON_NODE="erigon.node.url"
 ```
 
-3. Inside a terminal got to the rudder folder and run: 
+3. Inside a terminal got to the rudder folder and run:
 
 ```bash
 docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orphans
@@ -190,7 +203,7 @@ docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orpha
 4. Inside a second terminal navigate to the `rudder` folder and run:
 
 ```elixir
-iex -S mix 
+iex -S mix
 ```
 
 then
@@ -202,7 +215,30 @@ Rudder.ProofChain.Interactor.test_submit_block_result_proof(block_height)
 or
 
 ```elixir
-Rudder.ProofChain.Interactor.submit_block_result_proof(chain_id, block_height, block_specimen_hash, block_result_hash, url) 
+Rudder.ProofChain.Interactor.submit_block_result_proof(chain_id, block_height, block_specimen_hash, block_result_hash, url)
+=======
+## Block Specimen Session Event Listener
+In order to run the listener you need to fork ethereum node, run a script to add the operators and a script that mocks block specimen submissions and session finalizations:
+1. Download [bsp-agent](https://github.com/covalenthq/bsp-agent).
+2. Navigate to the `bsp-agent` folder.
+3. Add `envrc.local ` file.
+4. Inside `envrc.local` add ERIGON_NODE variable and replace the node's url with yours:
+
+```
+export ERIGON_NODE="erogone.node.url"
+```
+5. Inside a terminal got to the bsp-agent folder and run:
+```
+docker compose --env-file ".env" -f "docker-compose-local.yml" up --remove-orphans
+```
+6. Inside a separate terminal run:
+```
+docker exec -it eth-test-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
+```
+7. Inside a third terminal navigate to the `rudder` folder and run:
+```
+iex -S mix
+Rudder.ProofChain.BlockSpecimenEventListener.start()
 ```
 
 

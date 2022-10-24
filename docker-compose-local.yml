@@ -3,7 +3,7 @@ version: '3'
 services:
   node:
     image: "gcr.io/covalent-project/proofchain:latest"
-    container_name: eth-node
+    container_name: eth-test-node
     restart:  on-failure
     expose:
       - 8545:8545
@@ -27,6 +27,16 @@ services:
       - node
     networks:
       - cqt-net
+
+  ipfs-pinner:
+    image: "gcr.io/covalent-project/ipfs-pinner:latest"
+    container_name: ipfs-pinner-instance
+    restart:  on-failure
+    expose:
+      - 3001:3001
+    ports:
+      - 3001:3001
+    entrypoint: ./entry.sh
 
 networks:
   cqt-net:
