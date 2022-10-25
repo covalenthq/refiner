@@ -1,41 +1,57 @@
 defmodule Rudder.BlockResultUploaderTest do
   use ExUnit.Case, async: true
 
-  setup do
-    Porcelain.spawn("./server", [
-      "sudo",
-      "-port",
-      "3000",
-      "-file",
-      "temp.txt",
-      "-jwt",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGMxQkE4ODRFNzczMjBBODQ2NDk4QjI1RDZmNWI4NWU1YkRENDViMTYiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjE4OTk5MzE3NTAsIm5hbWUiOiJyZWZpbmVyLWlwZnMtcGlubmVyIn0.aX1F8S-dIGFKLa4vjQv8FEH-z_T3AU5z5DNyBUKRLOA"
-    ])
-
+  setup_all do
     blockResultUploader = start_supervised!(Rudder.BlockResultUploader)
-    %{blockResultUploader: blockResultUploader}
+    iPFSInteractor = start_supervised!(Rudder.IPFSInteractor)
+
+    %{blockResultUploader: blockResultUploader, iPFSInteractor: iPFSInteractor}
   end
 
-  # test "ipfs contains cid", %{blockResultUploader: blockResultUploader} do
-  #   assert Rudder.BlockResultUploader.lookup() == []
+  test "uploads block result to ipfs and sends the block result hash to proof chain", %{
+    blockResultUploader: _blockResultUploader,
+    iPFSInteractor: _iPFSInteractor
+  } do
+    expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
 
-  #   Rudder.BlockResultUploader.pin("temp.txt")
-  #   cid = Rudder.BlockResultUploader.lookup()
+    expected_block_result_hash =
+      <<135, 41, 140, 194, 243, 31, 186, 115, 24, 30, 162, 169, 230, 239, 16, 220, 226, 30, 217,
+        94, 152, 189, 172, 156, 78, 21, 4, 234, 22, 244, 134, 228>>
 
-  #   {err, _} =
-  #     Finch.build(:get, "https://dweb.link/ipfs/#{cid}")
-  #     |> Finch.request(Rudder.Finch, receive_timeout: 50_000)
+    block_result_metadata = %Rudder.BlockResultMetadata{
+      chain_id: 1,
+      block_height: 1,
+      block_specimen_hash: "525D191D6492F1E0928d4e816c29778c",
+      file_path: "./temp.txt"
+    }
 
-  #   assert err != :error
-  # end
+    {error, cid, block_result_hash} =
+      Rudder.BlockResultUploader.upload_block_result(block_result_metadata)
 
-  test "ipfs contains cid with known cid", %{blockResultUploader: blockResultUploader} do
-    Rudder.BlockResultUploader.pin("temp.txt")
-    cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+    assert error == :ok
+    assert cid == expected_cid
+    assert block_result_hash == expected_block_result_hash
+  end
 
+  test "ipfs contains cid with known cid", %{
+    iPFSInteractor: _iPFSInteractor,
+    blockResultUploader: _blockResultUploader
+  } do
+    {:ok, _current_dir} = File.cwd()
+    {err, cid} = Rudder.IPFSInteractor.pin("./temp.txt")
+    expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+
+    assert err == :ok
+    assert cid == expected_cid
+  end
+
+  test "the server works", %{
+    iPFSInteractor: _iPFSInteractor,
+    blockResultUploader: _blockResultUploader
+  } do
     {err, _} =
-      Finch.build(:get, "https://dweb.link/ipfs/#{cid}")
-      |> Finch.request(Rudder.Finch, receive_timeout: 50_000)
+      Finch.build(:get, "http://localhost:3001/pin")
+      |> Finch.request(Rudder.Finch)
 
     assert err != :error
   end

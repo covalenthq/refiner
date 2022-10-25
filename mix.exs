@@ -16,8 +16,7 @@ defmodule Rudder.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      applications: [:porcelain],
-      extra_applications: [:logger, :runtime_tools, :poison, :avrora],
+      extra_applications: [:logger, :runtime_tools, :poison, :avrora, :porcelain],
       mod: {Rudder.Application, []}
     ]
   end
@@ -28,6 +27,7 @@ defmodule Rudder.MixProject do
       {:poison, "~> 5.0"},
       {:porcelain, "~> 2.0"},
       {:broadway, "~> 1.0", override: true},
+      # {:erlexec, "~> 2.0"},
       {:off_broadway_redis, "~> 0.4.3"},
       {:cors_plug, "~> 2.0"},
       {:phoenix, "~> 1.4.9"},

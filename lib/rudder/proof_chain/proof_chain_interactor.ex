@@ -85,8 +85,7 @@ defmodule Rudder.ProofChain.Interactor do
     signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
 
     with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
-      IO.inspect(res)
-      true
+      :ok
     end
   end
 end
