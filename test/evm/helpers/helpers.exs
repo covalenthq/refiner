@@ -1,9 +1,18 @@
 defmodule TestHelper do
   defmodule EVMInputGenerator do
     def get_evm_path(is_with_exit? \\ false) do
-      case is_with_exit? do
-        false -> "test/evm/evm"
-        true -> "test/evm/evm-with-exit12"
+      arch = Rudder.Util.get_system_arch()
+
+      if arch == 'x86_64-apple-darwin21.5.0' do
+        case is_with_exit? do
+          false -> "evm/evm_amd64"
+          true -> "test/evm/evm-with-exit12"
+        end
+      else
+        case is_with_exit? do
+          false -> "test/evm/evm"
+          true -> "test/evm/evm-with-exit12"
+        end
       end
     end
   end
