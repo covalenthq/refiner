@@ -240,3 +240,17 @@ docker exec -it eth-test-node /bin/sh  -c "cd /usr/src/app; npm run docker:run";
 iex -S mix
 Rudder.ProofChain.BlockSpecimenEventListener.start()
 ```
+
+
+## Block Processor
+
+The block processor (`lib/rudder/evm`) takes block_id and block specimen json string and gives the block result. The stateless EVM needed to do this is written in golang, which is invoked via Porcelain in elixir.
+
+```elixir
+iex(87)> replica_fp="test-data/1-15127602-replica-0xce9ed851812286e05cd34684c9ce3836ea62ebbfc3764c8d8a131f0fd054ca35"
+
+iex(87)> [replica_fp] |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_file/1) |> Enum.map(fn {:ok, contents} -> {Integer.to_string(Enum.random('0123456789abcdef')), Poison.encode!(contents)} end) |> Enum.map(&Rudder.BlockProcessor.sync_queue/1)
+
+```
+
+The gap above is that the `extractor` used for decoding is for codec version 0.2 and an older version of extractor which doesn't play with the stateless evm tool. Additionally, the specimen needs to be extracted from replica structure (json) before being passed to the `sync_queue` API.
