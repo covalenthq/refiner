@@ -13,11 +13,12 @@ defmodule Rudder.IPFSInteractor do
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
     port = Application.get_env(:ipfs_pinner, :port)
+    url = "http://localhost:#{port}/upload?filePath=#{file_path}"
 
     {:ok, %Finch.Response{body: body, headers: _, status: _}} =
       Finch.build(
         :get,
-        "http://localhost:#{port}/pin?filePath=#{file_path}"
+        url
       )
       |> Finch.request(Rudder.Finch)
 
@@ -31,21 +32,20 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:fetch, cid}, _from, state) do
-    {err, data} =
-      Finch.build(
-        :get,
-        "https://dweb.link/ipfs/#{cid}"
-      )
-      |> Finch.request(Rudder.Finch, receive_timeout: 50_000)
+    port = Application.get_env(:ipfs_pinner, :port)
 
-    {:reply, {err, data}, state}
+    {status, data} =
+      Finch.build(:get, "http://localhost:#{port}/get?cid=#{cid}")
+      |> Finch.request(Rudder.Finch, receive_timeout: 60_000, pool_timeout: 60_000)
+
+    {:reply, {status, data}, state}
   end
 
   def pin(path) do
-    GenServer.call(Rudder.IPFSInteractor, {:pin, path})
+    GenServer.call(Rudder.IPFSInteractor, {:pin, path}, :infinity)
   end
 
   def fetch(cid) do
-    GenServer.call(Rudder.IPFSInteractor, {:fetch, cid})
+    GenServer.call(Rudder.IPFSInteractor, {:fetch, cid}, :infinity)
   end
 end
