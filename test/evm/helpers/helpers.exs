@@ -5,7 +5,7 @@ defmodule TestHelper do
 
       if arch == 'x86_64-apple-darwin21.5.0' do
         case is_with_exit? do
-          false -> "evm/evm_amd64"
+          false -> "test/evm/evm_amd64"
           true -> "test/evm/evm-with-exit12"
         end
       else
