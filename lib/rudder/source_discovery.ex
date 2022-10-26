@@ -11,11 +11,10 @@ defmodule Rudder.SourceDiscovery do
   end
 
   defp discover_source(specimen_key, urls) do
-    [chain_id, block_height, block_hash, specimen_hash] = String.split(specimen_key, "_")
-    # pull data from ipfs using the given urls and push the result for further processing?
-    IO.inspect("Source Discovery received urls for the specimen hash: " <> specimen_hash)
-    IO.inspect(urls)
-    IO.inspect("")
+    url = Enum.at(urls, 0)
+    ["ipfs", cid] = String.split(url, "://")
+
+    Rudder.IPFSInteractor.fetch(cid)
   end
 
   defp discover_source(specimen_hash) do
