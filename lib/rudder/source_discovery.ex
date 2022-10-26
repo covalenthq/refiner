@@ -10,7 +10,7 @@ defmodule Rudder.SourceDiscovery do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  defp discover_source(specimen_key, urls) do
+  defp discover_source(_specimen_key, urls) do
     url = Enum.at(urls, 0)
     ["ipfs", cid] = String.split(url, "://")
 
