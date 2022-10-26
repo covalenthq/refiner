@@ -22,7 +22,7 @@ defmodule Rudder.BlockResultUploaderTest do
       chain_id: 1,
       block_height: 1,
       block_specimen_hash: "525D191D6492F1E0928d4e816c29778c",
-      file_path: "./temp.txt"
+      file_path: "./test-data/temp.txt"
     }
 
     {error, cid, block_result_hash} =
@@ -38,7 +38,7 @@ defmodule Rudder.BlockResultUploaderTest do
     blockResultUploader: _blockResultUploader
   } do
     {:ok, _current_dir} = File.cwd()
-    {err, cid} = Rudder.IPFSInteractor.pin("./temp.txt")
+    {err, cid} = Rudder.IPFSInteractor.pin("./test-data/temp.txt")
     expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
 
     assert err == :ok
