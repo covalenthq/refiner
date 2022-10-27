@@ -96,7 +96,7 @@ defmodule Rudder.BlockProcessor.Core do
 
     @impl true
     def handle_info(result = %Struct.ExecResult{}, state) do
-      GenServer.reply(result.misc, {result.status, result.block_id})
+      GenServer.reply(result.misc, {result.status, result.block_id, result.output_path})
 
       child_id = result.block_id
       Supervisor.terminate_child(:evm_pool_supervisor, child_id)

@@ -24,6 +24,14 @@ defmodule Rudder.SourceDiscovery do
     IO.inspect("")
   end
 
+  def get_specimen_file_path(specimena_hash) do
+    "ipfs://" <> cid = "ipfs://QmenLp8RvB69Uk3G4udJWVqBVPkReZPW5AMikqoraGm6Bv"
+
+    # use this while we do not have the source discovery implemented
+    temp_test_path = "test-data/block-specimens/1-15127599-replica-0x167a4a9380713f133aa55f251fd307bd88dfd9ad1f2087346e1b741ff47ba7f5"
+    temp_test_path
+  end
+
   @impl true
   def handle_cast({:push, specimen_key, urls}, state) do
     discover_source(specimen_key, urls)
