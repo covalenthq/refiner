@@ -59,6 +59,10 @@ defmodule Rudder.BlockProcessor.Worker do
         {:error, :timeout} ->
           IO.puts("log timeout here")
           raise "oops timeout"
+
+        {:error, :noproc} ->
+          IO.puts("plugin not processed")
+          raise "oops unexecutable"
       end
 
       Porcelain.Process.stop(handler)

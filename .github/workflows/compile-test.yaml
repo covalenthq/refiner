@@ -2,9 +2,9 @@ name: compile-test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   MIX_ENV: test
@@ -52,7 +52,6 @@ jobs:
           rm otp.tar.gz
           .setup-elixir/otp/Install -minimal $(pwd)/.setup-elixir/otp
           echo "$(pwd)/.setup-elixir/otp/bin" >> $GITHUB_PATH
-
 
       - name: Retrieve Cached Dependencies
         uses: actions/cache@v2
