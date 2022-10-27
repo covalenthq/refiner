@@ -74,7 +74,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     Enum.reduce(bsp_keys, specimen_url_map, fn bsp_key, new_specimen_url_map ->
       if Map.has_key?(specimen_url_map, bsp_key) do
         bsp_urls = Map.get(specimen_url_map, bsp_key)
-        GenServer.cast(Rudder.SourceDiscovery, {:push, bsp_key, bsp_urls})
+        GenServer.cast(Rudder.BlockSpecimenDiscoverer, {:push, bsp_key, bsp_urls})
         Map.delete(new_specimen_url_map, bsp_key)
       else
         new_specimen_url_map

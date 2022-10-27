@@ -37,6 +37,8 @@ services:
     ports:
       - 3001:3001
     entrypoint: ./entry.sh
+    environment:
+      - WEB3_JWT=${WEB3_JWT}
 
 networks:
   cqt-net:
