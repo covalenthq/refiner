@@ -1,4 +1,4 @@
-defmodule Rudder.Preprocessor do
+defmodule Rudder.Pipeline do
   use GenServer
 
   @impl true
@@ -10,24 +10,36 @@ defmodule Rudder.Preprocessor do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  def pipeline(specimen_hash) do
-    
-    specimen_file_path = Rudder.SourceDiscovery.get_specimen_file_path(specimen_hash)
-    {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimenDecoder.decode_file(specimen_file_path)
-
-    {:ok, decoded_specimen_start_block} = Map.fetch(decoded_specimen, "startBlock")
-    # noreply????
-    handle_call({:process, block_id, contents}, from, state)
-
-
-    # pull data from ipfs using the given specimen hash and push the result for further processing?
-    IO.inspect("Source Discovery received the specimen hash: " <> specimen_hash)
-    IO.inspect("")
+  defp delete_block_result(file_path) do
+    :ok
   end
 
-  @impl true
-  def handle_cast({:push, specimen_hash}, state) do
-    pipeline(specimen_hash)
-    {:noreply, [state]}
+  # TODOs:
+  # - keep track of duplicate specimens
+  # - keep track of fail backlog
+  # - implement file clean up
+  # - fix block processor
+  # - set up ProofChain for testing
+  # - add tests
+  def pipeline(specimen_hash, _urls) do
+    urls = ["ipfs://QmR4BQi8fTdZM28GuWmtfjkbNPPzxiHCBNRXJng6rSEfcv"]
+    {:ok, specimen} = Rudder.BlockSpecimenDiscoverer.discover_block_specimen(urls)
+    {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimenDecoder.decode(specimen)
+    {:ok, block_id} = Map.fetch(decoded_specimen, "startBlock")
+    result = Rudder.BlockProcessor.sync_queue({block_id, decoded_specimen})
+    IO.inspect(result)
+    {status, _block_id, block_result_file_path} = result
+
+    block_result_metadata = %Rudder.BlockResultMetadata{
+      chain_id: 1,
+      block_height: 2,
+      block_specimen_hash: specimen_hash,
+      file_path: block_result_file_path
+    }
+
+    {:ok, cid, block_result_hash} =
+      Rudder.BlockResultUploader.upload_block_result(block_result_metadata)
+
+    :ok = delete_block_result(block_result_file_path)
   end
 end
