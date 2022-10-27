@@ -81,6 +81,17 @@ This should generate the JSON output specimen file (results) to the output direc
 15548376.specimen.json 15557220.specimen.json 15582840.specimen.json
   ```
 
+
+## Source Discovery
+
+```bash
+iex(4)> Rudder.SourceDiscovery.discover(["ipfs://bafybeibs6deu3kx6zmppun4bd6lbmtuqbs676pxkc5oc54dxsinefsi6qy"])
+"From 7ab15490e93e6384cfaa233238777ea88a88b8b6 Mon Sep 17 00:00:00 2001\nFrom: s7v7nislands <s7v7nislands@gmail.com>\nDate: Mon, 25 Apr 2022 17:15:14 +0800\nSubject: [PATCH] all: use 'embed' instead of go-bindata (#24744)\n\n---\n Makefile                                   |      1 -\n build/tools/tools.
+go
+.....
+"
+```
+
 ## Block Processor
 
 The block processor (`lib/rudder/evm`) takes block_id and block specimen json string and gives the block result. The stateless EVM needed to do this is written in golang, which is invoked via Porcelain in elixir.
