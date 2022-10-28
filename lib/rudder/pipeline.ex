@@ -27,19 +27,19 @@ defmodule Rudder.Pipeline do
     {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimenDecoder.decode(specimen)
     {:ok, block_id} = Map.fetch(decoded_specimen, "startBlock")
     result = Rudder.BlockProcessor.sync_queue({block_id, decoded_specimen})
-    IO.inspect(result)
-    {status, _block_id, block_result_file_path} = result
+    # IO.inspect(result)
+    # {status, _block_id, block_result_file_path} = result
 
-    block_result_metadata = %Rudder.BlockResultMetadata{
-      chain_id: 1,
-      block_height: 2,
-      block_specimen_hash: specimen_hash,
-      file_path: block_result_file_path
-    }
+    # block_result_metadata = %Rudder.BlockResultMetadata{
+    #   chain_id: 1,
+    #   block_height: 2,
+    #   block_specimen_hash: specimen_hash,
+    #   file_path: block_result_file_path
+    # }
 
-    {:ok, cid, block_result_hash} =
-      Rudder.BlockResultUploader.upload_block_result(block_result_metadata)
+    # {:ok, cid, block_result_hash} =
+    #   Rudder.BlockResultUploader.upload_block_result(block_result_metadata)
 
-    :ok = delete_block_result(block_result_file_path)
+    # :ok = delete_block_result(block_result_file_path)
   end
 end

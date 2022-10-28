@@ -20,11 +20,11 @@ defmodule Rudder.Application do
       {Rudder.IPFSInteractor, name: Rudder.IPFSInteractor},
       Rudder.Avro.Client,
       {Rudder.Avro.BlockSpecimenDecoder, name: Rudder.Avro.BlockSpecimenDecoder},
-      {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader},
-      %{
-        id: Rudder.BlockProcessor.Core.Server,
-        start: {Rudder.BlockProcessor.Core.Server, :start_link, [%{request_queue: :queue.new()}]}
-      }
+      {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
+      # %{
+      #   id: Rudder.BlockProcessor.Core.Server,
+      #   start: {Rudder.BlockProcessor.Core.Server, :start_link, [%{request_queue: :queue.new()}]}
+      # }
     ]
 
     Rudder.BlockProcessor.start()
