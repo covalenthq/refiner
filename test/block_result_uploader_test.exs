@@ -14,6 +14,9 @@ defmodule Rudder.BlockResultUploaderTest do
   } do
     expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
 
+    # tests would be started from project root rather than test/
+    file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp.txt")))
+
     expected_block_result_hash =
       <<135, 41, 140, 194, 243, 31, 186, 115, 24, 30, 162, 169, 230, 239, 16, 220, 226, 30, 217,
         94, 152, 189, 172, 156, 78, 21, 4, 234, 22, 244, 134, 228>>
@@ -22,7 +25,7 @@ defmodule Rudder.BlockResultUploaderTest do
       chain_id: 1,
       block_height: 1,
       block_specimen_hash: "525D191D6492F1E0928d4e816c29778c",
-      file_path: "./test-data/temp.txt"
+      file_path: file_path
     }
 
     {error, cid, block_result_hash} =
@@ -37,9 +40,9 @@ defmodule Rudder.BlockResultUploaderTest do
     iPFSInteractor: _iPFSInteractor,
     blockResultUploader: _blockResultUploader
   } do
-    {:ok, _current_dir} = File.cwd()
-    {err, cid} = Rudder.IPFSInteractor.pin("./test-data/temp.txt")
-    expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+    file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp.txt")))
+    {err, cid} = Rudder.IPFSInteractor.pin(file_path)
+    expected_cid = "bafkreiehfggmf4y7xjzrqhvcvhto6eg44ipnsxuyxwwjytqvatvbn5eg4q"
 
     assert err == :ok
     assert cid == expected_cid
@@ -50,7 +53,7 @@ defmodule Rudder.BlockResultUploaderTest do
     blockResultUploader: _blockResultUploader
   } do
     {err, _} =
-      Finch.build(:get, "http://localhost:3001/pin")
+      Finch.build(:get, "http://localhost:3001/upload")
       |> Finch.request(Rudder.Finch)
 
     assert err != :error
