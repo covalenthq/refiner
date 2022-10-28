@@ -1,6 +1,7 @@
 defmodule Rudder.BlockProcessor.Core do
   alias Rudder.BlockProcessor.Struct
   alias Rudder.BlockProcessor.Worker
+  alias Rudder.BlockProcessor.Core
 
   defmodule PoolSupervisor do
     use Supervisor
@@ -17,7 +18,7 @@ defmodule Rudder.BlockProcessor.Core do
         %{
           id: __MODULE__,
           type: :worker,
-          start: {BlockProcessor.Server, :start_link, [state]},
+          start: {Core.Server, :start_link, [state]},
           restart: :permanent
         }
       ]
@@ -81,7 +82,7 @@ defmodule Rudder.BlockProcessor.Core do
           }
         )
 
-      IO.puts("child spec id is #{Map.get(worker_sup_child_spec, :id)}")
+      # IO.puts("child spec id is #{Map.get(worker_sup_child_spec, :id)}")
 
       case Supervisor.start_child(:evm_pool_supervisor, worker_sup_child_spec) do
         {:error, term} ->

@@ -1,11 +1,11 @@
 defmodule Rudder.BlockProcessor.Worker do
   alias Rudder.BlockProcessor.Struct
+  alias Rudder.BlockProcessor.Worker
 
   defmodule WorkerSupervisor do
     use Supervisor
 
     def start_link(args) do
-      IO.puts("reaches here all right")
       Supervisor.start_link(__MODULE__, args)
     end
 
@@ -17,7 +17,7 @@ defmodule Rudder.BlockProcessor.Worker do
       children = [
         %{
           id: executor_id,
-          start: {Executor, :start_link, [inp, evm]},
+          start: {Worker.Executor, :start_link, [inp, evm]},
           type: :worker,
           restart: :transient
         }
