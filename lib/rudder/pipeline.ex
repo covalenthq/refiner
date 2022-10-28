@@ -26,8 +26,11 @@ defmodule Rudder.Pipeline do
     {:ok, specimen} = Rudder.BlockSpecimenDiscoverer.discover_block_specimen(urls)
     {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimenDecoder.decode(specimen)
     {:ok, block_id} = Map.fetch(decoded_specimen, "startBlock")
+    decoded_specimen = decoded_specimen |> Poison.encode!
+    IO.inspect(block_id)
     result = Rudder.BlockProcessor.sync_queue({block_id, decoded_specimen})
-    # IO.inspect(result)
+    IO.inspect(result)
+    # Rudder.Pipeline.pipeline("a", [])
     # {status, _block_id, block_result_file_path} = result
 
     # block_result_metadata = %Rudder.BlockResultMetadata{
