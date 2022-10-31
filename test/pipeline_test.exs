@@ -1,4 +1,4 @@
-defmodule Rudder.BlockResultUploaderTest do
+defmodule Rudder.PipelineTest do
   use ExUnit.Case, async: true
 
   test "returns the cid and hash of the processed block hash", %{} do
