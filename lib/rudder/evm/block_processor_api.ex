@@ -18,7 +18,7 @@ defmodule Rudder.BlockProcessor do
   @doc """
   Sends a synchronous request to the worker pool for manufacturing block result from the given block specimen contents
   """
-  def sync_queue({block_id, contents}) do
-    Core.Server.sync_queue({block_id, contents})
+  def sync_queue(block_specimen_metadata) do
+    Core.Server.sync_queue(block_specimen_metadata)
   end
 end
