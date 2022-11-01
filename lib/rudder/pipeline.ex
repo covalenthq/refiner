@@ -1,6 +1,37 @@
 defmodule Rudder.Pipeline do
   use GenServer
 
+  # defmodule Supervisor do
+  #   use Supervisor
+
+  #   @backlog_filepath ""
+
+  #   def start_link(workers_limit) do
+  #     Supervisor.start_link(__MODULE__, [], name: :pipeline_supervisor)
+  #   end
+
+  #   @impl true
+  #   def init(state) do
+  #     children = [
+  #       %{
+  #         id: __MODULE__,
+  #         type: :worker,
+  #         start: {Core.Server, :start_link, [state]},
+  #         restart: :permanent
+  #       }
+  #     ]
+
+  #     # the worker supervisor fails on 3 restarts in 10 seconds...so if there are two of them in 20 seconds,
+  #     # the PoolSupervisor fails indicating some problem with the setup
+  #     Supervisor.init(children, strategy: :one_for_one, max_restarts: 2, max_seconds: 20)
+  #   end
+
+  #   def on_fail(specimen) do
+  #     append_to_file(text, filepath)
+  #   end
+
+  # end
+
   @impl true
   def init(_) do
     {:ok, []}
