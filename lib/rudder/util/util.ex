@@ -27,4 +27,10 @@ defmodule Rudder.Util do
   def get_system_arch do
     :erlang.system_info(:system_architecture)
   end
+
+  def append_to_file(text, filepath) do
+    {:ok, file} = File.open(filepath, [:append, {:delayed_write, 100, 20}])
+    Enum.each(text, &IO.binwrite(file, &1))
+    File.close(file)
+  end
 end
