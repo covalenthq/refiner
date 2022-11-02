@@ -2,7 +2,7 @@ version: '3'
 
 services:
   node:
-    image: "gcr.io/covalent-project/proofchain:latest"
+    image: "gcr.io/covalent-project/operational-staking:latest"
     container_name: eth-test-node
     restart:  on-failure
     expose:
@@ -16,7 +16,7 @@ services:
       - 8545:8545
 
   cqt-virtnet:
-    image: "gcr.io/covalent-project/proofchain:latest"
+    image: "gcr.io/covalent-project/operational-staking:latest"
     container_name: set-up-contracts
     restart: on-failure
     expose:
