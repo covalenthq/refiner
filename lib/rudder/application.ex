@@ -20,14 +20,12 @@ defmodule Rudder.Application do
       {Rudder.IPFSInteractor, name: Rudder.IPFSInteractor},
       Rudder.Avro.Client,
       {Rudder.Avro.BlockSpecimenDecoder, name: Rudder.Avro.BlockSpecimenDecoder},
-      {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
-      # %{
-      #   id: Rudder.BlockProcessor.Core.Server,
-      #   start: {Rudder.BlockProcessor.Core.Server, :start_link, [%{request_queue: :queue.new()}]}
-      # }
+      {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader},
+      %{
+        id: Rudder.BlockProcessor.Core.PoolSupervisor,
+        start: {Rudder.BlockProcessor.Core.PoolSupervisor, :start_link, [10]}
+      }
     ]
-
-    Rudder.BlockProcessor.start()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

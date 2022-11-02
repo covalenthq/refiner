@@ -13,6 +13,10 @@ defmodule Rudder.PipelineTest do
 
     assert status == :ok
     assert cid == expected_cid
-    # assert block_result_hash == expected_block_result_hash
+    assert block_result_hash == expected_block_result_hash
   end
+
+  # test "generates a specimen backlog file with the failed specimen hash", %{} do
+  #   {status, cid, block_result_hash} = Rudder.Pipeline.pipeline("hash", [])
+  # end
 end
