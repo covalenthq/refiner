@@ -74,7 +74,8 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     Enum.reduce(bsp_keys, specimen_url_map, fn bsp_key, new_specimen_url_map ->
       if Map.has_key?(specimen_url_map, bsp_key) do
         bsp_urls = Map.get(specimen_url_map, bsp_key)
-        GenServer.cast(Rudder.BlockSpecimenDiscoverer, {:push, bsp_key, bsp_urls})
+        [_chain_id, _block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
+        Rudder.Pipeline.Spawner.push_hash(specimen_hash, bsp_urls)
         Map.delete(new_specimen_url_map, bsp_key)
       else
         new_specimen_url_map

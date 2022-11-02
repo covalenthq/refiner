@@ -1,47 +1,29 @@
 defmodule Rudder.Pipeline do
-  use GenServer
+  defmodule Spawner do
+    use DynamicSupervisor
 
-  @impl true
-  def init(_) do
-    {:ok, []}
-  end
+    def start_link(_) do
+      DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__, strategy: :one_for_one)
+    end
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, [], name: __MODULE__)
-  end
+    @impl true
+    def init(_) do
+      DynamicSupervisor.init(strategy: :one_for_one)
+    end
 
-  defp fetch_replica_event(decoded_specimen) do
-    with {:ok, replica_event} <- Map.fetch(decoded_specimen, "replicaEvent") do
-      [replica_event | _] = replica_event
-      {:ok, replica_event}
-    else
-      err -> err
+    def push_hash(specimen_hash, urls) do
+      DynamicSupervisor.start_child(
+        __MODULE__,
+        {Agent,
+         fn ->
+           Rudder.Pipeline.process_specimen(specimen_hash, urls)
+         end}
+      )
     end
   end
 
-  defp extract_block_specimen_metadata(decoded_specimen) do
-    with {:ok, block_height} <- Map.fetch(decoded_specimen, "startBlock"),
-         {:ok, replica_event} <- fetch_replica_event(decoded_specimen),
-         {:ok, data} <- Map.fetch(replica_event, "data"),
-         {:ok, chain_id} <- Map.fetch(data, "NetworkId") do
-      {:ok,
-       %Rudder.BlockSpecimenMetadata{
-         chain_id: chain_id,
-         block_height: Integer.to_string(block_height),
-         contents: Poison.encode!(data)
-       }}
-    else
-      err -> err
-    end
-  end
 
-  defp write_to_backlog(specimen_hash, urls, _err) do
-    backlog_filepath = Application.get_env(:rudder, :backlog_filepath)
-    text = specimen_hash <> "," <> List.to_string(urls) <> ";"
-    Rudder.Util.append_to_file(text, backlog_filepath)
-  end
-
-  def pipeline(specimen_hash, urls) do
+  def process_specimen(specimen_hash, urls) do
     # try do
     with {:ok, specimen} <- Rudder.BlockSpecimenDiscoverer.discover_block_specimen(urls),
          {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimenDecoder.decode(specimen),
@@ -65,5 +47,36 @@ defmodule Rudder.Pipeline do
     # rescue
     #   e -> write_to_backlog(specimen_hash, urls, e)
     # end
+  end
+
+  defp extract_block_specimen_metadata(decoded_specimen) do
+    with {:ok, block_height} <- Map.fetch(decoded_specimen, "startBlock"),
+         {:ok, replica_event} <- fetch_replica_event(decoded_specimen),
+         {:ok, data} <- Map.fetch(replica_event, "data"),
+         {:ok, chain_id} <- Map.fetch(data, "NetworkId") do
+      {:ok,
+       %Rudder.BlockSpecimenMetadata{
+         chain_id: chain_id,
+         block_height: Integer.to_string(block_height),
+         contents: Poison.encode!(data)
+       }}
+    else
+      err -> err
+    end
+  end
+
+  defp fetch_replica_event(decoded_specimen) do
+    with {:ok, replica_event} <- Map.fetch(decoded_specimen, "replicaEvent") do
+      [replica_event | _] = replica_event
+      {:ok, replica_event}
+    else
+      err -> err
+    end
+  end
+
+  defp write_to_backlog(specimen_hash, urls, _err) do
+    backlog_filepath = Application.get_env(:rudder, :backlog_filepath)
+    text = specimen_hash <> "," <> List.to_string(urls) <> ";"
+    Rudder.Util.append_to_file(text, backlog_filepath)
   end
 end
