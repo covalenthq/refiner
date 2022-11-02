@@ -67,11 +67,11 @@ defmodule Rudder.BlockProcessor.Core do
     end
 
     @impl true
-    def handle_call({:process, block_specimen_metadata}, from, state) do
-      block_id = block_specimen_metadata.block_height
-      contents = block_specimen_metadata.contents
-      # {:ok, block_id} = Map.fetch(block_specimen_metadata, "block_height")
-      # {:ok, contents} = Map.fetch(block_specimen_metadata, "contents")
+    def handle_call(
+          {:process, %Rudder.BlockSpecimenMetadata{block_height: block_id, contents: contents}},
+          from,
+          state
+        ) do
       worker_sup_child_spec =
         PoolSupervisor.get_worker_supervisor_childspec(
           block_id,
@@ -109,7 +109,7 @@ defmodule Rudder.BlockProcessor.Core do
       {:noreply, state}
     end
 
-    def sync_queue(block_specimen_metadata) do
+    def sync_queue(block_specimen_metadata = %Rudder.BlockSpecimenMetadata{}) do
       ## TODO: this is supposed to block the caller in case the pool is exhausted.
       GenServer.call(:evm_server, {:process, block_specimen_metadata}, :infinity)
     end

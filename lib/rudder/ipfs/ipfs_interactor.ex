@@ -12,7 +12,7 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
-    port = Application.get_env(:ipfs_pinner, :port)
+    port = Application.get_env(:rudder, :ipfs_pinner_port)
     url = "http://localhost:#{port}/upload?filePath=#{file_path}"
 
     {:ok, %Finch.Response{body: body, headers: _, status: _}} =
@@ -32,7 +32,7 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:fetch, cid}, _from, state) do
-    port = Application.get_env(:ipfs_pinner, :port)
+    port = Application.get_env(:rudder, :ipfs_pinner_port)
 
     {status, data} =
       Finch.build(:get, "http://localhost:#{port}/get?cid=#{cid}")
