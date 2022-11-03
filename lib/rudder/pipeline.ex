@@ -24,7 +24,7 @@ defmodule Rudder.Pipeline do
 
   def process_specimen(specimen_hash, urls) do
     try do
-      with {:ok, specimen} <- Rudder.BlockSpecimenDiscoverer.discover_block_specimen(urls),
+      with {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
            {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimenDecoder.decode(specimen),
            {:ok, block_specimen_metadata} <- extract_block_specimen_metadata(decoded_specimen),
            {:success, block_result_file_path} <-
