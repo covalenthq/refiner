@@ -47,7 +47,8 @@ defmodule Rudder.BlockResultUploader do
   def upload_block_result(block_result_metadata) do
     GenServer.call(
       Rudder.BlockResultUploader,
-      {:upload_block_result, block_result_metadata}
+      {:upload_block_result, block_result_metadata},
+      :infinity
     )
   end
 

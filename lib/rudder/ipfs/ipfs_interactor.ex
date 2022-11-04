@@ -34,11 +34,11 @@ defmodule Rudder.IPFSInteractor do
   def handle_call({:fetch, cid}, _from, state) do
     port = Application.get_env(:rudder, :ipfs_pinner_port)
 
-    {status, data} =
+    {:ok, %Finch.Response{body: body, headers: _, status: _}} =
       Finch.build(:get, "http://localhost:#{port}/get?cid=#{cid}")
-      |> Finch.request(Rudder.Finch, receive_timeout: 60_000, pool_timeout: 60_000)
+      |> Finch.request(Rudder.Finch, receive_timeout: 60_000_000, pool_timeout: 60_000_000)
 
-    {:reply, {status, data}, state}
+    {:reply, body, state}
   end
 
   def pin(path) do
