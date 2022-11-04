@@ -49,11 +49,10 @@ defmodule Rudder.IPFSInteractor do
     GenServer.call(Rudder.IPFSInteractor, {:fetch, cid}, :infinity)
   end
 
-  def discover_block_specimen(urls) do
-    url = Enum.at(urls, 0)
+  def discover_block_specimen([url | _]) do
     ["ipfs", cid] = String.split(url, "://")
 
-    {:ok, response} = Rudder.IPFSInteractor.fetch(cid)
-    {:ok, response.body}
+    response = Rudder.IPFSInteractor.fetch(cid)
+    {:ok, response}
   end
 end
