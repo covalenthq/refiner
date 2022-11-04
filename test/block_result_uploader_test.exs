@@ -12,7 +12,7 @@ defmodule Rudder.BlockResultUploaderTest do
     blockResultUploader: _blockResultUploader,
     iPFSInteractor: _iPFSInteractor
   } do
-    expected_cid = "QmS21GuXiRMvJKHos4ZkEmQDmRBqRaF5tQS2CQCu2ne9sY"
+    expected_cid = "bafkreiehfggmf4y7xjzrqhvcvhto6eg44ipnsxuyxwwjytqvatvbn5eg4q"
 
     # tests would be started from project root rather than test/
     file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp.txt")))
@@ -52,8 +52,10 @@ defmodule Rudder.BlockResultUploaderTest do
     iPFSInteractor: _iPFSInteractor,
     blockResultUploader: _blockResultUploader
   } do
+    port = Application.get_env(:rudder, :ipfs_pinner_port)
+
     {err, _} =
-      Finch.build(:get, "http://localhost:3001/upload")
+      Finch.build(:get, "http://localhost:#{port}/upload")
       |> Finch.request(Rudder.Finch)
 
     assert err != :error

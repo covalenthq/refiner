@@ -26,15 +26,17 @@ defmodule Rudder.Pipeline do
     try do
       with {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
            {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimenDecoder.decode(specimen),
-           {:ok, block_specimen_metadata} <- extract_block_specimen_metadata(decoded_specimen),
+           {:ok, block_specimen} <- extract_block_specimen(decoded_specimen),
            {:success, block_result_file_path} <-
-             Rudder.BlockProcessor.sync_queue(block_specimen_metadata),
-           block_result_metadata <- %Rudder.BlockResultMetadata{
-             chain_id: block_specimen_metadata.chain_id,
-             block_height: block_specimen_metadata.block_height,
-             block_specimen_hash: specimen_hash,
-             file_path: block_result_file_path
-           },
+             Rudder.BlockProcessor.sync_queue(block_specimen),
+           {block_height, ""} <- Integer.parse(block_specimen.block_height),
+           block_result_metadata <-
+             %Rudder.BlockResultMetadata{
+               chain_id: block_specimen.chain_id,
+               block_height: block_height,
+               block_specimen_hash: specimen_hash,
+               file_path: block_result_file_path
+             },
            {:ok, cid, block_result_hash} <-
              Rudder.BlockResultUploader.upload_block_result(block_result_metadata),
            :ok <- File.rm(block_result_file_path) do
@@ -61,14 +63,14 @@ defmodule Rudder.Pipeline do
     {:ok, data}
   end
 
-  defp extract_block_specimen_metadata(decoded_specimen) do
+  defp extract_block_specimen(decoded_specimen) do
     with {:ok, block_height} <- Map.fetch(decoded_specimen, "startBlock"),
          {:ok, replica_event} <- fetch_replica_event(decoded_specimen),
          {:ok, data} <- Map.fetch(replica_event, "data"),
          {:ok, data} <- convert_block_hash_read(data),
          {:ok, chain_id} <- Map.fetch(data, "NetworkId") do
       {:ok,
-       %Rudder.BlockSpecimenMetadata{
+       %Rudder.BlockSpecimen{
          chain_id: chain_id,
          block_height: Integer.to_string(block_height),
          contents: Poison.encode!(data)
