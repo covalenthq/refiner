@@ -26,8 +26,6 @@ defmodule Rudder.BlockResultUploader do
       {:ok, cid} ->
         block_result_hash = hash_block_result_file(file_path)
 
-        {block_height, _} = Integer.parse(block_height)
-
         :ok =
           Rudder.ProofChain.Interactor.submit_block_result_proof(
             chain_id,
