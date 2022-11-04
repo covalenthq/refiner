@@ -47,10 +47,25 @@ defmodule Rudder.Pipeline do
     end
   end
 
+  defp convert_block_hash_read(data) do
+    # this is a temp solution until prod agents' codec schema is updated
+    converted_block_hash_read =
+      Enum.map(data["State"]["BlockhashRead"], fn el ->
+        truncated = trunc(el["BlockNumber"])
+        Map.replace(el, "BlockNumber", truncated)
+      end)
+
+    state = data["State"]
+    state = Map.replace(state, "BlockhashRead", converted_block_hash_read)
+    data = Map.replace(data, "State", state)
+    {:ok, data}
+  end
+
   defp extract_block_specimen_metadata(decoded_specimen) do
     with {:ok, block_height} <- Map.fetch(decoded_specimen, "startBlock"),
          {:ok, replica_event} <- fetch_replica_event(decoded_specimen),
          {:ok, data} <- Map.fetch(replica_event, "data"),
+         {:ok, data} <- convert_block_hash_read(data),
          {:ok, chain_id} <- Map.fetch(data, "NetworkId") do
       {:ok,
        %Rudder.BlockSpecimenMetadata{
