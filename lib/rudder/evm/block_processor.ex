@@ -109,9 +109,9 @@ defmodule Rudder.BlockProcessor.Core do
       {:noreply, state}
     end
 
-    def sync_queue(block_specimen_metadata = %Rudder.BlockSpecimen{}) do
+    def sync_queue(block_specimen = %Rudder.BlockSpecimen{}) do
       ## TODO: this is supposed to block the caller in case the pool is exhausted.
-      GenServer.call(:evm_server, {:process, block_specimen_metadata}, :infinity)
+      GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
     end
 
     @impl true
