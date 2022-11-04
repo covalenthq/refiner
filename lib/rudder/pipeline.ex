@@ -72,7 +72,8 @@ defmodule Rudder.Pipeline do
     end
   end
 
-  defp write_to_backlog(specimen_hash, urls, _err) do
+  defp write_to_backlog(specimen_hash, urls, err) do
+    IO.inspect(err)
     # backlog_filepath = Application.get_env(:rudder, :backlog_filepath)
     # text = specimen_hash <> "," <> List.to_string(urls) <> ";"
     # Rudder.Util.append_to_file(text, backlog_filepath)
