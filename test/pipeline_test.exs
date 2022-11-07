@@ -2,34 +2,33 @@ defmodule Rudder.PipelineTest do
   use ExUnit.Case, async: true
 
   test "returns the cid and hash of the processed block hash", %{} do
-    test_urls = ["ipfs://QmR4BQi8fTdZM28GuWmtfjkbNPPzxiHCBNRXJng6rSEfcv"]
-    expected_cid = "bafkreiawcv77lmfzm4wl2tmhtxx6zgkjo6eabxufjhulnbc4zk7pbg7ciy"
+    test_urls = ["ipfs://bafybeiaar2hb22exwntqi5eurrgdql3ci2nv2udva7fhcqdkshqgo7srfi"] #encoded specimen file: test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1 (codec-0.31)
+    expected_block_result_cid = "bafybeihxvejooqtilcmvep6vy33ehacvt6hiyfqkq434jfbi26lo4qsi7q"
 
     expected_block_result_hash =
-      <<22, 21, 127, 245, 176, 185, 103, 44, 189, 77, 135, 157, 239, 236, 153, 73, 119, 136, 0,
-        222, 133, 73, 232, 182, 132, 92, 202, 190, 240, 155, 226, 70>>
+      <<105, 231, 102, 197, 138, 130, 127, 60, 117, 72, 181, 192, 13, 4, 59, 70, 74, 105, 56, 78, 116, 108, 186, 247, 61, 119, 24, 129, 180, 220, 5, 58>>
 
     {status, cid, block_result_hash} = Rudder.Pipeline.process_specimen("hash", test_urls)
+
     assert status == :ok
-    assert cid == expected_cid
+    assert cid == expected_block_result_cid
     assert block_result_hash == expected_block_result_hash
   end
 
   test "pipeline spawner starts pipeline processes", %{} do
-    test_urls = ["ipfs://QmQVxzXp5DfipnwXJdXmvmXhUv9prpivsgNuZD9CZ2Q3EN"]
+    test_urls = ["ipfs://bafybeihg6dvzspiicrvawxy3sviwpahnryzmmsj2a4hg3sf7am55opav5u"] #encoded specimen file: test-data/encoded/1-15892755-replica-0x0e7bfa908e3fc04003e00afde7eb31772a012e51e0e094e4add1734da92297f7 (codec-0.31)
 
     {:ok, agent} = Rudder.Pipeline.Spawner.push_hash("hash1", test_urls)
 
-    expected_cid = "bafybeiav76c7cwycbazgzfc75cg56khknabahw3npuizpftnks6adnrwjy"
+    expected_block_result_cid = "bafybeicwqmey3cr3gybgesjiafco3hjxxhxgze44wqsbxs4qqiuoxzluby"
 
     expected_block_result_hash =
-      <<1, 156, 207, 30, 71, 119, 21, 41, 176, 249, 241, 222, 201, 7, 88, 135, 8, 168, 81, 117,
-        229, 149, 4, 45, 107, 147, 243, 250, 69, 107, 112, 159>>
+      <<214, 102, 145, 182, 240, 67, 233, 253, 208, 246, 40, 113, 175, 91, 166, 104, 18, 146, 84, 58, 250, 48, 211, 184, 35, 58, 206, 238, 33, 139, 105, 255>>
 
     {status, cid, block_result_hash} = Agent.get(agent, & &1)
 
     assert status == :ok
-    assert cid == expected_cid
+    assert cid == expected_block_result_cid
     assert block_result_hash == expected_block_result_hash
   end
 end

@@ -2,3 +2,4 @@
 	path = erigon
 	url = https://github.com/covalenthq/erigon
 	branch = covalent
+	shallow = true
