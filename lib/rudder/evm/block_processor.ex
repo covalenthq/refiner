@@ -52,8 +52,6 @@ defmodule Rudder.BlockProcessor.Core do
   defmodule Server do
     use GenServer
 
-    @default_evm_exec_path "./plugins/evm"
-
     def start_link(state) do
       GenServer.start_link(__MODULE__, state, name: :evm_server)
     end
@@ -82,7 +80,7 @@ defmodule Rudder.BlockProcessor.Core do
               sender: self(),
               misc: from
             },
-            %Struct.EVMParams{evm_exec_path: @default_evm_exec_path}
+            %Struct.EVMParams{}
           }
         )
 

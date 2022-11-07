@@ -27,6 +27,12 @@ be found at <https://hexdocs.pm/rudder>.
 
 ## Test
 
+Build the EVM tool binary by running:
+
+```
+make submodules build
+```
+
 To start mock ProofChain and IPFS-Pinner in Terminal 1 run:
 
 ```
