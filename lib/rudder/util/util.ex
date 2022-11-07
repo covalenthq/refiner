@@ -24,10 +24,6 @@ defmodule Rudder.Util do
     ABI.decode(fs, data |> Base.decode16!(case: :lower))
   end
 
-  def get_system_arch do
-    :erlang.system_info(:system_architecture)
-  end
-
   def append_to_file(text, filepath) do
     {:ok, file} = File.open(filepath, [:append, {:delayed_write, 100, 20}])
     Enum.each(text, &IO.binwrite(file, &1))

@@ -24,7 +24,7 @@ defmodule SupervisionTreeTest do
 
     inp = %Struct.InputParams{block_id: block_id, contents: contents, sender: self()}
     # TODO: use relative paths
-    evm = %Struct.EVMParams{evm_exec_path: EVMInputGenerator.get_evm_path()}
+    evm = %Struct.EVMParams{}
 
     _ =
       SupervisorUtils.start_link_supervised!(%{
@@ -65,7 +65,7 @@ defmodule SupervisionTreeTest do
     }
 
     # TODO: use relative paths
-    evm = %Struct.EVMParams{evm_exec_path: EVMInputGenerator.get_evm_path()}
+    evm = %Struct.EVMParams{}
 
     _ =
       TestHelper.SupervisorUtils.start_link_supervised!(%{
