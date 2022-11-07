@@ -20,6 +20,12 @@ by adding `rudder` to your list of dependencies in `mix.exs`:
       ]
     end
   ```
+  
+Run 
+```
+make submodules
+make build
+```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
