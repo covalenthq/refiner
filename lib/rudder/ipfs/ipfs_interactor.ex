@@ -1,6 +1,8 @@
 defmodule Rudder.IPFSInteractor do
   use GenServer
 
+  alias Multipart.Part
+
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
@@ -13,13 +15,16 @@ defmodule Rudder.IPFSInteractor do
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
     port = Application.get_env(:rudder, :ipfs_pinner_port)
-    url = "http://localhost:#{port}/upload?filePath=#{file_path}"
+    url = "http://localhost:#{port}/upload"
+
+    multipart = Multipart.new() |> Multipart.add_part(Part.file_body(file_path))
+    body_stream = Multipart.body_stream(multipart)
+    content_length = Multipart.content_length(multipart)
+    content_type = Multipart.content_type(multipart, "multipart/form-data")
+    headers = [{"Content-Type", content_type}, {"Content-Length", to_string(content_length)}]
 
     {:ok, %Finch.Response{body: body, headers: _, status: _}} =
-      Finch.build(
-        :get,
-        url
-      )
+      Finch.build("POST", url, headers, {:stream, body_stream})
       |> Finch.request(Rudder.Finch)
 
     body_map = body |> Poison.decode!()

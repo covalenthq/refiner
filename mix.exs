@@ -58,6 +58,7 @@ defmodule Rudder.MixProject do
       {:finch, "~> 0.13.0"},
       {:downstream, "~> 1.0"},
       {:websockex, "~> 0.4.3"},
+      {:multipart, "~> 0.3.1"},
 
       # static code analysis
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
