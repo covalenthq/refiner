@@ -114,5 +114,4 @@ defmodule Rudder.BlockSpecimenDecoderTest do
 
     assert resolved_specimens == expected_specimens
   end
-
 end
