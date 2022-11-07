@@ -12,14 +12,15 @@ defmodule Rudder.BlockResultUploaderTest do
     blockResultUploader: _blockResultUploader,
     iPFSInteractor: _iPFSInteractor
   } do
-    expected_cid = "bafkreiehfggmf4y7xjzrqhvcvhto6eg44ipnsxuyxwwjytqvatvbn5eg4q"
+    # "bafkreiehfggmf4y7xjzrqhvcvhto6eg44ipnsxuyxwwjytqvatvbn5eg4q"
+    expected_cid = "bafkreibm6jg3ux5qumhcn2b3flc3tyu6dmlb4xa7u5bf44yegnrjhc4yeq"
 
     # tests would be started from project root rather than test/
-    file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp.txt")))
+    file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp2.txt")))
 
     expected_block_result_hash =
-      <<135, 41, 140, 194, 243, 31, 186, 115, 24, 30, 162, 169, 230, 239, 16, 220, 226, 30, 217,
-        94, 152, 189, 172, 156, 78, 21, 4, 234, 22, 244, 134, 228>>
+      <<44, 242, 77, 186, 95, 176, 163, 14, 38, 232, 59, 42, 197, 185, 226, 158, 27, 22, 30, 92,
+        31, 167, 66, 94, 115, 4, 51, 98, 147, 139, 152, 36>>
 
     block_result_metadata = %Rudder.BlockResultMetadata{
       chain_id: 1,
