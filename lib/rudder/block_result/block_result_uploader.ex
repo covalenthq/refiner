@@ -26,14 +26,14 @@ defmodule Rudder.BlockResultUploader do
       {:ok, cid} ->
         block_result_hash = hash_block_result_file(file_path)
 
-        # :ok =
-        #   Rudder.ProofChain.Interactor.submit_block_result_proof(
-        #     chain_id,
-        #     block_height,
-        #     block_specimen_hash,
-        #     block_result_hash,
-        #     cid
-        #   )
+        :ok =
+          Rudder.ProofChain.Interactor.submit_block_result_proof(
+            chain_id,
+            block_height,
+            block_specimen_hash,
+            block_result_hash,
+            cid
+          )
 
         {:reply, {:ok, cid, block_result_hash}, state}
 
