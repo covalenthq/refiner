@@ -23,10 +23,4 @@ defmodule Rudder.Util do
     fs = ABI.FunctionSelector.decode(signature)
     ABI.decode(fs, data |> Base.decode16!(case: :lower))
   end
-
-  def append_to_file(text, filepath) do
-    {:ok, file} = File.open(filepath, [:append, {:delayed_write, 100, 20}])
-    Enum.each(text, &IO.binwrite(file, &1))
-    File.close(file)
-  end
 end
