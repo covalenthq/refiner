@@ -28,16 +28,16 @@ services:
     networks:
       - cqt-net
 
-  ipfs-pinner:
-    image: "gcr.io/covalent-project/ipfs-pinner:latest"
-    container_name: ipfs-pinner-instance
-    restart:  on-failure
-    expose:
-      - 3000:3000
-    ports:
-      - 3000:3000
-    environment:
-      - WEB3_JWT=${WEB3_JWT}
+  # ipfs-pinner:
+  #   image: "gcr.io/covalent-project/ipfs-pinner:latest"
+  #   container_name: ipfs-pinner-instance
+  #   restart:  on-failure
+  #   expose:
+  #     - 3000:3000
+  #   ports:
+  #     - 3000:3000
+  #   environment:
+  #     - WEB3_JWT=${WEB3_JWT}
 
 networks:
   cqt-net:
