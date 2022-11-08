@@ -21,12 +21,6 @@ by adding `rudder` to your list of dependencies in `mix.exs`:
     end
   ```
   
-Run 
-```
-make submodules
-make build
-```
-
 In order to run IPFS-Pinner in your home directory you need to run:
 ```
 sudo chmod -R 770 .ipfs 
