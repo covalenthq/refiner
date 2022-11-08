@@ -23,10 +23,10 @@ defmodule Rudder.BlockSpecimenDecoderTest do
     blockSpecimenDecoder: _blockSpecimenDecoder
   } do
     specimen_path =
-      "./test-data/encoded/1-15548376-replica-0xdc137623c4a82c51478c74093a5b01bb6332ee0afecc9913c1f33f7fe9781ba1"
+      "./test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1"
 
-    expected_start_block = 15_548_376
-    expected_hash = "0x0f9f25ab9792530bdc0441fc66bb60011e11b3bef067c545582dcbe5b9635be1"
+    expected_start_block = 15_892_728
+    expected_hash = "0x816c62d9c077d6d7423bb6ece430f40dcf53b38b9676d96ca0e120ee3ec5dcb9"
 
     {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimenDecoder.decode_file(specimen_path)
 
@@ -45,11 +45,11 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   } do
     dir_path = "./test-data/encoded/*"
 
-    expected_start_block = 15_548_376
-    expected_last_block = 15_582_840
+    expected_start_block = 15_892_728
+    expected_last_block = 15_892_755
 
-    expected_start_hash = "0x0f9f25ab9792530bdc0441fc66bb60011e11b3bef067c545582dcbe5b9635be1"
-    expected_last_hash = "0xfbc9d4bb10a28dd4aa8103a8fd708fa1be64fa1a9207c477133b1a3c336a9cd3"
+    expected_start_hash = "0x816c62d9c077d6d7423bb6ece430f40dcf53b38b9676d96ca0e120ee3ec5dcb9"
+    expected_last_hash = "0xf335ebbe317d437b9736299a6ab9222ff20c6fc6252877c92c0e4a1d15ebfb55"
 
     decode_specimen_stream = Rudder.Avro.BlockSpecimenDecoder.decode_dir(dir_path)
 
@@ -114,14 +114,4 @@ defmodule Rudder.BlockSpecimenDecoderTest do
 
     assert resolved_specimens == expected_specimens
   end
-
-  # test "Crashes blockSpecimenDecoder but not application", %{
-  #   blockSpecimenDecoder: blockSpecimenDecoder
-  # } do
-
-  #   children = :supervisor.count_children(blockSpecimenDecoder)
-
-  #   assert children == 1
-
-  # end
 end

@@ -23,8 +23,4 @@ defmodule Rudder.Util do
     fs = ABI.FunctionSelector.decode(signature)
     ABI.decode(fs, data |> Base.decode16!(case: :lower))
   end
-
-  def get_system_arch do
-    :erlang.system_info(:system_architecture)
-  end
 end

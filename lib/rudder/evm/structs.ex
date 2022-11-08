@@ -11,11 +11,10 @@ defmodule Rudder.BlockProcessor.Struct do
   defmodule EVMParams do
     @default_input_replica_path "stdin"
     @default_output_dir "./evm-out"
-    defstruct [
-      :evm_exec_path,
-      input_replica_path: @default_input_replica_path,
-      output_basedir: @default_output_dir
-    ]
+    @default_evm_exec_path "./plugins/evm"
+    defstruct evm_exec_path: @default_evm_exec_path,
+              input_replica_path: @default_input_replica_path,
+              output_basedir: @default_output_dir
   end
 
   defmodule ExecResult do

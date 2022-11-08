@@ -8,10 +8,6 @@ defmodule Rudder.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      %{
-        id: Rudder.SourceDiscovery,
-        start: {Rudder.SourceDiscovery, :start_link, [[]]}
-      },
       {Finch,
        name: Rudder.Finch,
        pools: %{
@@ -20,7 +16,12 @@ defmodule Rudder.Application do
       {Rudder.IPFSInteractor, name: Rudder.IPFSInteractor},
       Rudder.Avro.Client,
       {Rudder.Avro.BlockSpecimenDecoder, name: Rudder.Avro.BlockSpecimenDecoder},
-      {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader}
+      {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader},
+      %{
+        id: Rudder.BlockProcessor.Core.PoolSupervisor,
+        start: {Rudder.BlockProcessor.Core.PoolSupervisor, :start_link, [10]}
+      },
+      {Rudder.Pipeline.Spawner, name: Rudder.Pipeline.Spawner}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
