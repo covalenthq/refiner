@@ -27,6 +27,15 @@ make submodules
 make build
 ```
 
+In order to run IPFS-Pinner in your home directory you need to run:
+```
+sudo chmod -R 770 .ipfs 
+```
+then run
+```
+sudo chmod -R 770 ipfs-pinner 
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/rudder>.
