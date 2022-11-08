@@ -21,9 +21,9 @@ defmodule BlockProcessorReplHelper do
   def queue_test(is_sync) do
     block_id = "1234_" <> Atom.to_string(is_sync)
 
-    {:ok, contents1} = File.read("../../../test-data/block-specimen/15548376.specimen.json")
+    {:ok, contents1} = File.read("../../../test-data/block-specimen/15892728.specimen.json")
 
-    {:ok, contents2} = File.read("../../../test-data/block-specimen/15557220.specimen.json")
+    {:ok, contents2} = File.read("../../../test-data/block-specimen/15892755.specimen.json")
 
     lmbd1 = fn -> BlockProcessor.sync_queue({block_id, contents1}) end
     lmbd2 = fn -> BlockProcessor.sync_queue({block_id <> "_2", contents2}) end

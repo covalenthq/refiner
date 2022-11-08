@@ -52,8 +52,6 @@ defmodule Rudder.BlockProcessor.Core do
   defmodule Server do
     use GenServer
 
-    @default_evm_exec_path "./plugins/evm"
-
     def start_link(state) do
       GenServer.start_link(__MODULE__, state, name: :evm_server)
     end
@@ -67,7 +65,11 @@ defmodule Rudder.BlockProcessor.Core do
     end
 
     @impl true
-    def handle_call({:process, block_id, contents}, from, state) do
+    def handle_call(
+          {:process, %Rudder.BlockSpecimen{block_height: block_id, contents: contents}},
+          from,
+          state
+        ) do
       worker_sup_child_spec =
         PoolSupervisor.get_worker_supervisor_childspec(
           block_id,
@@ -78,7 +80,7 @@ defmodule Rudder.BlockProcessor.Core do
               sender: self(),
               misc: from
             },
-            %Struct.EVMParams{evm_exec_path: @default_evm_exec_path}
+            %Struct.EVMParams{}
           }
         )
 
@@ -97,7 +99,7 @@ defmodule Rudder.BlockProcessor.Core do
 
     @impl true
     def handle_info(result = %Struct.ExecResult{}, state) do
-      GenServer.reply(result.misc, {result.status, result.block_id})
+      GenServer.reply(result.misc, {result.status, result.output_path})
 
       child_id = result.block_id
       Supervisor.terminate_child(:evm_pool_supervisor, child_id)
@@ -105,9 +107,9 @@ defmodule Rudder.BlockProcessor.Core do
       {:noreply, state}
     end
 
-    def sync_queue({block_id, contents}) do
+    def sync_queue(block_specimen = %Rudder.BlockSpecimen{}) do
       ## TODO: this is supposed to block the caller in case the pool is exhausted.
-      GenServer.call(:evm_server, {:process, block_id, contents}, :infinity)
+      GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
     end
 
     @impl true

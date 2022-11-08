@@ -53,7 +53,8 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
     unique_submitted_specimens = extract_submitted_specimens(brp_submitted_logs)
 
     Enum.each(unique_submitted_specimens, fn specimen_hash ->
-      GenServer.cast(Rudder.SourceDiscovery, {:push, specimen_hash})
+      nil
+      # GenServer.cast(Rudder.BlockSpecimenDiscoverer, {:push, specimen_hash})
     end)
 
     :timer.sleep(1000)

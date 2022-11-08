@@ -20,12 +20,27 @@ by adding `rudder` to your list of dependencies in `mix.exs`:
       ]
     end
   ```
+  
+In order to run IPFS-Pinner in your home directory you need to run:
+```
+sudo chmod -R 770 .ipfs 
+```
+then run
+```
+sudo chmod -R 770 ipfs-pinner 
+```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/rudder>.
 
 ## Test
+
+Build the EVM tool binary by running:
+
+```
+make submodules build
+```
 
 To start mock ProofChain and IPFS-Pinner in Terminal 1 run:
 
