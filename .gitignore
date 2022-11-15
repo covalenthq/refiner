@@ -48,3 +48,5 @@ rudder-*.tar
 evm-out/
 # Env-vars
 .env
+
+logs/
