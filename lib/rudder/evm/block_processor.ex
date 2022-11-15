@@ -1,4 +1,5 @@
 defmodule Rudder.BlockProcessor.Core do
+  require Logger
   alias Rudder.BlockProcessor.Struct
   alias Rudder.BlockProcessor.Worker
   alias Rudder.BlockProcessor.Core
@@ -41,10 +42,10 @@ defmodule Rudder.BlockProcessor.Core do
       pid = Process.whereis(:evm_pool_supervisor)
 
       if pid != nil and Process.alive?(pid) do
-        IO.puts("stopping the pool supervisor")
+        Logger.info("stopping the pool supervisor")
         Supervisor.stop(:evm_pool_supervisor, :normal, 50_000)
       else
-        IO.puts("pool supervisor not alive...can't stop.")
+        Logger.warn("pool supervisor not alive...can't stop.")
       end
     end
   end
@@ -84,15 +85,13 @@ defmodule Rudder.BlockProcessor.Core do
           }
         )
 
-      # IO.puts("child spec id is #{Map.get(worker_sup_child_spec, :id)}")
-
       case Supervisor.start_child(:evm_pool_supervisor, worker_sup_child_spec) do
         {:error, term} ->
-          IO.puts("some error in starting stateful worker #{inspect(term)}")
+          Logger.error("some error in starting stateful worker #{inspect(term)}")
           {:reply, {:submission, :failed, block_id}, state}
 
         _ ->
-          IO.puts("#{block_id} will be processed now")
+          Logger.info("#{block_id} will be processed now")
           {:noreply, state}
       end
     end
@@ -114,7 +113,7 @@ defmodule Rudder.BlockProcessor.Core do
 
     @impl true
     def terminate(reason, state) do
-      IO.puts("oh I'm terminating #{reason}")
+      Logger.warn("oh I'm terminating #{reason}")
       IO.inspect(state)
     end
   end

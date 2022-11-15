@@ -1,4 +1,5 @@
 defmodule Rudder.BlockProcessor.Worker do
+  require Logger
   alias Rudder.BlockProcessor.Struct
   alias Rudder.BlockProcessor.Worker
 
@@ -39,11 +40,11 @@ defmodule Rudder.BlockProcessor.Worker do
       case handler do
         {:error, reason} ->
           # log self too
-          IO.puts("failed: " <> reason)
+          Logger.error("failed: " <> reason)
           Process.exit(self(), "process spawn failed: " <> reason)
 
         msg ->
-          IO.puts("got a message")
+          Logger.info("got a message")
           IO.inspect(msg)
       end
 
@@ -57,11 +58,11 @@ defmodule Rudder.BlockProcessor.Worker do
           )
 
         {:error, :timeout} ->
-          IO.puts("log timeout here")
+          Logger.error("log timeout here")
           raise "oops timeout"
 
         {:error, :noproc} ->
-          IO.puts("plugin not processed")
+          Logger.error("plugin not processed")
           raise "oops unexecutable"
       end
 
