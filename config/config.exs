@@ -11,7 +11,7 @@ config :rudder,
   ipfs_pinner_port: 3000,
   backlog_filepath: "specimen_backlog.txt",
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
-  proofchain_address: ""
+  proofchain_address: "0x4f2E285227D43D9eB52799D0A28299540452446E"
 
 # Configures Elixir's Logger
 config :logger, :console,
