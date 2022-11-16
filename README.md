@@ -53,6 +53,12 @@ To start mock ProofChain and IPFS-Pinner in Terminal 1 run:
 docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
 ```
 
+To start IPFS-Pinner in Terminal 2 navigate to ipfs-pinner repo directory and run:
+
+```
+make clean server-dbg run
+```
+
 Wait a minute then in Terminal 2 run:
 ```
 mix test
