@@ -6,7 +6,6 @@ defmodule Rudder.ProofChain.Interactor do
     {:ok, []}
   end
 
-  @proofchain_address "0xCF3d5540525D191D6492F1E0928d4e816c29778c"
   @submit_brp_selector "submitBlockResultProof(uint64, uint64, bytes32, bytes32, string)"
 
   def start_link(_) do
@@ -53,13 +52,15 @@ defmodule Rudder.ProofChain.Interactor do
         url
       ])
 
-    test_private_key = "8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba"
-    sender = Rudder.Wallet.load(Base.decode16!(test_private_key, case: :lower))
-    {:ok, to} = Rudder.PublicKeyHash.parse(@proofchain_address)
+    operator_private_key = Application.get_env(:rudder, :operator_private_key)
+    sender = Rudder.Wallet.load(Base.decode16!(operator_private_key, case: :lower))
+    proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    {:ok, to} = Rudder.PublicKeyHash.parse(proofchain_address)
 
     {:ok, recent_gas_limit} = Rudder.Network.EthereumMainnet.gas_limit(:latest)
 
-    {:ok, from} = Rudder.PublicKeyHash.parse("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
+    public_key = sender.public_key
+    {:ok, from} = Rudder.PublicKeyHash.parse(public_key)
 
     estimated_gas_limit =
       Rudder.Network.EthereumMainnet.eth_estimateGas!(
