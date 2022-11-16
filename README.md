@@ -30,6 +30,11 @@ then run
 sudo chmod -R 770 ipfs-pinner 
 ```
 
+In order to run it in prod you need to add the operator private key inside `.envrc.local`:
+```
+export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="put_your_key_here"
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/rudder>.
