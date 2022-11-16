@@ -44,7 +44,7 @@ defmodule Rudder.BlockProcessor.Worker do
           Process.exit(self(), "process spawn failed: " <> reason)
 
         msg ->
-          Logger.info("got a message")
+          Logger.info("got a message to execute")
           IO.inspect(msg)
       end
 
