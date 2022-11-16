@@ -46,3 +46,8 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :rudder,
+  backlog_filepath: "specimen_backlog_test.txt",
+  operator_private_key: "8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba",
+  proofchain_address: "0xCF3d5540525D191D6492F1E0928d4e816c29778c"
