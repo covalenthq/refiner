@@ -28,6 +28,7 @@ services:
     networks:
       - cqt-net
 
+  # Pinner is run directly from covalenthq/ipfs-pinner with make run clear server-dbg
   # ipfs-pinner:
   #   image: "gcr.io/covalent-project/ipfs-pinner:latest"
   #   container_name: ipfs-pinner-instance
