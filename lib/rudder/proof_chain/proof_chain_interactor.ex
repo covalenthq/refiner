@@ -69,6 +69,8 @@ defmodule Rudder.ProofChain.Interactor do
     nonce = Rudder.Network.EthereumMainnet.next_nonce(sender.address)
     gas_price = Rudder.Network.EthereumMainnet.eth_gasPrice!()
 
+    chain_id = Application.get_env(:rudder, :proofchain_chain_id)
+
     tx = %Rudder.RPC.EthereumClient.Transaction{
       nonce: nonce,
       gas_price: gas_price,
@@ -76,7 +78,7 @@ defmodule Rudder.ProofChain.Interactor do
       to: to,
       value: 0,
       data: data,
-      chain_id: 1
+      chain_id: chain_id
     }
 
     signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
