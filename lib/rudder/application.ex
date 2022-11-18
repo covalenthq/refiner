@@ -14,6 +14,7 @@ defmodule Rudder.Application do
          :default => [size: 32]
        }},
       {Rudder.IPFSInteractor, name: Rudder.IPFSInteractor},
+      {Rudder.Journal, [Application.get_env(:rudder, :journal_path), name: Rudder.Journal]},
       Rudder.Avro.Client,
       {Rudder.Avro.BlockSpecimenDecoder, name: Rudder.Avro.BlockSpecimenDecoder},
       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader},
