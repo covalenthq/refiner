@@ -47,3 +47,4 @@ evm-out/
 # Env-vars
 .env
 .envrc.local
+logs/

@@ -68,7 +68,8 @@ defmodule Rudder.MixProject do
       {:avrora, "~> 0.21"},
 
       # logging
-      {:logger_file_backend, "~> 0.0.12"}
+      {:logger_file_backend, "~> 0.0.12"},
+      {:etfs, "~> 0.1.5"}
     ]
   end
 end
