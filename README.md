@@ -30,6 +30,11 @@ then run
 sudo chmod -R 770 ipfs-pinner 
 ```
 
+In order to run it in prod you need to add the operator private key inside `.envrc.local`:
+```
+export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="put_your_key_here"
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/rudder>.
@@ -46,6 +51,12 @@ To start mock ProofChain and IPFS-Pinner in Terminal 1 run:
 
 ```
 docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
+```
+
+To start IPFS-Pinner in Terminal 2 navigate to ipfs-pinner repo directory and run:
+
+```
+make clean server-dbg run
 ```
 
 Wait a minute then in Terminal 2 run:

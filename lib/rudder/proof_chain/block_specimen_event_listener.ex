@@ -7,7 +7,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     {:ok, []}
   end
 
-  @proofchain_address "0xCF3d5540525D191D6492F1E0928d4e816c29778c"
   @bsp_submitted_event_hash "0x57b0cb34d2ff9ed661f8b3c684aaee6cbf0bda5da02f4044205556817fa8e76c"
   @bsp_awarded_event_hash "0xf05ac779af1ec75a7b2fbe9415b33a67c00294a121786f7ce2eb3f92e4a6424a"
 
@@ -17,7 +16,8 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   def start() do
     specimen_url_map = %{}
-    listen_for_event(specimen_url_map)
+    proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    listen_for_event(specimen_url_map, proofchain_address)
   end
 
   defp extract_submitted_specimens([], specimen_url_map), do: specimen_url_map
@@ -83,11 +83,11 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     end)
   end
 
-  defp listen_for_event(specimen_url_map) do
+  defp listen_for_event(specimen_url_map, proofchain_address) do
     {:ok, bsp_submitted_logs} =
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
-          address: @proofchain_address,
+          address: proofchain_address,
           fromBlock: "latest",
           topics: [@bsp_submitted_event_hash]
         }
@@ -98,7 +98,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     {:ok, bsp_awarded_logs} =
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
-          address: @proofchain_address,
+          address: proofchain_address,
           fromBlock: "latest",
           topics: [@bsp_awarded_event_hash]
         }
@@ -109,6 +109,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     specimen_url_map = push_bsps_to_process(bsps_to_process, specimen_url_map)
 
     :timer.sleep(1000)
-    listen_for_event(specimen_url_map)
+    listen_for_event(specimen_url_map, proofchain_address)
   end
 end

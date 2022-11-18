@@ -3,11 +3,11 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
 
   @impl true
   def init(_) do
-    listen_for_event()
+    proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    listen_for_event(proofchain_address)
     {:ok, []}
   end
 
-  @proofchain_address "0xCF3d5540525D191D6492F1E0928d4e816c29778c"
   @brp_submitted_event_hash "0x8741f5bf89731b15f24deb1e84e2bbd381947f009ee378a2daa15ed8abfb9485"
 
   def start_link(_) do
@@ -15,7 +15,8 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
   end
 
   def start() do
-    listen_for_event()
+    proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    listen_for_event(proofchain_address)
   end
 
   defp extract_submitted_specimens(log_events) do
@@ -40,11 +41,11 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
     MapSet.to_list(specimen_hashes_set)
   end
 
-  defp listen_for_event() do
+  defp listen_for_event(proofchain_address) do
     {:ok, brp_submitted_logs} =
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
-          address: @proofchain_address,
+          address: proofchain_address,
           fromBlock: "latest",
           topics: [@brp_submitted_event_hash]
         }
@@ -58,6 +59,6 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
     end)
 
     :timer.sleep(1000)
-    listen_for_event()
+    listen_for_event(proofchain_address)
   end
 end
