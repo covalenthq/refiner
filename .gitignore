@@ -43,10 +43,7 @@ rudder-*.tar
 #VSCode
 /.vscode/
 
-.envrc_local
-
 evm-out/
 # Env-vars
 .env
-
-logs/
+.envrc.local
