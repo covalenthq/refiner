@@ -1,8 +1,8 @@
 defmodule Rudder.Network.EthereumMainnet do
   use Rudder.RPC.EthereumClient,
     otp_app: :rudder,
-    client_opts: {:system, "NODE_ETHEREUM_MAINNET", nil},
-    chain_id: 1,
+    client_opts: Application.get_env(:rudder, :proofchain_node),
+    chain_id: Application.get_env(:rudder, :proofchain_chain_id),
     description: "Ethereum Foundation Mainnet",
     currency: [name: "Ether", ticker_symbol: "ETH"]
 end
