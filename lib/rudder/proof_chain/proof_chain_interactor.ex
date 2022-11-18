@@ -7,7 +7,6 @@ defmodule Rudder.ProofChain.Interactor do
   end
 
   @submit_brp_selector "submitBlockResultProof(uint64, uint64, bytes32, bytes32, string)"
-
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -59,9 +58,6 @@ defmodule Rudder.ProofChain.Interactor do
 
     {:ok, recent_gas_limit} = Rudder.Network.EthereumMainnet.gas_limit(:latest)
 
-    public_key = sender.public_key
-    {:ok, from} = Rudder.PublicKeyHash.parse(public_key)
-
     estimated_gas_limit =
       Rudder.Network.EthereumMainnet.eth_estimateGas!(
         from: sender.address,
@@ -80,7 +76,7 @@ defmodule Rudder.ProofChain.Interactor do
       to: to,
       value: 0,
       data: data,
-      chain_id: 31337
+      chain_id: 1
     }
 
     signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
