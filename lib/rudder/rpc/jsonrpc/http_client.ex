@@ -8,6 +8,7 @@ defmodule Rudder.RPC.JSONRPC.HTTPClient do
   end
 
   def get_or_create(_owner, %URI{} = conn_uri) do
+
     req_uri =
       %{path: "/"}
       |> Map.merge(conn_uri)
