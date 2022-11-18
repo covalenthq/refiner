@@ -2,7 +2,6 @@ version: '3'
 
 services:
   node:
-    # image: "gcr.io/covalent-project/operational-staking@sha256:601e2f6fa158dd9e8b9ae389f5c659fbceb06bbda078b0fe47bb28d0b3a317a3"
     image: "gcr.io/covalent-project/operational-staking:latest"
     container_name: eth-test-node
     restart:  on-failure
@@ -17,7 +16,6 @@ services:
       - 8545:8545
 
   cqt-virtnet:
-    # image: "gcr.io/covalent-project/operational-staking@sha256:601e2f6fa158dd9e8b9ae389f5c659fbceb06bbda078b0fe47bb28d0b3a317a3"
     image: "gcr.io/covalent-project/operational-staking:latest"
     container_name: set-up-contracts
     restart: on-failure
