@@ -77,7 +77,8 @@ defmodule Rudder.Pipeline do
   end
 
   defp write_to_backlog(specimen_hash, urls, err) do
-    Logger.warn("specimen hash #{specimen_hash} written to backlog with #{url}")
-    IO.inspect(err)
+    Logger.warn(
+      "specimen hash #{specimen_hash} written to backlog with #{urls}; error: #{inspect(err)}"
+    )
   end
 end
