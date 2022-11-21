@@ -16,7 +16,7 @@ defmodule Rudder.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      extra_applications: [:logger, :runtime_tools, :poison, :avrora, :porcelain],
+      extra_applications: [:logger_file_backend, :runtime_tools, :poison, :avrora, :porcelain],
       mod: {Rudder.Application, []}
     ]
   end
@@ -65,7 +65,10 @@ defmodule Rudder.MixProject do
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
 
       # avro tools
-      {:avrora, "~> 0.21"}
+      {:avrora, "~> 0.21"},
+
+      # logging
+      {:logger_file_backend, "~> 0.0.12"}
     ]
   end
 end

@@ -44,8 +44,7 @@ defmodule SupervisionTreeTest do
         ExUnit.Assertions.assert(status == :success, "status is not success")
 
       msg ->
-        IO.inspect("unhandled message")
-        IO.inspect(msg)
+        Logger.info("unhandled message: #{inspect(msg)}")
         ExUnit.Assertions.assert(false, "unhandled message")
     after
       3000 ->
@@ -85,8 +84,7 @@ defmodule SupervisionTreeTest do
         ExUnit.Assertions.assert(status != :success, "status is unexpectedly success")
 
       msg ->
-        IO.inspect("unhandled message")
-        IO.inspect(msg)
+        Logger.info("unhandled message: #{inspect(msg)}")
         ExUnit.Assertions.assert(false, "unhandled message")
     after
       3000 ->

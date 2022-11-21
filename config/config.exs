@@ -15,6 +15,21 @@ config :rudder,
   proofchain_node: "https://rpc.api.moonbeam.network"
 
 # Configures Elixir's Logger
+
+# configuration for the {LoggerFileBackend, :error_log} backend
+if config_env() == :dev || config_env() == :prod do
+  config :logger,
+    backends: [{LoggerFileBackend, :file_log}]
+
+  config :logger, :file_log,
+    path: "./logs/log.log",
+    level: :info,
+    rotate: %{max_bytes: 1_000_000, keep: 5},
+    format: "$time $metadata[$level] $message\n",
+    metadata: [:request_id, :file, :line]
+end
+
+# configuration of console
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]

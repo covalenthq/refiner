@@ -1,4 +1,6 @@
 defmodule Rudder.Pipeline do
+  require Logger
+
   defmodule Spawner do
     use DynamicSupervisor
 
@@ -75,6 +77,8 @@ defmodule Rudder.Pipeline do
   end
 
   defp write_to_backlog(specimen_hash, urls, err) do
-    IO.inspect(err)
+    Logger.warn(
+      "specimen hash #{specimen_hash} written to backlog with #{urls}; error: #{inspect(err)}"
+    )
   end
 end
