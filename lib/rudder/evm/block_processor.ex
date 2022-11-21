@@ -112,9 +112,8 @@ defmodule Rudder.BlockProcessor.Core do
     end
 
     @impl true
-    def terminate(reason, state) do
-      Logger.warn("oh I'm terminating #{reason}")
-      IO.inspect(state)
+    def terminate(reason, _state) do
+      Logger.info("terminating #{reason}")
     end
   end
 end

@@ -44,8 +44,7 @@ defmodule Rudder.BlockProcessor.Worker do
           Process.exit(self(), "process spawn failed: " <> reason)
 
         msg ->
-          Logger.info("got a message to execute")
-          IO.inspect(msg)
+          Logger.info("got an unexpected message: #{inspect(msg)}")
       end
 
       Porcelain.Process.send_input(handler, inp.contents)
