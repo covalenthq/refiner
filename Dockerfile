@@ -62,6 +62,7 @@ COPY --from=builder-elixir mix.lock .
 COPY --from=builder-elixir test/ ./test
 COPY --from=builder-elixir test-data/ ./test-data
 COPY --from=builder-go plugins/erigon/build/bin ./plugins
+RUN cd plugins && chmod +x evm
 
 CMD [ "mix", "test"]
 # ENV 
