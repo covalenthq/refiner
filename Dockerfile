@@ -53,7 +53,7 @@ COPY --from=builder mix.lock .
 COPY --from=builder test/ ./test
 COPY --from=builder test-data/ ./test-data
 
-# ENTRYPOINT [ "/bin/bash", "-l", "-c"]
 CMD [ "mix", "test"]
+# ENV 
 
-# ENV $NODE_ETHEREUM_MAINNET $BLOCK_RESULT_OPERATOR_PRIVATE_KEY $ERIGON_NODE 
+# "echo", "$NODE_ETHEREUM_MAINNET", "echo" "$BLOCK_RESULT_OPERATOR_PRIVATE_KEY", "echo","$ERIGON_NODE"  
