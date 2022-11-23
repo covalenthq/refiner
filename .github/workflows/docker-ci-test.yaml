@@ -18,7 +18,7 @@ jobs:
           password: ${{ secrets.GCR_JSON_KEY }}
 
       - uses: actions/checkout@v2
-      - name: Build & Publish the Docker image
+      - name: Build & Publish rudder Docker image
         run: |
           docker build . --file Dockerfile --tag gcr.io/covalent-project/rudder:latest
           docker push gcr.io/covalent-project/rudder:latest;
@@ -28,13 +28,12 @@ jobs:
           touch .env
           echo ERIGON_NODE=${{ secrets.ERIGON_NODE }} >> .env
           echo NODE_ETHEREUM_MAINNET=${{ secrets.NODE_ETHEREUM_MAINNET }} >> .env
-          BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets.BLOCK_RESULT_OPERATOR_PRIVATE_KEY }} >> .env
-          echo WEB3_JWT=${{ secrets.WEB3_JWT }} >> .env
-          echo 
+          echo BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets BLOCK_RESULT_OPERATOR_PRIVATE_KEY }} >> .env
+          echo WEB3_JWT=${{ secrets.WEB3_JWT }} >> .env 
           cat .env
 
       - name: Run containers
-        run: docker-compose -f "docker-compose-ci.yml" up --remove-orphans --exit-code-from rudder
+        run: docker compose --env-file ".env" -f "docker-compose-ci.yml" up --remove-orphans --exit-code-from rudder
 
       - name: Check running rudder
         run: docker inspect rudder
