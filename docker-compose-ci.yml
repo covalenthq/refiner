@@ -21,6 +21,7 @@ services:
     restart: on-failure
     expose:
       - 8545:8545
+      - 8008
     entrypoint: |
       /bin/bash -l -c "
       echo $ERIGON_NODE "forked-node"
@@ -39,11 +40,10 @@ services:
     restart:  on-failure
     expose:
       - 3000:3000
-    ports:
-      - 3000:3000
     environment:
       - WEB3_JWT=${WEB3_JWT}
-
+    ports:
+      - 3000:3000
   rudder:
     image: "rudder-local:latest"
     container_name: rudder
@@ -64,6 +64,8 @@ services:
        sleep 1;
        done;
        echo proof-chain contracts deployed!;
+       make submodules;
+       make build;
        mix test;
        exit 0;"
     environment:
