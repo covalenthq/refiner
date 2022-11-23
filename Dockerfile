@@ -36,7 +36,7 @@ RUN mix release
 #================
 FROM elixir:1.13.4-otp-25-alpine as deployer
 # RUN mkdir -p /node/test /node/prod 
-RUN apk update && apk add --no-cache git=2.36.3-r0
+RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2
 RUN mkdir -p /node/_build /node/config /node/deps /node/lib /node/plugins /node/priv node/test /node/test-data /node/evm-out
 WORKDIR /node
 RUN mix local.hex --force
