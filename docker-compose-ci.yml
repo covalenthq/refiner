@@ -64,8 +64,6 @@ services:
        sleep 1;
        done;
        echo proof-chain contracts deployed!;
-       make submodules;
-       make build;
        mix test;
        exit 0;"
     environment:
