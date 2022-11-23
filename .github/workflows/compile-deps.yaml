@@ -1,4 +1,4 @@
-name: compile-test
+name: compile-deps
 
 on:
   push:
