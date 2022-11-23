@@ -12,12 +12,11 @@ COPY mix.exs ./mix.exs
 
 # # Update default packages
 # RUN apt-get update
-
-# # Get Ubuntu packages
 # RUN apt-get install -y \
 #     build-essential \
 #     curl
 
+# Install rust tooling
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 # Add .cargo/bin to PATH
 ENV PATH="/root/.cargo/bin:${PATH}"
@@ -35,9 +34,10 @@ RUN mix release
 #================
 #Deployment Stage
 #================
-FROM elixir:1.13.4-otp-25 as deployer
+FROM elixir:1.13.4-otp-25-alpine as deployer
 # RUN mkdir -p /node/test /node/prod 
-RUN mkdir -p /node/_build /node/config /node/deps /node/lib /node/plugins /node/priv node/test /node/test-data 
+RUN apk update && apk add --no-cache git=2.36.3-r0
+RUN mkdir -p /node/_build /node/config /node/deps /node/lib /node/plugins /node/priv node/test /node/test-data /node/evm-out
 WORKDIR /node
 RUN mix local.hex --force
 
