@@ -2,7 +2,6 @@ version: '3'
 
 services:
   eth-node:
-    # image: "op-stake-local:latest"
     image: "gcr.io/covalent-project/operational-staking:latest"
     container_name: hardhat
     restart:  on-failure
@@ -17,7 +16,6 @@ services:
       - 8545:8545
 
   operational-staking:
-    # image: "op-stake-local:latest"
     image: "gcr.io/covalent-project/operational-staking:latest"
     container_name: proof-chain
     restart: on-failure
