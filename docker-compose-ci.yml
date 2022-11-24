@@ -2,14 +2,16 @@ version: '3'
 
 services:
   eth-node:
-    image: "gcr.io/covalent-project/operational-staking:latest"
-    container_name: hardhat
+    # image: "gcr.io/covalent-project/operational-staking:latest"
+    image: "op-stake-local:latest"
+    container_name: hardhat-node
     restart:  on-failure
     expose:
       - 8545:8545
       - 8007
     entrypoint: |
       /bin/bash -l -c "
+      echo $NODE_ETHEREUM_MAINNET "hardhat-address"
       ./entrypoint.sh;"
     networks:
       - cqt-net
@@ -19,7 +21,8 @@ services:
       - 8545:8545
 
   operational-staking:
-    image: "gcr.io/covalent-project/operational-staking:latest"
+    # image: "gcr.io/covalent-project/operational-staking:latest"
+    image: "op-stake-local:latest"
     container_name: proof-chain
     restart: on-failure
     expose:
