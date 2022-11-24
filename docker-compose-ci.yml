@@ -7,7 +7,10 @@ services:
     restart:  on-failure
     expose:
       - 8545:8545
-    entrypoint: ./entrypoint.sh
+      - 8007
+    entrypoint: |
+      /bin/bash -l -c "
+      ./entrypoint.sh;"
     networks:
       - cqt-net
     environment:
@@ -24,6 +27,9 @@ services:
       - 8008
     entrypoint: |
       /bin/bash -l -c "
+      echo Waiting for hardhat node to start up...;
+      sleep 20;
+      echo hard-hat node started!;
       echo $ERIGON_NODE "forked-node"
       npm run docker:deploy;
       nc -v rudder 8008;"
@@ -42,8 +48,11 @@ services:
       - 3000:3000
     environment:
       - WEB3_JWT=${WEB3_JWT}
+    networks:
+      - cqt-net
     ports:
       - 3000:3000
+
   rudder:
     image: "rudder-local:latest"
     container_name: rudder
