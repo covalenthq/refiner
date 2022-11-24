@@ -4,6 +4,8 @@ defmodule SupervisionTreeTest do
   use ExUnit.Case, async: false
   @moduletag :spawn
 
+  require Logger
+
   alias Rudder.BlockProcessor.Worker.Executor
   alias Rudder.BlockProcessor.Struct
 
