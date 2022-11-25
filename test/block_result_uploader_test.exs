@@ -56,7 +56,7 @@ defmodule Rudder.BlockResultUploaderTest do
     port = Application.get_env(:rudder, :ipfs_pinner_port)
 
     {err, _} =
-      Finch.build(:get, "http://ipfs-pinner:#{port}/upload")
+      Finch.build(:get, "http://localhost:#{port}/upload")
       |> Finch.request(Rudder.Finch)
 
     assert err != :error

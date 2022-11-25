@@ -11,6 +11,7 @@ COPY priv ./priv
 COPY test ./test
 COPY test-data ./test-data
 COPY mix.exs .
+# COPY plugins ./plugins
 
 # Install rust tooling
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -26,17 +27,17 @@ RUN mix local.hex --force && \
 # dev release (copy release to next stage from _build) [Enable once tests work in docker]
 # RUN mix release
 
-# clone the eriogn plugin repo
+# clone the erigon plugin repo
 RUN git clone -b covalent https://github.com/covalenthq/erigon
 
 #===========
 #(Go) Build Stage
 #===========
-FROM crazymax/goxx:1.19.2 as builder-go
+FROM crazymax/goxx:1.18.4 as builder-go
 # RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2 make=4.3-r0 gcc=11.2.1_git20220219-r2 musl-dev=1.2.3-r2 libc-dev=6.0.3-1
 RUN mkdir -p /plugins/erigon/build/bin
 WORKDIR /plugins
-COPY --from=builder-elixir mix/erigon ./erigon
+COPY --from=builder-elixir /mix/erigon ./erigon
 RUN cd erigon && make evm-prod
 
 
@@ -50,21 +51,19 @@ RUN mkdir -p /app/_build /app/config /app/deps /app/lib /app/plugins /app/priv n
 WORKDIR /app
 RUN mix local.hex --force
 
-COPY --from=builder-elixir mix/_build ./_build
-COPY --from=builder-elixir mix/config ./config
-COPY --from=builder-elixir mix/deps ./deps
-COPY --from=builder-elixir mix/lib ./lib
-COPY --from=builder-elixir mix/priv ./priv
-COPY --from=builder-elixir mix/mix.exs .
-COPY --from=builder-elixir mix/mix.lock .
+COPY --from=builder-elixir /mix/_build ./_build
+COPY --from=builder-elixir /mix/config ./config
+COPY --from=builder-elixir /mix/deps ./deps
+COPY --from=builder-elixir /mix/lib ./lib
+COPY --from=builder-elixir /mix/priv ./priv
+COPY --from=builder-elixir /mix/mix.exs .
+COPY --from=builder-elixir /mix/mix.lock .
 # COPY --from=builder-elixir build/_build/prod/rel/rudder ./prod/
-COPY --from=builder-elixir mix/test/ ./test
-COPY --from=builder-elixir mix/test-data/ ./test-data
-COPY --from=builder-go plugins/erigon/build/bin ./plugins
+COPY --from=builder-elixir /mix/test/ ./test
+COPY --from=builder-elixir /mix/test-data/ ./test-data
+# COPY --from=builder-elixir mix/plugins/ ./plugins
+COPY --from=builder-go /plugins/erigon/build/bin ./plugins
 
 RUN cd plugins && chmod +x evm
 
 CMD [ "mix", "test"]
-# ENV 
-
-# "echo", "$NODE_ETHEREUM_MAINNET", "echo" "$BLOCK_RESULT_OPERATOR_PRIVATE_KEY", "echo","$ERIGON_NODE"  

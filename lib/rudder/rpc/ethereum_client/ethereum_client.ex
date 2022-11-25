@@ -6,7 +6,7 @@ defmodule Rudder.RPC.EthereumClient do
       alias Rudder.RPC.EthereumClient.Transaction
 
       @default_client_module Rudder.RPC.JSONRPC.HTTPClient
-      @default_client_opts "http://localhost:8545"
+      @default_client_opts "http://127.0.0.1:8545"
 
       @default_selector List.last(Module.split(__MODULE__))
       @default_adapter Rudder.RPC.JSONRPC.HTTPAdapter
