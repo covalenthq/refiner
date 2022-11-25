@@ -26,6 +26,9 @@ jobs:
           echo WEB3_JWT=${{ secrets.WEB3_JWT }} >> .env 
           cat .env
 
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v1.0.2
+
       - name: Run containers
         run: docker compose -f "docker-compose-ci.yml" up --remove-orphans
 
