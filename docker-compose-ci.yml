@@ -9,7 +9,11 @@ services:
       - 8545:8545
     entrypoint: |
       /bin/bash -l -c "
-      echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET
+        echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET
+        echo "forked-node-address:" $ERIGON_NODE
+        echo "ipfs-node-address:" $IPFS_PINNER_URL
+        echo "web3-jwt:" $WEB3_JWT
+        echo "brp-op-pk:" $BLOCK_RESULT_OPERATOR_PRIVATE_KEY
       ./entrypoint.sh;"
     networks:
       - cqt-net
@@ -22,8 +26,6 @@ services:
     image: "gcr.io/covalent-project/operational-staking:latest-rudder"
     container_name: proof-chain
     restart: on-failure
-    expose:
-      - 8008
     entrypoint: |
       /bin/bash -l -c "
       echo Waiting for hardhat node to start up...;
@@ -57,7 +59,10 @@ services:
       - 3000:3000
 
   rudder:
-    image: "gcr.io/covalent-project/rudder:latest"
+    # image: "gcr.io/covalent-project/rudder:latest"
+    image: "rudder-local:latest"
+    volumes:
+      - /tmp/data/.ipfs:/root/.ipfs/
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
@@ -81,10 +86,11 @@ services:
     environment:
      - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
      - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
+     - IPFS_PINNER_URL=${IPFS_PINNER_URL}
     networks:
       - cqt-net
-    # ports: 
-    # # - "8080:8080"
+    ports: 
+    - 8080:8080
 
 networks:
   cqt-net:
