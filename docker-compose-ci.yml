@@ -76,8 +76,8 @@ services:
        sleep 1;
        done;
        echo proof-chain contracts deployed!;
-       mix test;"
-      #  exit 0;"
+       mix test;
+       exit 0;"
     environment:
      - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
      - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
