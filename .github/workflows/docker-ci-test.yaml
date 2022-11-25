@@ -27,7 +27,7 @@ jobs:
           cat .env
 
       - name: Run containers
-        run: docker compose --env-file ".env" -f "docker-compose-ci.yml" up --remove-orphans --exit-code-from rudder
+        run: docker compose -f "docker-compose-ci.yml" up --remove-orphans
 
       - name: Check running rudder
         run: docker inspect rudder
