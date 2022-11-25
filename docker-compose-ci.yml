@@ -2,8 +2,8 @@ version: '3'
 
 services:
   eth-node:
-    # image: "gcr.io/covalent-project/operational-staking:latest"
     image: "op-stake-local:latest"
+    # image: "gcr.io/covalent-project/operational-staking:latest-rudder"
     container_name: hardhat-node
     restart:  on-failure
     expose:
@@ -20,8 +20,8 @@ services:
       - 8545:8545
 
   operational-staking:
-    # image: "gcr.io/covalent-project/operational-staking:latest"
     image: "op-stake-local:latest"
+    # image: "gcr.io/covalent-project/operational-staking:latest-rudder"
     container_name: proof-chain
     restart: on-failure
     expose:
