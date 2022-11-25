@@ -1,0 +1,50 @@
+name: docker-ci-test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to GCR
+        uses: docker/login-action@v2
+        with:
+          registry: gcr.io
+          username: _json_key
+          password: ${{ secrets.GCR_JSON_KEY }}
+          
+      - name: Create .env file
+        run: |
+          touch .env
+          echo ERIGON_NODE=${{ secrets.ERIGON_NODE }} >> .env
+          echo NODE_ETHEREUM_MAINNET=${{ secrets.NODE_ETHEREUM_MAINNET }} >> .env
+          echo BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets BLOCK_RESULT_OPERATOR_PRIVATE_KEY }} >> .env
+          echo WEB3_JWT=${{ secrets.WEB3_JWT }} >> .env 
+          cat .env
+
+      - name: Run containers
+        run: docker compose --env-file ".env" -f "docker-compose-ci.yml" up --remove-orphans --exit-code-from rudder
+
+      - name: Check running rudder
+        run: docker inspect rudder
+
+      - name: Check running containers
+        run: docker ps
+
+      - name: Delete .env & bin files
+        run: |
+          rm -rf .env
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose-ci.yml" down
+
+      # - uses: actions/checkout@v2
+      # - name: Build & Publish rudder Docker image
+      #   run: |
+      #     docker build . --file Dockerfile --tag gcr.io/covalent-project/rudder:latest
+      #     docker push gcr.io/covalent-project/rudder:latest;
