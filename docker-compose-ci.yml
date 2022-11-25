@@ -2,7 +2,7 @@ version: '3'
 
 services:
   eth-node:
-    image: "gcr.io/covalent-project/operational-staking:latest"
+    image: "gcr.io/covalent-project/operational-staking:latest-rudder"
     container_name: hardhat-node
     restart:  on-failure
     expose:
@@ -19,7 +19,7 @@ services:
       - 8545:8545
 
   operational-staking:
-    image: "gcr.io/covalent-project/operational-staking:latest"
+    image: "gcr.io/covalent-project/operational-staking:latest-rudder"
     container_name: proof-chain
     restart: on-failure
     expose:
@@ -48,7 +48,6 @@ services:
     expose:
       - 4001:4001
       - 3000:3000
-      - 8080
     environment:
       - WEB3_JWT=${WEB3_JWT}
     networks:
@@ -56,7 +55,6 @@ services:
     ports:
       - 4001:4001
       - 3000:3000
-      - 8080:8080
 
   # rudder:
   #   image: "rudder-local:latest"
