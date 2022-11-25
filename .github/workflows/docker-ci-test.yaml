@@ -16,7 +16,8 @@ jobs:
           registry: gcr.io
           username: _json_key
           password: ${{ secrets.GCR_JSON_KEY }}
-          
+
+      - uses: actions/checkout@v2
       - name: Create .env file
         run: |
           touch .env
