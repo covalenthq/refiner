@@ -14,8 +14,8 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
-    port = Application.get_env(:rudder, :ipfs_pinner_port)
-    url = "http://localhost:#{port}/upload"
+    ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
+    url = "#{ipfs_url}/upload"
 
     multipart = Multipart.new() |> Multipart.add_part(Part.file_body(file_path))
     body_stream = Multipart.body_stream(multipart)
@@ -37,10 +37,11 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:fetch, cid}, _from, state) do
-    port = Application.get_env(:rudder, :ipfs_pinner_port)
+    ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
+    url = "#{ipfs_url}/upload"
 
     {:ok, %Finch.Response{body: body, headers: _, status: _}} =
-      Finch.build(:get, "http://localhost:#{port}/get?cid=#{cid}")
+      Finch.build(:get, "#{url}/get?cid=#{cid}")
       |> Finch.request(Rudder.Finch, receive_timeout: 60_000_000, pool_timeout: 60_000_000)
 
     {:reply, body, state}
