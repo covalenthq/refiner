@@ -2,7 +2,7 @@ version: '3'
 
 services:
   eth-node:
-    image: "gcr.io/covalent-project/operational-staking:latest"
+    image: "gcr.io/covalent-project/operational-staking:latest-rudder"
     container_name: hardhat-node
     restart:  on-failure
     expose:
@@ -19,7 +19,7 @@ services:
       - 8545:8545
 
   operational-staking:
-    image: "gcr.io/covalent-project/operational-staking:latest"
+    image: "gcr.io/covalent-project/operational-staking:latest-rudder"
     container_name: proof-chain
     restart: on-failure
     expose:
@@ -42,7 +42,7 @@ services:
   ipfs-pinner:
     image: "gcr.io/covalent-project/ipfs-pinner:latest"
     volumes:
-      - /tmp/data/.ipfs:/root/.ipfs/
+      - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
     restart:  on-failure
     expose:
