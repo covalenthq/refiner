@@ -27,10 +27,9 @@ services:
       echo Waiting for hardhat-node to start up...;
       sleep 20;
       echo hard-hat node started!;
-      echo "forked-node-address:" $ERIGON_NODE;
       echo "web3-jwt:" $WEB3_JWT;
-      npm run docker:deploy;"
-      # nc -v rudder 8008;"
+      npm run docker:deploy;
+      nc -v rudder 8008;"
     depends_on:
       - eth-node
     networks:
@@ -55,41 +54,41 @@ services:
       - 4001:4001
       - 3000:3000
 
-  # rudder:
-  #   image: "rudder-local:latest"
-  #   container_name: rudder
-  #   links:
-  #     - "ipfs-pinner:ipfs-pinner"
-  #   # build: 
-  #   #   context: .
-  #   #   dockerfile: Dockerfile
-  #   restart: on-failure
-  #   depends_on:
-  #       ipfs-pinner:
-  #         condition: service_started
-  #   entrypoint: >
-  #    /bin/bash -l -c "   
-  #      echo Waiting for proof-chain to be deployed...;
-  #      echo "ipfs-node-address:" $IPFS_PINNER_URL;
-  #      echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET;
-  #      echo "brp-op-pk:" $BLOCK_RESULT_OPERATOR_PRIVATE_KEY;
-  #      while ! nc -v -l -k -p 8008;
-  #      do
-  #      sleep 1;
-  #      done;
-  #      echo Proof-chain contracts deployed!;
-  #      echo Uploading test files to local .ipfs...;
-  #      curl -F "filedata=@/app/test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1" http://ipfs-pinner:3000/upload;
-  #      curl -F "filedata=@/app/test-data/encoded/1-15892755-replica-0x0e7bfa908e3fc04003e00afde7eb31772a012e51e0e094e4add1734da92297f7" http://ipfs-pinner:3000/upload;
-  #      echo Test bsp files uploaded!;
-  #      mix test;"
-  #     #  exit 0;"
-  #   environment:
-  #    - IPFS_PINNER_URL=${IPFS_PINNER_URL}
-  #    - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
-  #    - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
-  #   networks:
-  #     - cqt-net
+  rudder:
+    image: "rudder-local:latest"
+    container_name: rudder
+    links:
+      - "ipfs-pinner:ipfs-pinner"
+    # build: 
+    #   context: .
+    #   dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+        ipfs-pinner:
+          condition: service_started
+    entrypoint: >
+     /bin/bash -l -c "   
+       echo Waiting for proof-chain to be deployed...;
+       echo "ipfs-node-address:" $IPFS_PINNER_URL;
+       echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET;
+       echo "brp-op-pk:" $BLOCK_RESULT_OPERATOR_PRIVATE_KEY;
+       while ! nc -v -l -k -p 8008;
+       do
+       sleep 1;
+       done;
+       echo Proof-chain contracts deployed!;
+       echo Uploading test files to local .ipfs...;
+       curl -F "filedata=@/app/test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1" http://ipfs-pinner:3000/upload;
+       curl -F "filedata=@/app/test-data/encoded/1-15892755-replica-0x0e7bfa908e3fc04003e00afde7eb31772a012e51e0e094e4add1734da92297f7" http://ipfs-pinner:3000/upload;
+       echo Test bsp files uploaded!;
+       mix test;"
+      #  exit 0;"
+    environment:
+     - IPFS_PINNER_URL=${IPFS_PINNER_URL}
+     - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
+     - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
+    networks:
+      - cqt-net
 
 networks:
   cqt-net:
