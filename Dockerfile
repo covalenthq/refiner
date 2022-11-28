@@ -55,12 +55,14 @@ RUN cd erigon && make evm-prod
 #================
 #Deployment Stage
 #================
-FROM elixir:1.13.4-otp-25-alpine as deployer
+FROM elixir:1.13.4-otp-25 as deployer
 # RUN mkdir -p /app/test /app/prod
-RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2 curl=7.83.1-r4 go=1.18.7-r0 make=4.3-r0 gcc=11.2.1_git20220219-r2 
+
+RUN apt-get update && apt-get install -y git bash curl netcat-traditional
 
 RUN mkdir -p /app/_build /app/config /app/deps /app/lib /app/plugins /app/priv node/test /app/test-data /app/evm-out
 
+# RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2 curl=7.83.1-r4 go=1.18.7-r0 make=4.3-r0 gcc=11.2.1_git20220219-r2
 WORKDIR /app
 RUN mix local.hex --force
 
@@ -78,6 +80,6 @@ COPY --from=builder-elixir /mix/test-data/ /app/test-data
 
 # COPY ./erigon/build/bin/ ./plugins/
 
-RUN chmod 777 /app/plugins/evm
+RUN chmod +x /app/plugins/evm
 
 CMD [ "mix", "test", "./test/block_specimen_decoder_test.exs", "./test/block_result_uploader_test.exs"]

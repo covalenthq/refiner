@@ -1,42 +1,6 @@
 version: '3'
 
 services:
-  # eth-node:
-  #   image: "gcr.io/covalent-project/operational-staking:latest-rudder"
-  #   container_name: hardhat-node
-  #   restart:  on-failure
-  #   expose:
-  #     - 8545:8545
-  #   entrypoint: |
-  #     /bin/bash -l -c "
-  #     echo "forked-node-address:" $ERIGON_NODE;
-  #     ./entrypoint.sh;"
-  #   networks:
-  #     - cqt-net
-  #   environment:
-  #     - ERIGON_NODE=${ERIGON_NODE}
-  #   ports:
-  #     - 8545:8545
-
-  # operational-staking:
-  #   image: "gcr.io/covalent-project/operational-staking:latest-rudder"
-  #   container_name: proof-chain
-  #   restart: on-failure
-  #   entrypoint: |
-  #     /bin/bash -l -c "
-  #     echo Waiting for hardhat-node to start up...;
-  #     sleep 20;
-  #     echo hard-hat node started!;
-  #     echo "web3-jwt:" $WEB3_JWT;
-  #     npm run docker:deploy;
-  #     nc -v rudder 8008;"
-  #   depends_on:
-  #     - eth-node
-  #   networks:
-  #     - cqt-net
-  #   ports:
-  #     - "8008:8008"
-
   ipfs-pinner:
     image: "gcr.io/covalent-project/ipfs-pinner:latest"
     volumes:
@@ -69,16 +33,10 @@ services:
         ipfs-pinner:
           condition: service_started
     entrypoint: >
-     /bin/bash -l -c "   
-      #  echo Waiting for proof-chain to be deployed...;
+     /bin/sh -l -c "   
        echo "ipfs-node-address:" $IPFS_PINNER_URL;
        echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET;
        echo "brp-op-pk:" $BLOCK_RESULT_OPERATOR_PRIVATE_KEY;
-      #  while ! nc -v -l -k -p 8008;
-      #  do
-      #  sleep 1;
-      #  done;
-      #  echo Proof-chain contracts deployed!;
        echo Uploading test files to local .ipfs...;
        sleep 10;
        curl -F "filedata=@/app/test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1" http://ipfs-pinner:3000/upload;
