@@ -46,7 +46,7 @@ RUN cd erigon && make evm-prod
 #================
 FROM elixir:1.13.4-otp-25-alpine as deployer
 # RUN mkdir -p /app/test /app/prod
-RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2
+RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2 curl=7.83.1-r4
 RUN mkdir -p /app/_build /app/config /app/deps /app/lib /app/plugins /app/priv node/test /app/test-data /app/evm-out
 WORKDIR /app
 RUN mix local.hex --force
