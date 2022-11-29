@@ -28,7 +28,7 @@ RUN mix local.hex --force && \
     MIX_ENV=test mix do compile
 
 # dev release (copy release to next stage from _build) [Enable once tests work in docker]
-# RUN mix release
+RUN mix release
 
 RUN apt-get update && apt-get install -y build-essential
 RUN curl -OL https://golang.org/dl/go1.19.linux-amd64.tar.gz
@@ -62,6 +62,7 @@ RUN apt-get update && apt-get install -y git bash curl netcat-traditional
 
 RUN mkdir -p /app/_build /app/config /app/deps /app/lib /app/plugins /app/priv node/test /app/test-data /app/evm-out
 
+# used in case alpine image are used
 # RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2 curl=7.83.1-r4 go=1.18.7-r0 make=4.3-r0 gcc=11.2.1_git20220219-r2
 WORKDIR /app
 RUN mix local.hex --force
@@ -74,12 +75,14 @@ COPY --from=builder-elixir /mix/lib /app/lib
 COPY --from=builder-elixir /mix/priv /app/priv
 COPY --from=builder-elixir /mix/mix.exs /app/
 COPY --from=builder-elixir /mix/mix.lock /app/
-# COPY --from=builder-elixir mix/_build/prod/rel/rudder /app/prod/
+COPY --from=builder-elixir /mix/_build/dev/rel/rudder/ /app/prod/
 COPY --from=builder-elixir /mix/test/ /app/test
 COPY --from=builder-elixir /mix/test-data/ /app/test-data
 
-# COPY ./erigon/build/bin/ ./plugins/
 
 RUN chmod +x /app/plugins/evm
 
-CMD [ "mix", "test", "./test/block_specimen_decoder_test.exs", "./test/block_result_uploader_test.exs"]
+# Used only for testing in compose
+# CMD [ "mix", "test", "./test/block_specimen_decoder_test.exs", "./test/block_result_uploader_test.exs"]
+
+CMD ["/app/prod/bin/rudder", "start"]
