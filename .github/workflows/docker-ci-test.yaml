@@ -34,10 +34,10 @@ jobs:
           cat .env
 
       - name: Load .env file
-        uses: xom9ikk/dotenv@v1.0.2 
+        uses: xom9ikk/dotenv@v1.0.2
 
       - name: Run containers
-        run: docker compose --env-file ".env" -f "docker-compose-ci.yml" up --remove-orphans
+        run: docker compose --env-file ".env" -f "docker-compose-ci.yml" up --remove-orphans --exit-code-from rudder
 
       - name: Check running rudder
         run: docker inspect rudder
@@ -45,10 +45,10 @@ jobs:
       - name: Check running containers
         run: docker ps
 
-      - name: Stop containers
-        if: always()
-        run: docker-compose --env-file ".env" -f  "docker-compose-ci.yml" down
-
       - name: Delete .env & bin files
         run: |
           rm -rf .env
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose --env-file ".env" -f  "docker-compose-ci.yml" down
