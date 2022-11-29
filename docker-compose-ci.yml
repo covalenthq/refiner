@@ -6,7 +6,7 @@ services:
     container_name: hardhat-node
     restart:  on-failure
     expose:
-      - 8545:8545
+      - "8545:8545"
     entrypoint: |
       /bin/bash -l -c "
       echo "forked-node-address:" $ERIGON_NODE;
@@ -16,7 +16,7 @@ services:
     environment:
       - ERIGON_NODE=${ERIGON_NODE}
     ports:
-      - 8545:8545
+      - "8545:8545"
 
   operational-staking:
     image: "gcr.io/covalent-project/operational-staking:latest-rudder"
@@ -36,7 +36,7 @@ services:
     networks:
       - cqt-net
     ports:
-      - 8008:8008
+      - "8008:8008"
 
   ipfs-pinner:
     image: "gcr.io/covalent-project/ipfs-pinner:latest"
@@ -45,15 +45,15 @@ services:
     container_name: ipfs-pinner
     restart:  on-failure
     expose:
-      - 4001:4001
-      - 3000:3000
+      - "4001:4001"
+      - "3000:3000"
     environment:
       - WEB3_JWT=${WEB3_JWT}
     networks:
       - cqt-net
     ports:
-      - 4001:4001
-      - 3000:3000
+      - "4001:4001"
+      - "3000:3000"
 
   rudder:
     image: "gcr.io/covalent-project/rudder:latest"
