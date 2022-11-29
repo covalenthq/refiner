@@ -29,7 +29,8 @@ services:
       echo hard-hat node started!;
       echo "web3-jwt:" $WEB3_JWT;
       npm run docker:deploy;
-      nc -v rudder 8008;"
+      nc -v rudder 8008;
+      sleep 1000000;"
     depends_on:
       - eth-node
     networks:
