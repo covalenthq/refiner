@@ -18,6 +18,10 @@ jobs:
           password: ${{ secrets.GCR_JSON_KEY }}
 
       - uses: actions/checkout@v2
+
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+      # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
       - name: Build & Publish the Docker image
         run: |
           docker build . --file Dockerfile --tag gcr.io/covalent-project/rudder:latest
@@ -51,4 +55,4 @@ jobs:
 
       - name: Stop containers
         if: always()
-        run: docker-compose -f "docker-compose-ci.yml" down
+        run: docker compose -f "docker-compose-ci.yml" down
