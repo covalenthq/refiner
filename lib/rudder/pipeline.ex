@@ -13,20 +13,21 @@ defmodule Rudder.Pipeline do
       DynamicSupervisor.init(strategy: :one_for_one)
     end
 
-    def push_hash(specimen_hash, urls) do
+    def push_hash(bsp_key, urls) do
       DynamicSupervisor.start_child(
         __MODULE__,
         {Agent,
          fn ->
-           Rudder.Pipeline.process_specimen(specimen_hash, urls)
+           Rudder.Pipeline.process_specimen(bsp_key, urls)
          end}
       )
     end
   end
 
-  def process_specimen(specimen_hash, urls) do
+  def process_specimen(bsp_key, urls) do
     try do
-      with {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
+      with [_chain_id, _block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
+           {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
            {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimenDecoder.decode(specimen),
            {:ok, block_specimen} <- extract_block_specimen(decoded_specimen),
            {:success, block_result_file_path} <-
@@ -41,13 +42,14 @@ defmodule Rudder.Pipeline do
              },
            {:ok, cid, block_result_hash} <-
              Rudder.BlockResultUploader.upload_block_result(block_result_metadata),
+           :ok <- Rudder.Journal.commit(bsp_key),
            :ok <- File.rm(block_result_file_path) do
         {:ok, cid, block_result_hash}
       else
-        err -> write_to_backlog(specimen_hash, urls, err)
+        err -> write_to_backlog(bsp_key, urls, err)
       end
     rescue
-      e -> write_to_backlog(specimen_hash, urls, e)
+      e -> write_to_backlog(bsp_key, urls, e)
     end
   end
 
@@ -76,9 +78,8 @@ defmodule Rudder.Pipeline do
     end
   end
 
-  defp write_to_backlog(specimen_hash, urls, err) do
-    Logger.warn(
-      "specimen hash #{specimen_hash} written to backlog with #{urls}; error: #{inspect(err)}"
-    )
+  defp write_to_backlog(bsp_key, urls, err) do
+    Logger.warn("key #{bsp_key} written to backlog with #{urls}; error: #{inspect(err)}")
+    Rudder.Journal.abort(bsp_key)
   end
 end

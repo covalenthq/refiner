@@ -1,5 +1,6 @@
 defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   use GenServer
+  alias Rudder.Journal
 
   @impl true
   def init(_) do
@@ -39,6 +40,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
       urls = Map.get(specimen_url_map, key, [])
       urls = [url | urls]
+      Journal.discovered(key)
       Map.put(new_specimen_url_map, key, urls)
     end)
   end
@@ -64,6 +66,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
         to_string(chain_id) <>
           "_" <> to_string(block_height) <> "_" <> block_hash <> "_" <> specimen_hash
 
+      Journal.awarded(key)
       [key | keys]
     end)
   end
@@ -74,8 +77,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     Enum.reduce(bsp_keys, specimen_url_map, fn bsp_key, new_specimen_url_map ->
       if Map.has_key?(specimen_url_map, bsp_key) do
         bsp_urls = Map.get(specimen_url_map, bsp_key)
-        [_chain_id, _block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
-        Rudder.Pipeline.Spawner.push_hash(specimen_hash, bsp_urls)
+        Rudder.Pipeline.Spawner.push_hash(bsp_key, bsp_urls)
         Map.delete(new_specimen_url_map, bsp_key)
       else
         new_specimen_url_map
