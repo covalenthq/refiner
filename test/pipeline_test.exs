@@ -10,7 +10,8 @@ defmodule Rudder.PipelineTest do
       <<105, 231, 102, 197, 138, 130, 127, 60, 117, 72, 181, 192, 13, 4, 59, 70, 74, 105, 56, 78,
         116, 108, 186, 247, 61, 119, 24, 129, 180, 220, 5, 58>>
 
-    {status, cid, block_result_hash} = Rudder.Pipeline.process_specimen("hash", test_urls)
+    {status, cid, block_result_hash} =
+      Rudder.Pipeline.process_specimen("1_1_wewerc323_hash", test_urls)
 
     assert status == :ok
     assert cid == expected_block_result_cid
@@ -21,7 +22,7 @@ defmodule Rudder.PipelineTest do
     # encoded specimen file: test-data/encoded/1-15892755-replica-0x0e7bfa908e3fc04003e00afde7eb31772a012e51e0e094e4add1734da92297f7 (codec-0.31)
     test_urls = ["ipfs://bafybeihg6dvzspiicrvawxy3sviwpahnryzmmsj2a4hg3sf7am55opav5u"]
 
-    {:ok, agent} = Rudder.Pipeline.Spawner.push_hash("hash1", test_urls)
+    {:ok, agent} = Rudder.Pipeline.Spawner.push_hash("1_1_wewerc323_hash1", test_urls)
 
     expected_block_result_cid = "bafybeicwqmey3cr3gybgesjiafco3hjxxhxgze44wqsbxs4qqiuoxzluby"
 
