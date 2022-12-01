@@ -30,7 +30,7 @@ RUN mix local.hex --force && \
 # dev release (copy release to next stage from _build) [Enable once tests work in docker]
 RUN mix release
 
-RUN apt-get update && apt-get install -y build-essential
+RUN apt-get update && apt-get install -y build-essential && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN curl -OL https://golang.org/dl/go1.19.linux-amd64.tar.gz
 RUN tar -C /usr/local -xvf go1.19.linux-amd64.tar.gz
 
@@ -58,7 +58,7 @@ RUN cd erigon && make evm-prod
 FROM elixir:1.13.4-otp-25 as deployer
 # RUN mkdir -p /app/test /app/prod
 
-RUN apt-get update && apt-get install -y git bash curl netcat-traditional
+RUN apt-get update && apt-get install -y git bash curl netcat-traditional && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /app/_build /app/config /app/deps /app/lib /app/plugins /app/priv node/test /app/test-data /app/evm-out
 
