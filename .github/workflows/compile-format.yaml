@@ -1,4 +1,4 @@
-name: compile-test
+name: compile-format
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   deps:
-    name: Dependencies
+    name: Get dependencies
     runs-on: ubuntu-20.04
     strategy:
       matrix:

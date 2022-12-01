@@ -1,5 +1,5 @@
 version: '3'
-
+# used for testing only locally built images for rudder and ipfs in docker  (proof-chain and hardhat services are not available here)
 services:
   ipfs-pinner:
     image: "gcr.io/covalent-project/ipfs-pinner:latest"
