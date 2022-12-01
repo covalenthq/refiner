@@ -1,15 +1,14 @@
 # Rudder
+
 [![docker-ci-test](https://github.com/covalenthq/rudder/actions/workflows/docker-ci-test.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/docker-ci-test.yaml)
 [![compile-format](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml)
-[![compile-format](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml)
+[![hadolint](https://github.com/covalenthq/rudder/actions/workflows/hadolint.yml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/hadolint.yml)
 
 Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations.
 
 ![Rudder Pipeline](./temp/Rudder.jpg)
 
-The happy path for `rudder` is made up of loosely coupled (some maintain state and some don't) actor processes, that can be called upon to fulfill responsiblities at different sections in the refinement/transformation process - under one umberalla supervisor process, that can bring them back up in case of a failure.
-
-
+The happy path for `rudder` is made up of loosely coupled (some maintain state and some don't) actor processes spawned through gen server processes, that can be called upon to fulfill responsiblities at different sections in the refinement/transformation process - under one umberalla supervisor process, this can bring them back up in case of a failure to continue the operation.
 
 ## Install
 
@@ -41,6 +40,54 @@ export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="put_your_key_here"
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/rudder>.
+
+
+## Run
+
+Run all services including rudder in docker with the following -
+
+```bash
+docker compose --env-file ".env" -f "docker-compose-ci.yml" up --remove-orphans
+```
+
+By default this will perform and end to end test and create a release
+
+### Pull
+
+Pull only the latest containerized version of rudder using the following -
+
+Make sure you're logged into gcr by running
+
+```bash
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+```
+
+Pull image
+
+```docker
+docker pull gcr.io/covalent-project/rudder:latest
+```
+
+### Environment Vars
+
+Add the env vars to a .env file as below. Ask your node operator about these if you have questions.
+
+```env
+# used to submit and block result through a web3 storage service
+WEB3_JWT=<WEB3-JWT> 
+# used  for testing and forking a state of ethereum mainnent
+ERIGON_NODE=<FORKED-ERIGON-NODE>
+# used to submit block result proofs 
+BLOCK_RESULT_OPERATOR_PRIVATE_KEY=<PRIVATE-KEY-OF-BLOCK-RESULT-OPERATOR>
+
+# if running rudder and all supporting services using docker compose
+NODE_ETHEREUM_MAINNET=http://hardhat-node:8545/
+IPFS_PINNER_URL=http://ipfs-pinner:3000
+
+# if running rudder locally and all other services using docker compose
+NODE_ETHEREUM_MAINNET=http://127.0.0.1:8545/
+IPFS_PINNER_URL=http://127.0.0.1:3000
+```
 
 ## Test
 
