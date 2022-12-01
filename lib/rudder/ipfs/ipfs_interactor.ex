@@ -38,7 +38,7 @@ defmodule Rudder.IPFSInteractor do
   @impl true
   def handle_call({:fetch, cid}, _from, state) do
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
-    url = "#{ipfs_url}/upload"
+    url = "#{ipfs_url}"
 
     {:ok, %Finch.Response{body: body, headers: _, status: _}} =
       Finch.build(:get, "#{url}/get?cid=#{cid}")
