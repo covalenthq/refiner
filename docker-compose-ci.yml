@@ -1,5 +1,5 @@
 version: '3'
-
+# runs the entire rudder pipeline with all supporting services (including rudder) in docker
 services:
   eth-node:
     image: "gcr.io/covalent-project/operational-staking:latest-rudder"
