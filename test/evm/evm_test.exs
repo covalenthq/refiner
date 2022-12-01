@@ -3,7 +3,7 @@ Code.require_file("helpers.exs", "test/evm/helpers")
 defmodule SupervisionTreeTest do
   use ExUnit.Case, async: false
   @moduletag :spawn
-
+  require Logger
   alias Rudder.BlockProcessor.Worker.Executor
   alias Rudder.BlockProcessor.Struct
 

@@ -1,17 +1,17 @@
-name: compile-test
+name: compile-format
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 env:
   MIX_ENV: test
 
 jobs:
   deps:
-    name: Dependencies
+    name: install-deps
     runs-on: ubuntu-20.04
     strategy:
       matrix:
