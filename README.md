@@ -1,4 +1,7 @@
 # Rudder
+[![docker-ci-test](https://github.com/covalenthq/rudder/actions/workflows/docker-ci-test.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/docker-ci-test.yaml)
+[![compile-format](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml)
+[![compile-format](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml)
 
 Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations.
 
