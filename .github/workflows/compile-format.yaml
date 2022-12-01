@@ -11,7 +11,7 @@ env:
 
 jobs:
   deps:
-    name: Get dependencies
+    name: install-deps
     runs-on: ubuntu-20.04
     strategy:
       matrix:

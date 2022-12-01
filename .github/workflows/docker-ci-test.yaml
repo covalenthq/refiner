@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  deploy-test:
     runs-on: ubuntu-latest
     steps:
       - name: Login to GCR
