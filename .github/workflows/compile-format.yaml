@@ -2,9 +2,9 @@ name: compile-format
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 env:
   MIX_ENV: test
