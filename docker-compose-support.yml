@@ -1,0 +1,63 @@
+version: '3'
+# runs only supporting services for rudder in docker when running rudder locally
+# set .env such that only rudder needs to talk to the services in docker
+services:
+  eth-node:
+    image: "gcr.io/covalent-project/operational-staking:latest-rudder"
+    container_name: hardhat-node
+    restart:  on-failure
+    expose:
+      - 8545:8545
+    entrypoint: |
+      /bin/bash -l -c "
+        echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET
+        echo "forked-node-address:" $ERIGON_NODE
+        echo "ipfs-node-address:" $IPFS_PINNER_URL
+        echo "web3-jwt:" $WEB3_JWT
+      ./entrypoint.sh;"
+    networks:
+      - cqt-net
+    environment:
+      - ERIGON_NODE=${ERIGON_NODE}
+    ports:
+      - 8545:8545
+
+  operational-staking:
+    image: "gcr.io/covalent-project/operational-staking:latest-rudder"
+    container_name: proof-chain
+    restart: on-failure
+    expose:
+      - 8008
+    entrypoint: |
+      /bin/bash -l -c "
+      echo Waiting for hardhat node to start up...;
+      sleep 20;
+      echo hard-hat node started!;
+      echo "forked-node-address:" $ERIGON_NODE
+      npm run docker:deploy;"
+    depends_on:
+      - eth-node
+    networks:
+      - cqt-net
+    ports:
+      - "8008:8008"
+
+  ipfs-pinner:
+    image: "gcr.io/covalent-project/ipfs-pinner:latest"
+    volumes:
+      - /tmp/data/.ipfs:/root/.ipfs/
+    container_name: ipfs-pinner
+    restart:  on-failure
+    expose:
+      - 4001:4001
+      - 3000:3000
+    environment:
+      - WEB3_JWT=${WEB3_JWT}
+    networks:
+      - cqt-net
+    ports:
+      - 4001:4001
+      - 3000:3000
+
+networks:
+  cqt-net:

@@ -1,0 +1,55 @@
+version: '3'
+# used exclusively for testing only locally built images for rudder and ipfs in docker  (proof-chain and hardhat services are not available here)
+services:
+  ipfs-pinner:
+    image: "gcr.io/covalent-project/ipfs-pinner:latest"
+    volumes:
+      - ~/.ipfs:/root/.ipfs/
+    container_name: ipfs-pinner
+    restart:  on-failure
+    expose:
+      - 4001:4001
+      - 3000:3000
+    environment:
+      - WEB3_JWT=${WEB3_JWT}
+    networks:
+      - cqt-net
+    ports:
+      - 4001:4001
+      - 3000:3000
+
+  rudder:
+    image: "rudder-local-ubuntu:latest"
+    container_name: rudder
+    volumes:
+      - ./evm-out:/app/evm-out
+    links:
+      - "ipfs-pinner:ipfs-pinner"
+    # build: 
+    #   context: .
+    #   dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+        ipfs-pinner:
+          condition: service_started
+    entrypoint: >
+     /bin/sh -l -c "   
+       echo "ipfs-node-address:" $IPFS_PINNER_URL;
+       echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET;
+       echo "brp-op-pk:" $BLOCK_RESULT_OPERATOR_PRIVATE_KEY;
+       echo Uploading test files to local .ipfs...;
+       sleep 10;
+       curl -F "filedata=@/app/test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1" http://ipfs-pinner:3000/upload;
+       curl -F "filedata=@/app/test-data/encoded/1-15892755-replica-0x0e7bfa908e3fc04003e00afde7eb31772a012e51e0e094e4add1734da92297f7" http://ipfs-pinner:3000/upload;
+       echo Test bsp files uploaded!;
+       mix test ./test/block_specimen_decoder_test.exs ./test/block_result_uploader_test.exs;
+       exit 0;"
+    environment:
+     - IPFS_PINNER_URL=${IPFS_PINNER_URL}
+     - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
+     - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
+    networks:
+      - cqt-net
+
+networks:
+  cqt-net:
