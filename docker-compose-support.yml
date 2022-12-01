@@ -1,5 +1,6 @@
 version: '3'
-
+# runs only supporting services for rudder in docker when running rudder locally
+# set .env such that only rudder needs to talk to the services in docker
 services:
   eth-node:
     image: "gcr.io/covalent-project/operational-staking:latest-rudder"
