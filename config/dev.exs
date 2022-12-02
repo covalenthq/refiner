@@ -48,7 +48,7 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :rudder,
-  operator_private_key: "8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba",
-  proofchain_address: "0xCF3d5540525D191D6492F1E0928d4e816c29778c",
-  proofchain_chain_id: 1,
+  operator_private_key: "b5a40dc84e0c6cb3110f3552bf32b41b3296029b8817d4aa9cf767fe8253f61b",
+  proofchain_address: "0x19492a5019B30471aA8fa2c6D9d39c99b5Cda20C",
+  proofchain_chain_id: 1287,
   proofchain_node: System.get_env("NODE_ETHEREUM_MAINNET")
