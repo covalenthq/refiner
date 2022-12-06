@@ -18,7 +18,12 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   def start() do
     specimen_url_map = %{}
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
-    listen_for_event(specimen_url_map, proofchain_address)
+    block_height = get_latest_block()
+    listen_for_event(specimen_url_map, proofchain_address, block_height)
+  end
+
+  def get_latest_block() do
+    return "latest"
   end
 
   defp extract_submitted_specimens([], specimen_url_map), do: specimen_url_map
@@ -85,12 +90,12 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     end)
   end
 
-  defp listen_for_event(specimen_url_map, proofchain_address) do
+  defp listen_for_event(specimen_url_map, proofchain_address, block_height) do
     {:ok, bsp_submitted_logs} =
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
           address: proofchain_address,
-          fromBlock: "latest",
+          fromBlock: block_height,
           topics: [@bsp_submitted_event_hash]
         }
       ])
@@ -101,7 +106,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
           address: proofchain_address,
-          fromBlock: "latest",
+          fromBlock: block_height,
           topics: [@bsp_awarded_event_hash]
         }
       ])
@@ -110,7 +115,11 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
     specimen_url_map = push_bsps_to_process(bsps_to_process, specimen_url_map)
 
-    :timer.sleep(1000)
-    listen_for_event(specimen_url_map, proofchain_address)
+    latest_block_number = Rudder.Network.EthereumMainnet.eth_blockNumber()
+    if latest_block_number == block_height do
+      :timer.sleep(12000)
+    end
+
+    listen_for_event(specimen_url_map, proofchain_address, block_height + 1)
   end
 end
