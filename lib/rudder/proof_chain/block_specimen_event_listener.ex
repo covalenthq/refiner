@@ -23,7 +23,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   end
 
   def get_latest_block() do
-    return "latest"
+    "latest"
   end
 
   defp extract_submitted_specimens([], specimen_url_map), do: specimen_url_map
