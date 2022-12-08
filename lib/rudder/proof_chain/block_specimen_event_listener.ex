@@ -18,12 +18,31 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   def start() do
     specimen_url_map = %{}
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
-    block_height = get_latest_block()
+    block_height = get_block_height_from_the_last_checkpoint()
     listen_for_event(specimen_url_map, proofchain_address, block_height)
   end
 
-  def get_latest_block() do
-    "latest"
+  def get_block_height_from_the_last_checkpoint() do
+    block_height =  Rudder.Network.EthereumMainnet.eth_blockNumber() # TODO: load checkpoint
+    if block_height == nil do
+      Rudder.Network.EthereumMainnet.eth_blockNumber()
+    else
+      chain_id = Application.get_env(:rudder, :proofchain_chain_id)
+      get_open_session_block_height(chain_id, block_height)
+    end
+  end
+
+  defp get_open_session_block_height(chain_id, block_height) do
+    get_open_session_block_height(chain_id, block_height, false)
+  end
+
+  defp get_open_session_block_height(chain_id, block_height, false) do
+    block_height
+  end
+
+  defp get_open_session_block_height(chain_id, block_height, true) do
+    is_session_closed = Rudder.ProofChain.Interactor.is_block_result_session_closed(chain_id, block_height)
+    get_open_session_block_height(chain_id, block_height + 1, is_session_closed)
   end
 
   defp extract_submitted_specimens([], specimen_url_map), do: specimen_url_map
