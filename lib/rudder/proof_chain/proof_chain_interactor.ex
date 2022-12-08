@@ -7,6 +7,8 @@ defmodule Rudder.ProofChain.Interactor do
   end
 
   @submit_brp_selector "submitBlockResultProof(uint64, uint64, bytes32, bytes32, string)"
+  @is_session_closed_selector ABI.FunctionSelector.decode("isSessionClosed(uint64, uint64, bool) -> bool")
+
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -34,6 +36,30 @@ defmodule Rudder.ProofChain.Interactor do
       test_url
     )
   end
+
+  def is_block_result_session_closed(chain_id, block_height) do
+    rpc_params = [chain_id, block_height, false]
+
+    proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    {:ok, to} = Rudder.PublicKeyHash.parse(proofchain_address)
+
+    gas_price = Rudder.Network.EthereumMainnet.eth_gasPrice!()
+
+    chain_id = Application.get_env(:rudder, :proofchain_chain_id)
+    t = [
+      from: nil,
+      to: to,
+      gas: 1000000,
+      gas_price: gas_price,
+      value: 0,
+      data: {@is_session_closed_selector, rpc_params}
+    ]
+
+    with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_call(t) do
+      res
+    end
+  end
+
 
   def submit_block_result_proof(
         chain_id,
