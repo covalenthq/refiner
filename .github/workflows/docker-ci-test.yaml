@@ -2,9 +2,9 @@ name: docker-ci-test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy-test:
@@ -19,7 +19,7 @@ jobs:
 
       - uses: actions/checkout@v2
       - uses: satackey/action-docker-layer-caching@v0.0.10
-      # Ignore the failure of a step and avoid terminating the job.
+        # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
       - name: Build & Publish the Docker image
         run: |
@@ -34,6 +34,7 @@ jobs:
           echo ERIGON_NODE=${{ secrets.ERIGON_NODE }} >> .env
           echo NODE_ETHEREUM_MAINNET=${{ secrets.NODE_ETHEREUM_MAINNET }} >> .env
           echo BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets.BLOCK_RESULT_OPERATOR_PRIVATE_KEY }} >> .env
+          echo EVM_EXEC_PATH=${{ secrets.EVM_EXEC_PATH }} >> .env
           cat .env
 
       - name: Load .env file
