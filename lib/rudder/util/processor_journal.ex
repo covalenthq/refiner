@@ -14,14 +14,42 @@ defmodule Rudder.Journal do
 
   @impl true
   def init(journal_path) do
-    {:ok, ETFs.DebugFile.open_async(:processor_journal, journal_path)}
+    work_items_log = Path.join(journal_path, "worklog.etf")
+    block_height_log = Path.join(journal_path, "block_height.etf")
+
+    {:ok,
+     {ETFs.DebugFile.open_async(:processor_journal, work_items_log),
+      ETFs.DebugFile.open_async(:processor_journal, block_height_log)}}
+  end
+
+  @impl true
+  def handle_call({:blockh, :fetch}, _from, {_workitem_log, blockh_log} = state) do
+    Logger.info("getting the last unprocessed block height")
+
+    {result, max_height} =
+      ETFs.DebugFile.stream!(blockh_log)
+      |> Enum.reduce({MapSet.new(), -1}, fn elem, {running_set, max_height} ->
+        case elem do
+          {:started, height} ->
+            set = MapSet.put(running_set, height)
+            max_height = max(max_height, height)
+            {set, max_height}
+
+          {_, height} ->
+            set = MapSet.delete(running_set, height)
+            max_height = max(max_height, height)
+            {set, max_height}
+        end
+      end)
+
+    {:reply, {:ok, Enum.min(result, &<=/2, fn -> max_height + 1 end)}, state}
   end
 
   @doc """
   returns a list of ids which are in the given status stage
   """
   @impl true
-  def handle_call({:fetch, status}, _from, state) do
+  def handle_call({:workitem, :fetch, status}, _from, {workitem_log, _blockh_log} = state) do
     Logger.info("getting ids with status=#{status}")
 
     ## filter function for Enum.reduce/3
@@ -59,7 +87,7 @@ defmodule Rudder.Journal do
       end
 
     result =
-      ETFs.DebugFile.stream!(state)
+      ETFs.DebugFile.stream!(workitem_log)
       |> Enum.reduce(MapSet.new(), filter_fn)
       |> Enum.to_list()
 
@@ -67,8 +95,14 @@ defmodule Rudder.Journal do
   end
 
   @impl true
-  def handle_call({status, id}, _from, state) do
-    ETFs.DebugFile.log_term!(state, {status, id})
+  def handle_call({:workitem, status, id}, _from, {workitem_log, _blockh_log} = state) do
+    ETFs.DebugFile.log_term!(workitem_log, {status, id})
+    {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_call({:blockh, status, height}, _from, {_workitem_log, blockh_log} = state) do
+    ETFs.DebugFile.log_term!(blockh_log, {status, height})
     {:reply, :ok, state}
   end
 
@@ -85,28 +119,48 @@ defmodule Rudder.Journal do
   def items_with_status(status) do
     cond do
       status in [:awarded, :commit, :abort, :discovered] ->
-        {:ok, items} = GenServer.call(Rudder.Journal, {:fetch, status}, :infinity)
+        {:ok, items} = GenServer.call(Rudder.Journal, {:workitem, :fetch, status}, :infinity)
         items
 
       true ->
-        Logger.info("wrong status provided #{status}")
+        Logger.info("status not supported provided #{status}")
         {:error, "wrong status"}
     end
   end
 
+  @doc """
+  returns the last block which was "started" but not "committed"/"aborted".
+  Returns 1 + last_process_block_height in case no such block exists
+  """
+  def last_started_block() do
+    GenServer.call(Rudder.Journal, {:blockh, :fetch})
+  end
+
   def discovered(id) do
-    GenServer.call(Rudder.Journal, {:discovered, id}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:workitem, :discovered, id}, 5_00_000)
   end
 
   def awarded(id) do
-    GenServer.call(Rudder.Journal, {:awarded, id}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:workitem, :awarded, id}, 5_00_000)
   end
 
   def commit(id) do
-    GenServer.call(Rudder.Journal, {:commit, id}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:workitem, :commit, id}, 5_00_000)
   end
 
   def abort(id) do
-    GenServer.call(Rudder.Journal, {:abort, id}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:workitem, :abort, id}, 5_00_000)
+  end
+
+  def block_height_started(height) do
+    GenServer.call(Rudder.Journal, {:blockh, :started, height}, 5_00_000)
+  end
+
+  def block_height_committed(height) do
+    GenServer.call(Rudder.Journal, {:blockh, :committed, height}, 5_00_000)
+  end
+
+  def block_height_aborted(height) do
+    GenServer.call(Rudder.Journal, {:blockh, :aborted, height}, 5_00_000)
   end
 end
