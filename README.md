@@ -15,24 +15,15 @@ The happy path for `rudder` is made up of loosely coupled (some maintain state a
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `rudder` to your list of dependencies in `mix.exs`:
 
-  ```elixir
-    def deps do
-      [
-        {:rudder, "~> 0.1.0"}
-      ]
-    end
-  ```
-  
-In order to run IPFS-Pinner in your home directory you need to run:
-```
-sudo chmod -R 770 .ipfs 
-```
-then run
-```
-sudo chmod -R 770 ipfs-pinner 
+```elixir
+  def deps do
+    [
+      {:rudder, "~> 0.1.2"}
+    ]
+  end
 ```
 
-In order to run it in prod you need to add the operator private key inside `.envrc.local`:
+In order to run it in prod you need to add the operator private key inside `.envrc`:
 ```
 export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="put_your_key_here"
 ```
@@ -71,23 +62,7 @@ docker pull gcr.io/covalent-project/rudder:latest
 ### Environment Vars
 
 Add the env vars to a .env file as below. Ask your node operator about these if you have questions.
-
-```env
-# used to submit and block result through a web3 storage service
-WEB3_JWT=<WEB3-JWT> 
-# used  for testing and forking a state of ethereum mainnent
-ERIGON_NODE=<FORKED-ERIGON-NODE>
-# used to submit block result proofs 
-BLOCK_RESULT_OPERATOR_PRIVATE_KEY=<PRIVATE-KEY-OF-BLOCK-RESULT-OPERATOR>
-
-# if running rudder and all supporting services using docker compose
-NODE_ETHEREUM_MAINNET=http://hardhat-node:8545/
-IPFS_PINNER_URL=http://ipfs-pinner:3000
-
-# if running rudder locally and all other services using docker compose
-NODE_ETHEREUM_MAINNET=http://127.0.0.1:8545/
-IPFS_PINNER_URL=http://127.0.0.1:3000
-```
+Check the `.env_example` for the list of required (and optional) environment variables.
 
 ## Test
 
@@ -359,3 +334,13 @@ iex(87)> [replica_fp] |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_fil
 ```
 
 The gap above is that the `extractor` used for decoding is for codec version 0.2 and an older version of extractor which doesn't play with the stateless evm tool. Additionally, the specimen needs to be extracted from replica structure (json) before being passed to the `sync_queue` API.
+
+---
+
+## Troubleshooting
+
+- permission errors with ~/.ipfs folder
+In order to run IPFS-Pinner in your home directory you need to run:
+```
+sudo chmod -R 770 .ipfs 
+```

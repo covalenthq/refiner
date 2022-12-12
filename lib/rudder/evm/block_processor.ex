@@ -81,7 +81,7 @@ defmodule Rudder.BlockProcessor.Core do
               sender: self(),
               misc: from
             },
-            %Struct.EVMParams{}
+            Struct.EVMParams.new()
           }
         )
 
