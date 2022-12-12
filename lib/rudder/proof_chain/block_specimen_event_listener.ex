@@ -91,6 +91,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
         %{
           address: proofchain_address,
           fromBlock: 3342290,
+          toBlock: "latest",
           topics: [@bsp_submitted_event_hash]
         }
       ])
@@ -102,6 +103,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
         %{
           address: proofchain_address,
           fromBlock: 3343723,
+          toBlock: "latest",
           topics: [@bsp_awarded_event_hash]
         }
       ])
