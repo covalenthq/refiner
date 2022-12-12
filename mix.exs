@@ -43,7 +43,7 @@ defmodule Rudder.MixProject do
        github: "tsutsu/ethereum_abi",
        branch: "feature-parse-events-from-abi-specifications",
        override: true},
-      {:ex_secp256k1, "~> 0.4.0"},
+      {:ex_secp256k1, "~> 0.6.0"},
       {:ex_keccak, "~> 0.3.0", override: true},
       {:mnemonic, "~> 0.3"},
       {:ex_rlp, "~> 0.5.4", override: true},
