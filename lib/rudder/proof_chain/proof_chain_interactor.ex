@@ -7,7 +7,9 @@ defmodule Rudder.ProofChain.Interactor do
   end
 
   @submit_brp_selector "submitBlockResultProof(uint64, uint64, bytes32, bytes32, string)"
-  @is_session_closed_selector ABI.FunctionSelector.decode("isSessionClosed(uint64, uint64, bool) -> bool")
+  @is_session_closed_selector ABI.FunctionSelector.decode(
+                                "isSessionOpen(uint64, uint64, address, bool) -> bool"
+                              )
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -37,29 +39,36 @@ defmodule Rudder.ProofChain.Interactor do
     )
   end
 
-  def is_block_result_session_closed(chain_id, block_height) do
-    rpc_params = [chain_id, block_height, false]
+  def is_block_result_session_open(block_height) do
+    operator = get_operator_wallet()
+    operator_address = operator.address
+    chain_id = Application.get_env(:rudder, :proofchain_chain_id)
+
+    rpc_params = [chain_id, block_height, false, operator_address]
 
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
     {:ok, to} = Rudder.PublicKeyHash.parse(proofchain_address)
 
     gas_price = Rudder.Network.EthereumMainnet.eth_gasPrice!()
 
-    chain_id = Application.get_env(:rudder, :proofchain_chain_id)
-    t = [
+    tx = [
       from: nil,
       to: to,
-      gas: 1000000,
+      gas: 1_000_000,
       gas_price: gas_price,
       value: 0,
-      data: {@is_session_closed_selector, rpc_params}
+      data: {@is_session_open_selector, rpc_params}
     ]
 
-    with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_call(t) do
+    with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_call(tx) do
       res
     end
   end
 
+  defp get_operator_wallet() do
+    operator_private_key = Application.get_env(:rudder, :operator_private_key)
+    Rudder.Wallet.load(Base.decode16!(operator_private_key, case: :lower))
+  end
 
   def submit_block_result_proof(
         chain_id,
@@ -77,8 +86,7 @@ defmodule Rudder.ProofChain.Interactor do
         url
       ])
 
-    operator_private_key = Application.get_env(:rudder, :operator_private_key)
-    sender = Rudder.Wallet.load(Base.decode16!(operator_private_key, case: :lower))
+    sender = get_operator_wallet()
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
     {:ok, to} = Rudder.PublicKeyHash.parse(proofchain_address)
 
