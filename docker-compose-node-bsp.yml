@@ -57,7 +57,7 @@ services:
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
-    # build: 
+    # build:
     #   context: .
     #   dockerfile: Dockerfile
     restart: on-failure

@@ -18,31 +18,19 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   def start() do
     specimen_url_map = %{}
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
-    block_height = get_block_height_from_the_last_checkpoint()
+    block_height = load_last_checked_block()
     listen_for_event(specimen_url_map, proofchain_address, block_height)
   end
 
-  def get_block_height_from_the_last_checkpoint() do
-    block_height =  Rudder.Network.EthereumMainnet.eth_blockNumber() # TODO: load checkpoint
-    if block_height == nil do
-      Rudder.Network.EthereumMainnet.eth_blockNumber()
+  def load_last_checked_block() do
+    {:ok, block_height} = Rudder.Journal.last_started_block()
+
+    if block_height == 0 do
+      {:ok, block_height} = Rudder.Network.EthereumMainnet.eth_blockNumber()
+      block_height
     else
-      chain_id = Application.get_env(:rudder, :proofchain_chain_id)
-      get_open_session_block_height(chain_id, block_height)
+      block_height
     end
-  end
-
-  defp get_open_session_block_height(chain_id, block_height) do
-    get_open_session_block_height(chain_id, block_height, false)
-  end
-
-  defp get_open_session_block_height(chain_id, block_height, false) do
-    block_height
-  end
-
-  defp get_open_session_block_height(chain_id, block_height, true) do
-    is_session_closed = Rudder.ProofChain.Interactor.is_block_result_session_closed(chain_id, block_height)
-    get_open_session_block_height(chain_id, block_height + 1, is_session_closed)
   end
 
   defp extract_submitted_specimens([], specimen_url_map), do: specimen_url_map
@@ -95,13 +83,22 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     end)
   end
 
+  defp is_brp_session_open(bsp_key) do
+    [_chain_id, block_height, _block_hash, _specimen_hash] = String.split(bsp_key, "_")
+    Rudder.ProofChain.Interactor.is_block_result_session_open(block_height)
+  end
+
   defp push_bsps_to_process([], specimen_url_map), do: specimen_url_map
 
   defp push_bsps_to_process(bsp_keys, specimen_url_map) do
     Enum.reduce(bsp_keys, specimen_url_map, fn bsp_key, new_specimen_url_map ->
       if Map.has_key?(specimen_url_map, bsp_key) do
         bsp_urls = Map.get(specimen_url_map, bsp_key)
-        Rudder.Pipeline.Spawner.push_hash(bsp_key, bsp_urls)
+
+        if is_brp_session_open(bsp_key) do
+          Rudder.Pipeline.Spawner.push_hash(bsp_key, bsp_urls)
+        end
+
         Map.delete(new_specimen_url_map, bsp_key)
       else
         new_specimen_url_map
@@ -135,7 +132,9 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     specimen_url_map = push_bsps_to_process(bsps_to_process, specimen_url_map)
 
     latest_block_number = Rudder.Network.EthereumMainnet.eth_blockNumber()
+
     if latest_block_number == block_height do
+      # ~12 seconds is mining time of one moonbeam block
       :timer.sleep(12000)
     end
 
