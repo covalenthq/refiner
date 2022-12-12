@@ -29,7 +29,7 @@ defmodule Rudder.MixProject do
       {:broadway, "~> 1.0", override: true},
       # {:erlexec, "~> 2.0"},
       {:off_broadway_redis, "~> 0.4.3"},
-      {:cors_plug, "~> 2.0"},
+      {:cors_plug, "~> 3.0"},
       {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
       {:gettext, "~> 0.11"},
