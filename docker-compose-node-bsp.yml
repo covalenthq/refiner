@@ -57,7 +57,7 @@ services:
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
-    # build: 
+    # build:
     #   context: .
     #   dockerfile: Dockerfile
     restart: on-failure
@@ -80,7 +80,7 @@ services:
         curl -F "filedata=@/app/test-data/encoded/1-15892755-replica-0x0e7bfa908e3fc04003e00afde7eb31772a012e51e0e094e4add1734da92297f7" http://ipfs-pinner:3000/upload;
         echo Test bsp files uploaded!;
         cd /app;
-        mix test --trace --slowest 10;
+        MIX_ENV=docker mix test --trace --slowest 10;
         exit 0;"
     environment:
       - IPFS_PINNER_URL=${IPFS_PINNER_URL}
