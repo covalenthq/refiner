@@ -90,8 +90,8 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
           address: proofchain_address,
-          fromBlock: 3342290,
-          toBlock: 3343818,
+          fromBlock: 3344163,
+          toBlock: 3344661,
           topics: [@bsp_submitted_event_hash]
         }
       ])
@@ -102,8 +102,8 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
           address: proofchain_address,
-          fromBlock: 3343723,
-          toBlock: 3343818,
+          fromBlock: 3344163,
+          toBlock: 3344661,
           topics: [@bsp_awarded_event_hash]
         }
       ])
