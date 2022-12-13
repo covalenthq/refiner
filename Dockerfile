@@ -22,7 +22,7 @@ COPY plugins ./plugins
 RUN mix local.hex --force && \
     mix local.rebar --force && \
     mix deps.get && \
-    MIX_ENV=test mix do compile
+    MIX_ENV=docker mix do compile
 
 # dev release (copy release to next stage from _build) [Enable once tests work in docker]
 RUN mix release
@@ -53,6 +53,7 @@ RUN mkdir -p /app/_build /app/config /app/deps /app/lib /app/plugins /app/priv n
 # RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2 curl=7.83.1-r4 go=1.18.7-r0 make=4.3-r0 gcc=11.2.1_git20220219-r2
 WORKDIR /app
 RUN mix local.hex --force
+RUN mix local.rebar --force
 
 COPY --from=builder-evm /erigon/build/bin/ /app/plugins/
 COPY --from=builder-elixir /mix/_build /app/_build
