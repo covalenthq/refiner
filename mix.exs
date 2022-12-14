@@ -69,7 +69,12 @@ defmodule Rudder.MixProject do
 
       # logging
       {:logger_file_backend, "~> 0.0.12"},
-      {:etfs, "~> 0.1.5"}
+      {:etfs, "~> 0.1.5"},
+
+       # for telemetry
+       {:telemetry, "~> 1.0"},
+       {:telemetry_metrics, "~> 0.6.1"},
+       {:telemetry_metrics_prometheus, "~> 1.1.0"}
     ]
   end
 end

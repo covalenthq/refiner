@@ -14,6 +14,7 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
+    start_pinning_ms = System.monotonic_time(:millisecond)
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
     url = "#{ipfs_url}/upload"
 
@@ -28,6 +29,10 @@ defmodule Rudder.IPFSInteractor do
       |> Finch.request(Rudder.Finch)
 
     body_map = body |> Poison.decode!()
+
+    end_pinning_ms = System.monotonic_time(:millisecond)
+    pinning_duration = end_pinning_ms - start_pinning_ms
+    :telemetry.execute([ :rudder, :ipfsPinning], %{value: pinning_duration}, %{filePath: file_path})
 
     case body_map do
       %{"error" => error} -> {:reply, {:error, error}, state}
