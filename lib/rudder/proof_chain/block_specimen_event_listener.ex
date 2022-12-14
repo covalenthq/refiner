@@ -16,10 +16,9 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   end
 
   def start() do
-    specimen_url_map = %{}
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
     block_height = load_last_checked_block()
-    listen_for_event(specimen_url_map, proofchain_address, block_height)
+    listen_for_event(proofchain_address, block_height)
   end
 
   def load_last_checked_block() do
@@ -31,30 +30,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     else
       block_height
     end
-  end
-
-  defp extract_submitted_specimens([], specimen_url_map), do: specimen_url_map
-
-  defp extract_submitted_specimens(log_events, specimen_url_map) do
-    Enum.reduce(log_events, specimen_url_map, fn log_event, new_specimen_url_map ->
-      event_signature = "(uint64,uint64,bytes32,bytes32,string,uint128)"
-
-      [chain_id, block_height, block_hash_raw, specimen_hash_raw, url, _submittedStake] =
-        Rudder.Util.extract_data(log_event, event_signature)
-
-      # prepare data to generate key
-      specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
-      block_hash = Base.encode16(block_hash_raw, case: :lower)
-
-      key =
-        to_string(chain_id) <>
-          "_" <> to_string(block_height) <> "_" <> block_hash <> "_" <> specimen_hash
-
-      urls = Map.get(specimen_url_map, key, [])
-      urls = [url | urls]
-      Journal.discovered(key)
-      Map.put(new_specimen_url_map, key, urls)
-    end)
   end
 
   defp extract_awarded_specimens([]), do: []
@@ -83,53 +58,34 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     end)
   end
 
-  defp is_brp_session_open(bsp_key) do
-    [_chain_id, block_height, _block_hash, _specimen_hash] = String.split(bsp_key, "_")
-    Rudder.ProofChain.Interactor.is_block_result_session_open(block_height)
-  end
+  defp push_bsps_to_process(bsp_keys) do
+    Enum.map(bsp_keys, fn bsp_key ->
+      [_chain_id, block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
+      is_brp_sesion_open = Rudder.ProofChain.Interactor.is_block_result_session_open(block_height)
 
-  defp push_bsps_to_process([], specimen_url_map), do: specimen_url_map
+      specimen_hash_bytes32 = Base.decode16!(specimen_hash, case: :mixed)
+      bsp_urls = Rudder.ProofChain.Interactor.get_urls(specimen_hash_bytes32)
 
-  defp push_bsps_to_process(bsp_keys, specimen_url_map) do
-    Enum.reduce(bsp_keys, specimen_url_map, fn bsp_key, new_specimen_url_map ->
-      if Map.has_key?(specimen_url_map, bsp_key) do
-        bsp_urls = Map.get(specimen_url_map, bsp_key)
-
-        if is_brp_session_open(bsp_key) do
-          Rudder.Pipeline.Spawner.push_hash(bsp_key, bsp_urls)
-        end
-
-        Map.delete(new_specimen_url_map, bsp_key)
-      else
-        new_specimen_url_map
+      if is_brp_sesion_open do
+        Rudder.Pipeline.Spawner.push_hash(bsp_key, bsp_urls)
       end
     end)
   end
 
-  defp listen_for_event(specimen_url_map, proofchain_address, block_height) do
-    {:ok, bsp_submitted_logs} =
-      Rudder.Network.EthereumMainnet.eth_getLogs([
-        %{
-          address: proofchain_address,
-          fromBlock: block_height,
-          topics: [@bsp_submitted_event_hash]
-        }
-      ])
-
-    specimen_url_map = extract_submitted_specimens(bsp_submitted_logs, specimen_url_map)
-
+  defp listen_for_event(proofchain_address, block_height) do
     {:ok, bsp_awarded_logs} =
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
           address: proofchain_address,
           fromBlock: block_height,
+          toBlock: block_height,
           topics: [@bsp_awarded_event_hash]
         }
       ])
 
     bsps_to_process = extract_awarded_specimens(bsp_awarded_logs)
 
-    specimen_url_map = push_bsps_to_process(bsps_to_process, specimen_url_map)
+    push_bsps_to_process(bsps_to_process)
 
     latest_block_number = Rudder.Network.EthereumMainnet.eth_blockNumber()
 
@@ -138,6 +94,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       :timer.sleep(12000)
     end
 
-    listen_for_event(specimen_url_map, proofchain_address, block_height + 1)
+    listen_for_event(proofchain_address, block_height + 1)
   end
 end
