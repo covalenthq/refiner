@@ -147,7 +147,6 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
     case {Keyword.get(call_tx, :decode, true), selector.returns, decode_bin(bin)} do
       {false, _, returned_data} ->
-
         returned_data
 
       {true, nil, _} ->
