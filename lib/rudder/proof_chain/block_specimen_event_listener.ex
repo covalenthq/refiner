@@ -94,6 +94,9 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       :timer.sleep(12000)
     end
 
-    listen_for_event(proofchain_address, block_height + 1)
+    next_block_height = block_height + 1
+    Rudder.Journal.block_height_started(next_block_height)
+
+    listen_for_event(proofchain_address, next_block_height)
   end
 end

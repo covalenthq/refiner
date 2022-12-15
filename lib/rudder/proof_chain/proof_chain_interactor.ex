@@ -73,7 +73,7 @@ defmodule Rudder.ProofChain.Interactor do
         url
       ) do
     data =
-      ABI.encode(@submit_brp_selector, [
+      ABI.encode_call_payload(@submit_brp_selector, [
         chain_id,
         block_height,
         block_specimen_hash,

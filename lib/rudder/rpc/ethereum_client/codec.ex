@@ -133,7 +133,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   defp normalize_hl_call_payload_part(other), do: other
 
   def encode_call_payload({selector, params}) do
-    ABI.encode(selector, params)
+    ABI.encode_call_payload(selector, params)
     |> encode_call_payload()
   end
 
@@ -147,6 +147,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
     case {Keyword.get(call_tx, :decode, true), selector.returns, decode_bin(bin)} do
       {false, _, returned_data} ->
+
         returned_data
 
       {true, nil, _} ->
@@ -162,8 +163,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
         decoded_data
 
       {true, return_type, returned_data} ->
-        [{decoded_data}] =
-          ABI.TypeDecoder.decode_raw(returned_data, [{:tuple, [return_type]}], discard_rest: true)
+        decoded_data = ABI.decode_output(selector, returned_data)
 
         decoded_data
     end
