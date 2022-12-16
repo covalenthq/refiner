@@ -88,13 +88,13 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
     latest_block_number = Rudder.Network.EthereumMainnet.eth_blockNumber()
 
+    next_block_height = block_height + 1
+    Rudder.Journal.block_height_started(next_block_height)
+
     if latest_block_number == block_height do
       # ~12 seconds is mining time of one moonbeam block
       :timer.sleep(12000)
     end
-
-    next_block_height = block_height + 1
-    Rudder.Journal.block_height_started(next_block_height)
 
     listen_for_event(proofchain_address, next_block_height)
   end
