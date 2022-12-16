@@ -7,9 +7,10 @@ defmodule Rudder.ProofChain.Interactor do
   end
 
   @submit_brp_selector "submitBlockResultProof(uint64, uint64, bytes32, bytes32, string)"
-  @is_session_closed_selector ABI.FunctionSelector.decode(
-                                "isSessionOpen(uint64, uint64, address, bool) -> bool"
-                              )
+  @is_session_open_selector ABI.FunctionSelector.decode(
+                              "isSessionOpen(uint64,uint64,bool,address) -> bool"
+                            )
+  @get_urls_selector ABI.FunctionSelector.decode("getURLS(bytes32) -> string[] memory")
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -24,28 +25,7 @@ defmodule Rudder.ProofChain.Interactor do
   # "Operator already submitted for the provided block hash"
   # "Insufficiently staked to submit"
 
-  def test_submit_block_result_proof(block_height) do
-    test_block_specimen_hash = "525D191D6492F1E0928d4e816c29778c"
-    test_block_result_hash = "525D191D6492F1E0928d4e816c29778c"
-    test_url = "block_result.url"
-    chain_id = 1
-
-    submit_block_result_proof(
-      chain_id,
-      block_height,
-      test_block_specimen_hash,
-      test_block_result_hash,
-      test_url
-    )
-  end
-
-  def is_block_result_session_open(block_height) do
-    operator = get_operator_wallet()
-    operator_address = operator.address
-    chain_id = Application.get_env(:rudder, :proofchain_chain_id)
-
-    rpc_params = [chain_id, block_height, false, operator_address]
-
+  defp make_call(data) do
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
     {:ok, to} = Rudder.PublicKeyHash.parse(proofchain_address)
 
@@ -57,12 +37,27 @@ defmodule Rudder.ProofChain.Interactor do
       gas: 1_000_000,
       gas_price: gas_price,
       value: 0,
-      data: {@is_session_open_selector, rpc_params}
+      data: data
     ]
 
     with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_call(tx) do
       res
     end
+  end
+
+  def get_urls(hash) do
+    rpc_params = [hash]
+    data = {@get_urls_selector, rpc_params}
+    make_call(data)
+  end
+
+  def is_block_result_session_open(block_height) do
+    {block_height, _} = Integer.parse(block_height)
+    operator = get_operator_wallet()
+    chain_id = Application.get_env(:rudder, :proofchain_chain_id)
+    rpc_params = [chain_id, block_height, false, operator.address.bytes]
+    data = {@is_session_open_selector, rpc_params}
+    make_call(data)
   end
 
   defp get_operator_wallet() do
@@ -78,7 +73,7 @@ defmodule Rudder.ProofChain.Interactor do
         url
       ) do
     data =
-      ABI.encode(@submit_brp_selector, [
+      ABI.encode_call_payload(@submit_brp_selector, [
         chain_id,
         block_height,
         block_specimen_hash,
