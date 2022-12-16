@@ -998,6 +998,25 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "specimenhash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getURLS",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "initialOwner",
         "type": "address"
@@ -1051,7 +1070,7 @@
       },
       {
         "internalType": "address",
-        "name": "delegator",
+        "name": "operator",
         "type": "address"
       }
     ],
