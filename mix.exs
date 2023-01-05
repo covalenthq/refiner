@@ -70,6 +70,7 @@ defmodule Rudder.MixProject do
       # logging
       {:logger_file_backend, "~> 0.0.12"},
       {:etfs, "~> 0.1.5"}
+      # {:etfs, path: "/Users/sudeep/repos/experiment/etfs"}
     ]
   end
 end

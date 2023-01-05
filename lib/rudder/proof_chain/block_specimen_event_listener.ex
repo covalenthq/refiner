@@ -1,6 +1,5 @@
 defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   use GenServer
-  alias Rudder.Journal
 
   @impl true
   def init(_) do
@@ -17,6 +16,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   def start() do
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    push_bsps_to_process(Rudder.Journal.items_with_status(:discover))
     block_height = load_last_checked_block()
     listen_for_event(proofchain_address, block_height)
   end
@@ -53,7 +53,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
         to_string(chain_id) <>
           "_" <> to_string(block_height) <> "_" <> block_hash <> "_" <> specimen_hash
 
-      Journal.awarded(key)
       [key | keys]
     end)
   end

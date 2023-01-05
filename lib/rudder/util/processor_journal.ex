@@ -18,8 +18,8 @@ defmodule Rudder.Journal do
     block_height_log = Path.join(journal_path, "block_height.etf")
 
     {:ok,
-     {ETFs.DebugFile.open_async(:processor_journal, work_items_log),
-      ETFs.DebugFile.open_async(:processor_journal, block_height_log)}}
+     {ETFs.DebugFile.open_async(:work_items_processor_journal, work_items_log),
+      ETFs.DebugFile.open_async(:block_height_processor_journal, block_height_log)}}
   end
 
   @impl true
@@ -81,21 +81,22 @@ defmodule Rudder.Journal do
   end
 
   @impl true
-  def handle_call({:workitem, status, id}, _from, {workitem_log, _blockh_log} = state) do
-    ETFs.DebugFile.log_term!(workitem_log, {status, id})
-    {:reply, :ok, state}
+  def handle_call({:workitem, status, id}, _from, {workitem_log, blockh_log}) do
+    workitem_log = ETFs.DebugFile.log_term!(workitem_log, {status, id})
+    {:reply, :ok, {workitem_log, blockh_log}}
   end
 
   @impl true
-  def handle_call({:blockh, status, height}, _from, {_workitem_log, blockh_log} = state) do
-    ETFs.DebugFile.log_term!(blockh_log, {status, height})
-    {:reply, :ok, state}
+  def handle_call({:blockh, status, height}, _from, {workitem_log, blockh_log}) do
+    blockh_log = ETFs.DebugFile.log_term!(blockh_log, {status, height})
+    {:reply, :ok, {workitem_log, blockh_log}}
   end
 
   @impl true
-  def terminate(reason, state) do
+  def terminate(reason, {workitem_log, blockh_log}) do
     Logger.info("journal terminated, reason: #{inspect(reason)}")
-    ETFs.DebugFile.close(state)
+    ETFs.DebugFile.close(workitem_log)
+    ETFs.DebugFile.close(blockh_log)
   end
 
   @doc """
