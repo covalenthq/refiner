@@ -87,33 +87,42 @@ defmodule Rudder.ProofChain.Interactor do
 
     {:ok, recent_gas_limit} = Rudder.Network.EthereumMainnet.gas_limit(:latest)
 
-    estimated_gas_limit =
-      Rudder.Network.EthereumMainnet.eth_estimateGas!(
-        from: sender.address,
+    try do
+      estimated_gas_limit =
+        Rudder.Network.EthereumMainnet.eth_estimateGas!(
+          from: sender.address,
+          to: to,
+          data: data,
+          gas: recent_gas_limit
+        )
+
+      nonce = Rudder.Network.EthereumMainnet.next_nonce(sender.address)
+      gas_price = Rudder.Network.EthereumMainnet.eth_gasPrice!()
+
+      chain_id = Application.get_env(:rudder, :proofchain_chain_id)
+
+      tx = %Rudder.RPC.EthereumClient.Transaction{
+        nonce: nonce,
+        gas_price: gas_price,
+        gas_limit: estimated_gas_limit,
         to: to,
+        value: 0,
         data: data,
-        gas: recent_gas_limit
-      )
+        chain_id: chain_id
+      }
 
-    nonce = Rudder.Network.EthereumMainnet.next_nonce(sender.address)
-    gas_price = Rudder.Network.EthereumMainnet.eth_gasPrice!()
+      signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
 
-    chain_id = Application.get_env(:rudder, :proofchain_chain_id)
-
-    tx = %Rudder.RPC.EthereumClient.Transaction{
-      nonce: nonce,
-      gas_price: gas_price,
-      gas_limit: estimated_gas_limit,
-      to: to,
-      value: 0,
-      data: data,
-      chain_id: chain_id
-    }
-
-    signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
-
-    with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
-      :ok
+      with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
+        :ok
+      end
+    rescue
+      e in Rudder.RPCError ->
+        if String.contains?(e.message, "Operator already submitted for the provided block hash") do
+          :ok
+        else
+          :error
+        end
     end
   end
 end
