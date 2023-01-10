@@ -72,16 +72,10 @@ Build the EVM tool binary by running:
 make submodules build
 ```
 
-To start mock ProofChain and IPFS-Pinner in Terminal 1 run:
+To start mock node, ProofChain and IPFS-Pinner in Terminal 1 run:
 
 ```
-docker compose --env-file '.env' -f 'docker-compose-local.yml' up --remove-orphans
-```
-
-To start IPFS-Pinner in Terminal 2 navigate to ipfs-pinner repo directory and run:
-
-```
-make clean server-dbg run
+docker compose --env-file '.env' -f 'docker-compose-support.yml' up --remove-orphans
 ```
 
 Wait a minute then in Terminal 2 run:
@@ -150,7 +144,7 @@ The block processor (`lib/rudder/evm`) takes block_id and block specimen json st
 ```elixir
 iex(87)> {:ok, contents} = File.read("./out/block-results/15548376.specimen.json")
 
-iex(107)> API.sync_queue({"15548376", contents})                             
+iex(107)> API.sync_queue({"15548376", contents})
 child spec id is 15548376
 reaches here all right
 15548376 will be processed now
@@ -342,5 +336,5 @@ The gap above is that the `extractor` used for decoding is for codec version 0.2
 - permission errors with ~/.ipfs folder
 In order to run IPFS-Pinner in your home directory you need to run:
 ```
-sudo chmod -R 770 .ipfs 
+sudo chmod -R 770 .ipfs
 ```
