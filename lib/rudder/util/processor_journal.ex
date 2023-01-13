@@ -27,7 +27,7 @@ defmodule Rudder.Journal do
     Logger.info("getting the last unprocessed block height")
 
     {result, max_height} =
-      ETFs.DebugFile.stream!(blockh_log)
+      ETFs.DebugFile.stream!(blockh_log.disk_log_name, blockh_log.path)
       |> Enum.reduce({MapSet.new(), 0}, fn elem, {running_set, max_height} ->
         case elem do
           {:start, height} ->
@@ -73,7 +73,7 @@ defmodule Rudder.Journal do
       end
 
     result =
-      ETFs.DebugFile.stream!(workitem_log)
+      ETFs.DebugFile.stream!(workitem_log.disk_log_name, workitem_log.path)
       |> Enum.reduce(MapSet.new(), filter_fn)
       |> Enum.to_list()
 
