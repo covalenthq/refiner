@@ -69,7 +69,7 @@ defmodule Rudder.MixProject do
 
       # logging
       {:logger_file_backend, "~> 0.0.12"},
-      {:etfs, "~> 0.1.5"}
+      {:etfs, "~> 0.2.0"}
     ]
   end
 end
