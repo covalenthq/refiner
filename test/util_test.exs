@@ -37,13 +37,18 @@ defmodule Rudder.UtilTest do
   test "returns 'idunno' for other types" do
     specimen_path =
       "./test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1"
+
     {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimenDecoder.decode_file(specimen_path)
 
     assert Rudder.Util.typeof(decoded_specimen) == "idunno"
   end
 
   test "get_file_paths returns a list of files in the given directory" do
-    assert Rudder.Util.get_file_paths("./test-data/block-specimen/*") == ["test-data/block-specimen/15892728.specimen.json", "test-data/block-specimen/15892740.specimen.json", "test-data/block-specimen/15892755.specimen.json"]
+    assert Rudder.Util.get_file_paths("./test-data/block-specimen/*") == [
+             "test-data/block-specimen/15892728.specimen.json",
+             "test-data/block-specimen/15892740.specimen.json",
+             "test-data/block-specimen/15892755.specimen.json"
+           ]
   end
 
   test "get_file_paths returns an empty list when given a directory with no files or invalid path" do
