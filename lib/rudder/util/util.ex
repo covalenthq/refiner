@@ -3,8 +3,8 @@ defmodule Rudder.Util do
     cond do
       is_float(a) -> "float"
       is_number(a) -> "number"
-      is_atom(a) -> "atom"
       is_boolean(a) -> "boolean"
+      is_atom(a) -> "atom"
       is_binary(a) -> "binary"
       is_function(a) -> "function"
       is_list(a) -> "list"
@@ -13,8 +13,12 @@ defmodule Rudder.Util do
     end
   end
 
-  def file_open(path) do
-    Path.wildcard(path)
+  def get_file_paths(dir_path) do
+    try do
+      Path.wildcard(dir_path)
+    catch
+      File.Error -> raise "could not find a file at path #{dir_path}"
+    end
   end
 
   def extract_data(log_event, signature) do
