@@ -1,4 +1,5 @@
 defmodule Rudder.ProofChain.BlockSpecimenEventListener do
+  require Logger
   use GenServer
 
   @impl true
@@ -74,6 +75,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   end
 
   defp listen_for_event(proofchain_address, block_height) do
+    Logger.info("listening for events at #{block_height}")
     Rudder.Journal.block_height_started(block_height)
 
     {:ok, bsp_awarded_logs} =
@@ -87,6 +89,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       ])
 
     bsps_to_process = extract_awarded_specimens(bsp_awarded_logs)
+    Logger.info("found #{length(bsps_to_process)} bsps to process")
     push_bsps_to_process(bsps_to_process)
     Rudder.Journal.block_height_committed(block_height)
 
