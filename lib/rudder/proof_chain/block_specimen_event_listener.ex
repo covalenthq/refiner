@@ -25,7 +25,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   def load_last_checked_block() do
     {:ok, block_height} = Rudder.Journal.last_started_block()
 
-    if block_height == 0 do
+    if block_height == 1 do
       {:ok, block_height} = Rudder.Network.EthereumMainnet.eth_blockNumber()
       block_height
     else
@@ -93,15 +93,20 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     push_bsps_to_process(bsps_to_process)
     Rudder.Journal.block_height_committed(block_height)
 
-    latest_block_number = Rudder.Network.EthereumMainnet.eth_blockNumber()
-
     next_block_height = block_height + 1
+    loop(next_block_height)
+    listen_for_event(proofchain_address, next_block_height)
+  end
 
-    if latest_block_number == block_height do
+  defp loop(curr_block_height) do
+    {:ok, latest_block_number} = Rudder.Network.EthereumMainnet.eth_blockNumber()
+    Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
+
+    if curr_block_height > latest_block_number do
+      Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
       # ~12 seconds is mining time of one moonbeam block
       :timer.sleep(12000)
+      loop(curr_block_height)
     end
-
-    listen_for_event(proofchain_address, next_block_height)
   end
 end
