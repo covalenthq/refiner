@@ -64,7 +64,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
   Returns `:ok, %{stream}` for lazy eval if successful, `:error` otherwise.
   """
   def decode_dir(dir_path) do
-    Rudder.Util.file_open(dir_path)
+    Rudder.Util.get_file_paths(dir_path)
     |> Enum.map(fn file ->
       [file]
       |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_file/1)
