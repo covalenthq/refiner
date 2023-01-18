@@ -34,7 +34,7 @@ defmodule Rudder.MixProject do
       {:phoenix_pubsub, "~> 1.1"},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
-      {:rustler, "~> 0.26.0", override: true},
+      {:rustler, "~> 0.27.0", override: true},
       {:ranch, "~> 2.1.0",
        [env: :prod, hex: "ranch", repo: "hexpm", optional: false, override: true]},
 
