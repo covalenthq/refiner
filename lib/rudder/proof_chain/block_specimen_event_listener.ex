@@ -65,7 +65,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       is_brp_sesion_open = Rudder.ProofChain.Interactor.is_block_result_session_open(block_height)
 
       if is_brp_sesion_open do
-        specimen_hash_bytes32 = Base.decode16!(specimen_hash, case: :mixed)
+        specimen_hash_bytes32 = Rudder.Util.convert_to_bytes32(specimen_hash)
         bsp_urls = Rudder.ProofChain.Interactor.get_urls(specimen_hash_bytes32)
         Rudder.Pipeline.Spawner.push_hash(bsp_key, bsp_urls)
       else
