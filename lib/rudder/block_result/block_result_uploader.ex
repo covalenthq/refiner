@@ -1,4 +1,5 @@
 defmodule Rudder.BlockResultUploader do
+  require Logger
   use GenServer
 
   def start_link(opts) do
@@ -24,6 +25,7 @@ defmodule Rudder.BlockResultUploader do
       ) do
     case Rudder.IPFSInteractor.pin(file_path) do
       {:ok, cid} ->
+        Logger.info("#{block_height}:#{block_specimen_hash} successfully uploaded")
         block_result_hash = hash_block_result_file(file_path)
 
         :ok =
@@ -34,6 +36,8 @@ defmodule Rudder.BlockResultUploader do
             block_result_hash,
             cid
           )
+
+        Logger.info("#{block_height}:#{block_specimen_hash} proof submitted")
 
         {:reply, {:ok, cid, block_result_hash}, state}
 

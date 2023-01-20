@@ -114,7 +114,7 @@ defmodule Rudder.ProofChain.Interactor do
 
       signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
 
-      with {:ok, res} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
+      with {:ok, _res} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
         :ok
       end
     rescue
@@ -123,7 +123,7 @@ defmodule Rudder.ProofChain.Interactor do
           :ok
         else
           Logger.error("error in connecting to RPC: #{inspect(e)}")
-          :error
+          {:error, e}
         end
     end
   end
