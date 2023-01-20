@@ -108,6 +108,9 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
   def decode_http_resp({:error, %Finch.Error{reason: :normal}}),
     do: :connection_closed
 
+  def decode_http_resp({:error, %Mint.TransportError{reason: :closed}}),
+    do: :connection_closed
+
   def decode_http_resp({:error, %Finch.Error{reason: {:stop, {:goaway, _, _, _}, _}}}),
     do: :connection_closed
 
