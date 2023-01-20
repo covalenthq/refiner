@@ -18,8 +18,8 @@ defmodule Rudder.Journal do
     block_height_log = Path.join(journal_path, "block_height.etf")
 
     {:ok,
-     {ETFs.DebugFile.open_async(:processor_journal, work_items_log),
-      ETFs.DebugFile.open_async(:processor_journal, block_height_log)}}
+     {ETFs.DebugFile.open_async(:work_items_processor_journal, work_items_log),
+      ETFs.DebugFile.open_async(:block_height_processor_journal, block_height_log)}}
   end
 
   @impl true
@@ -27,15 +27,15 @@ defmodule Rudder.Journal do
     Logger.info("getting the last unprocessed block height")
 
     {result, max_height} =
-      ETFs.DebugFile.stream!(blockh_log)
-      |> Enum.reduce({MapSet.new(), -1}, fn elem, {running_set, max_height} ->
+      ETFs.DebugFile.stream!(blockh_log.disk_log_name, blockh_log.path)
+      |> Enum.reduce({MapSet.new(), 0}, fn elem, {running_set, max_height} ->
         case elem do
-          {:started, height} ->
+          {:start, height} ->
             set = MapSet.put(running_set, height)
             max_height = max(max_height, height)
             {set, max_height}
 
-          {_, height} ->
+          {:commit, height} ->
             set = MapSet.delete(running_set, height)
             max_height = max(max_height, height)
             {set, max_height}
@@ -55,7 +55,7 @@ defmodule Rudder.Journal do
     ## filter function for Enum.reduce/3
     filter_fn =
       cond do
-        status in [:commit, :abort] ->
+        status in [:commit, :abort, :skip] ->
           fn elem, accumulator ->
             case elem do
               {^status, id} -> MapSet.put(accumulator, id)
@@ -63,21 +63,7 @@ defmodule Rudder.Journal do
             end
           end
 
-        status == :awarded ->
-          fn elem, accumulator ->
-            case elem do
-              {^status, id} ->
-                MapSet.put(accumulator, id)
-
-              {finalizing_status, id} when finalizing_status in [:commit, :abort] ->
-                MapSet.delete(accumulator, id)
-
-              {_, _} ->
-                accumulator
-            end
-          end
-
-        status == :discovered ->
+        status == :discover ->
           fn elem, accumulator ->
             case elem do
               {^status, id} -> MapSet.put(accumulator, id)
@@ -87,7 +73,7 @@ defmodule Rudder.Journal do
       end
 
     result =
-      ETFs.DebugFile.stream!(workitem_log)
+      ETFs.DebugFile.stream!(workitem_log.disk_log_name, workitem_log.path)
       |> Enum.reduce(MapSet.new(), filter_fn)
       |> Enum.to_list()
 
@@ -95,30 +81,31 @@ defmodule Rudder.Journal do
   end
 
   @impl true
-  def handle_call({:workitem, status, id}, _from, {workitem_log, _blockh_log} = state) do
-    ETFs.DebugFile.log_term!(workitem_log, {status, id})
-    {:reply, :ok, state}
+  def handle_call({:workitem, status, id}, _from, {workitem_log, blockh_log}) do
+    workitem_log = ETFs.DebugFile.log_term!(workitem_log, {status, id})
+    {:reply, :ok, {workitem_log, blockh_log}}
   end
 
   @impl true
-  def handle_call({:blockh, status, height}, _from, {_workitem_log, blockh_log} = state) do
-    ETFs.DebugFile.log_term!(blockh_log, {status, height})
-    {:reply, :ok, state}
+  def handle_call({:blockh, status, height}, _from, {workitem_log, blockh_log}) do
+    blockh_log = ETFs.DebugFile.log_term!(blockh_log, {status, height})
+    {:reply, :ok, {workitem_log, blockh_log}}
   end
 
   @impl true
-  def terminate(reason, state) do
+  def terminate(reason, {workitem_log, blockh_log}) do
     Logger.info("journal terminated, reason: #{inspect(reason)}")
-    ETFs.DebugFile.close(state)
+    ETFs.DebugFile.close(workitem_log)
+    ETFs.DebugFile.close(blockh_log)
   end
 
   @doc """
   returns items which are on given status
-  status: :discovered, :awarded, :commit, :abort
+  status: :discover, :skip, :commit, :abort
   """
   def items_with_status(status) do
     cond do
-      status in [:awarded, :commit, :abort, :discovered] ->
+      status in [:commit, :abort, :discover, :skip] ->
         {:ok, items} = GenServer.call(Rudder.Journal, {:workitem, :fetch, status}, :infinity)
         items
 
@@ -129,19 +116,17 @@ defmodule Rudder.Journal do
   end
 
   @doc """
-  returns the last block which was "started" but not "committed"/"aborted".
+  returns the last block which was "started" but not "commit"/"aborted".
   Returns 1 + last_process_block_height in case no such block exists
   """
   def last_started_block() do
     GenServer.call(Rudder.Journal, {:blockh, :fetch})
   end
 
-  def discovered(id) do
-    GenServer.call(Rudder.Journal, {:workitem, :discovered, id}, 5_00_000)
-  end
+  # ethereum block ids status logging
 
-  def awarded(id) do
-    GenServer.call(Rudder.Journal, {:workitem, :awarded, id}, 5_00_000)
+  def discover(id) do
+    GenServer.call(Rudder.Journal, {:workitem, :discover, id}, 5_00_000)
   end
 
   def commit(id) do
@@ -152,15 +137,16 @@ defmodule Rudder.Journal do
     GenServer.call(Rudder.Journal, {:workitem, :abort, id}, 5_00_000)
   end
 
+  def skip(id) do
+    GenServer.call(Rudder.Journal, {:workitem, :skip, id}, 5_00_000)
+  end
+
+  # moonbeam block_height status logging APIs
   def block_height_started(height) do
-    GenServer.call(Rudder.Journal, {:blockh, :started, height}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:blockh, :start, height}, 5_00_000)
   end
 
   def block_height_committed(height) do
-    GenServer.call(Rudder.Journal, {:blockh, :committed, height}, 5_00_000)
-  end
-
-  def block_height_aborted(height) do
-    GenServer.call(Rudder.Journal, {:blockh, :aborted, height}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:blockh, :commit, height}, 5_00_000)
   end
 end

@@ -1,6 +1,6 @@
 defmodule Rudder.ProofChain.BlockSpecimenEventListener do
+  require Logger
   use GenServer
-  alias Rudder.Journal
 
   @impl true
   def init(_) do
@@ -17,6 +17,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   def start() do
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    push_bsps_to_process(Rudder.Journal.items_with_status(:discover))
     block_height = load_last_checked_block()
     listen_for_event(proofchain_address, block_height)
   end
@@ -24,7 +25,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   def load_last_checked_block() do
     {:ok, block_height} = Rudder.Journal.last_started_block()
 
-    if block_height == 0 do
+    if block_height == 1 do
       {:ok, block_height} = Rudder.Network.EthereumMainnet.eth_blockNumber()
       block_height
     else
@@ -53,25 +54,30 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
         to_string(chain_id) <>
           "_" <> to_string(block_height) <> "_" <> block_hash <> "_" <> specimen_hash
 
-      Journal.awarded(key)
       [key | keys]
     end)
   end
 
   defp push_bsps_to_process(bsp_keys) do
     Enum.map(bsp_keys, fn bsp_key ->
+      Rudder.Journal.discover(bsp_key)
       [_chain_id, block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
       is_brp_sesion_open = Rudder.ProofChain.Interactor.is_block_result_session_open(block_height)
 
       if is_brp_sesion_open do
-        specimen_hash_bytes32 = Base.decode16!(specimen_hash, case: :mixed)
+        specimen_hash_bytes32 = Rudder.Util.convert_to_bytes32(specimen_hash)
         bsp_urls = Rudder.ProofChain.Interactor.get_urls(specimen_hash_bytes32)
         Rudder.Pipeline.Spawner.push_hash(bsp_key, bsp_urls)
+      else
+        Rudder.Journal.skip(bsp_key)
       end
     end)
   end
 
   defp listen_for_event(proofchain_address, block_height) do
+    Logger.info("listening for events at #{block_height}")
+    Rudder.Journal.block_height_started(block_height)
+
     {:ok, bsp_awarded_logs} =
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
@@ -83,19 +89,24 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       ])
 
     bsps_to_process = extract_awarded_specimens(bsp_awarded_logs)
-
+    Logger.info("found #{length(bsps_to_process)} bsps to process")
     push_bsps_to_process(bsps_to_process)
-
-    latest_block_number = Rudder.Network.EthereumMainnet.eth_blockNumber()
+    Rudder.Journal.block_height_committed(block_height)
 
     next_block_height = block_height + 1
-    Rudder.Journal.block_height_started(next_block_height)
+    loop(next_block_height)
+    listen_for_event(proofchain_address, next_block_height)
+  end
 
-    if latest_block_number == block_height do
+  defp loop(curr_block_height) do
+    {:ok, latest_block_number} = Rudder.Network.EthereumMainnet.eth_blockNumber()
+    Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
+
+    if curr_block_height > latest_block_number do
+      Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
       # ~12 seconds is mining time of one moonbeam block
       :timer.sleep(12000)
+      loop(curr_block_height)
     end
-
-    listen_for_event(proofchain_address, next_block_height)
   end
 end
