@@ -1,4 +1,5 @@
 defmodule Rudder.ProofChain.Interactor do
+  require Logger
   use GenServer
 
   @impl true
@@ -121,6 +122,7 @@ defmodule Rudder.ProofChain.Interactor do
         if String.contains?(e.message, "Operator already submitted for the provided block hash") do
           :ok
         else
+          Logger.error("error in connecting to RPC: #{inspect(e)}")
           :error
         end
     end
