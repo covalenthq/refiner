@@ -7,12 +7,12 @@ defmodule Rudder.PipelineTest do
     expected_block_result_cid = "bafybeihxvejooqtilcmvep6vy33ehacvt6hiyfqkq434jfbi26lo4qsi7q"
     test_block_specimen_hash = "69e766c58a827f3c7548b5c00d043b464a69384e746cbaf73d771881b4dc053a"
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
+
     expected_block_result_hash =
       <<105, 231, 102, 197, 138, 130, 127, 60, 117, 72, 181, 192, 13, 4, 59, 70, 74, 105, 56, 78,
         116, 108, 186, 247, 61, 119, 24, 129, 180, 220, 5, 58>>
 
-    {status, cid, block_result_hash} =
-      Rudder.Pipeline.process_specimen(test_bsp_key, test_urls)
+    {status, cid, block_result_hash} = Rudder.Pipeline.process_specimen(test_bsp_key, test_urls)
 
     assert status == :ok
     assert cid == expected_block_result_cid
