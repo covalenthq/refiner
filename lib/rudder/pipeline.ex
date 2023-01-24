@@ -33,12 +33,11 @@ defmodule Rudder.Pipeline do
            {:success, block_result_file_path} <-
              Rudder.BlockProcessor.sync_queue(block_specimen),
            {block_height, ""} <- Integer.parse(block_specimen.block_height),
-           specimen_hash_bytes32 <- Rudder.Util.convert_to_bytes32(specimen_hash),
            block_result_metadata <-
              %Rudder.BlockResultMetadata{
                chain_id: block_specimen.chain_id,
                block_height: block_height,
-               block_specimen_hash: specimen_hash_bytes32,
+               block_specimen_hash: specimen_hash,
                file_path: block_result_file_path
              },
            {:ok, cid, block_result_hash} <-

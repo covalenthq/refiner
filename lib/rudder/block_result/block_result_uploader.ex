@@ -25,14 +25,15 @@ defmodule Rudder.BlockResultUploader do
       ) do
     case Rudder.IPFSInteractor.pin(file_path) do
       {:ok, cid} ->
-        Logger.info("#{block_height}:#{block_specimen_hash} successfully uploaded")
+        specimen_hash_bytes32 = Rudder.Util.convert_to_bytes32(block_specimen_hash)
+        Logger.info("#{block_height}:#{block_specimen_hash} successfully uploaded ")
         block_result_hash = hash_block_result_file(file_path)
 
         :ok =
           Rudder.ProofChain.Interactor.submit_block_result_proof(
             chain_id,
             block_height,
-            block_specimen_hash,
+            specimen_hash_bytes32,
             block_result_hash,
             cid
           )
