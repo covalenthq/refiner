@@ -119,11 +119,20 @@ defmodule Rudder.ProofChain.Interactor do
       end
     rescue
       e in Rudder.RPCError ->
-        if String.contains?(e.message, "Operator already submitted for the provided block hash") do
-          :ok
-        else
-          Logger.error("error in connecting to RPC: #{inspect(e)}")
-          {:error, e}
+        cond do
+          String.contains?(e.message, "Operator already submitted for the provided block hash") ->
+            :ok
+
+          String.contains?(e.message, "Session submissions have closed") ->
+            Logger.error(
+              "error when submitting block result proof for chain id #{chain_id} block height #{block_height}: #{inspect(e)}"
+            )
+
+            :ok
+
+          true ->
+            Logger.error("error in connecting to RPC: #{inspect(e)}")
+            {:error, e}
         end
     end
   end
