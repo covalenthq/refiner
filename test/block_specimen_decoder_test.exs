@@ -2,25 +2,25 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   use ExUnit.Case, async: true
 
   setup do
-    blockSpecimenDecoder = start_supervised(Rudder.Avro.BlockSpecimenDecoder)
-    %{blockSpecimenDecoder: blockSpecimenDecoder}
+    block_specimen_decoder = start_supervised(Rudder.Avro.BlockSpecimenDecoder)
+    %{block_specimen_decoder: block_specimen_decoder}
   end
 
   test "Rudder.Avro.BlockSpecimenDecoder.list/0 returns an empty list", %{
-    blockSpecimenDecoder: _blockSpecimenDecoder
+    block_specimen_decoder: _block_specimen_decoder
   } do
     assert Rudder.Avro.BlockSpecimenDecoder.list() == :ok
   end
 
   test "Rudder.Avro.BlockSpecimenDecoder.get_schema/0 returns correct schema", %{
-    blockSpecimenDecoder: _blockSpecimenDecoder
+    block_specimen_decoder: _block_specimen_decoder
   } do
     assert Rudder.Avro.BlockSpecimenDecoder.get_schema() ==
              "com.covalenthq.brp.avro.ReplicationSegment"
   end
 
   test "Rudder.Avro.BlockSpecimenDecoder.decode_file/1 decodes binary specimen file", %{
-    blockSpecimenDecoder: _blockSpecimenDecoder
+    block_specimen_decoder: _block_specimen_decoder
   } do
     specimen_path =
       "./test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1"
@@ -41,7 +41,7 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   end
 
   test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 streams directory binary files", %{
-    blockSpecimenDecoder: _blockSpecimenDecoder
+    block_specimen_decoder: _block_specimen_decoder
   } do
     dir_path = "./test-data/encoded/*"
 
@@ -100,7 +100,7 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   end
 
   test "Rudder.Avro.BlockSpecimenDecoder.decode_dir/1 decodes all binary files", %{
-    blockSpecimenDecoder: _blockSpecimenDecoder
+    block_specimen_decoder: _block_specimen_decoder
   } do
     dir_path = "./test-data/encoded/*"
 
