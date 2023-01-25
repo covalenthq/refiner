@@ -104,14 +104,13 @@ defmodule Rudder.Journal do
   status: :discover, :skip, :commit, :abort
   """
   def items_with_status(status) do
-    cond do
-      status in [:commit, :abort, :discover, :skip] ->
-        {:ok, items} = GenServer.call(Rudder.Journal, {:workitem, :fetch, status}, :infinity)
-        items
+    if status in [:commit, :abort, :discover, :skip] do
+      {:ok, items} = GenServer.call(Rudder.Journal, {:workitem, :fetch, status}, :infinity)
+      items
 
-      true ->
-        Logger.info("status not supported provided #{status}")
-        {:error, "wrong status"}
+    else
+      Logger.info("status not supported provided #{status}")
+      {:error, "wrong status"}
     end
   end
 

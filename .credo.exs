@@ -129,6 +129,7 @@
           {Credo.Check.Refactor.MapJoin, []},
           {Credo.Check.Refactor.CyclomaticComplexity, max_complexity: [10]},
           {Credo.Check.Refactor.CondStatements, []},
+          {Credo.Check.Refactor.Nesting, max_nesting: [3]},
           #
           ## Warnings
           #
@@ -161,12 +162,10 @@
           #   and be sure to use `mix credo --strict` to see low priority checks)
           # Disabled for rudder repo
           {Credo.Check.Readability.FunctionNames, []},
-          {Credo.Check.Readability.ModuleDoc, []},
-          {Credo.Check.Refactor.Nesting, []},
           {Credo.Check.Refactor.LongQuoteBlocks, []},
           {Credo.Check.Design.TagTODO, [exit_status: 2]},
-
-          # disabled by default
+          {Credo.Check.Readability.ModuleDoc, []},
+          # Disabled by default
           {Credo.Check.Consistency.MultiAliasImportRequireUse, []},
           {Credo.Check.Consistency.UnusedVariableNames, []},
           {Credo.Check.Design.DuplicatedCode, []},
