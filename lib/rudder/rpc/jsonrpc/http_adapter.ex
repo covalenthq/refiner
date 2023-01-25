@@ -142,13 +142,13 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
   def batch_error(502, _), do: :gateway_error
   def batch_error(503, _), do: :overload
   def batch_error(524, _), do: :overload
-  def batch_error({_, -32700}, _), do: raise(Rudder.RPCError, "client sent malformed JSON")
-  def batch_error({_, -32600}, _), do: raise(Rudder.RPCError, "invalid request")
-  def batch_error({_, -32601}, _), do: raise(Rudder.RPCError, "RPC endpoint not available")
-  def batch_error({_, -32602}, e), do: raise(Rudder.RPCError, {"invalid parameters", e})
-  def batch_error({_, -32603}, msg), do: raise(Rudder.RPCError, {"internal JSON-RPC error", msg})
+  def batch_error({_, -32_700}, _), do: raise(Rudder.RPCError, "client sent malformed JSON")
+  def batch_error({_, -32_600}, _), do: raise(Rudder.RPCError, "invalid request")
+  def batch_error({_, -32_601}, _), do: raise(Rudder.RPCError, "RPC endpoint not available")
+  def batch_error({_, -32_602}, e), do: raise(Rudder.RPCError, {"invalid parameters", e})
+  def batch_error({_, -32_603}, msg), do: raise(Rudder.RPCError, {"internal JSON-RPC error", msg})
 
-  def batch_error({_, code}, error_msg) when code >= -32099 and code <= -32000 do
+  def batch_error({_, code}, error_msg) when code >= -32_099 and code <= -32_000 do
     {:server_error, code, error_msg}
   end
 
@@ -173,13 +173,13 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
   def batch_error(code, msg), do: {:unknown_error, code, msg}
 
   # client may be attempting methods to determine existence, so raise only if invalid syntactically
-  def req_error(-32700, _), do: raise(Rudder.RPCError, "client sent malformed JSON")
-  def req_error(-32600, _), do: raise(Rudder.RPCError, "invalid request")
-  def req_error(-32601, _), do: :notfound
-  def req_error(-32602, e), do: {:invalid_parameters, e}
-  def req_error(-32603, msg), do: {:rpc_error, msg}
+  def req_error(-32_700, _), do: raise(Rudder.RPCError, "client sent malformed JSON")
+  def req_error(-32_600, _), do: raise(Rudder.RPCError, "invalid request")
+  def req_error(-32_601, _), do: :notfound
+  def req_error(-32_602, e), do: {:invalid_parameters, e}
+  def req_error(-32_603, msg), do: {:rpc_error, msg}
 
-  def req_error(code, error_msg) when code >= -32099 and code <= -32000 do
+  def req_error(code, error_msg) when code >= -32_099 and code <= -32_000 do
     {:server_error, code, error_msg}
   end
 

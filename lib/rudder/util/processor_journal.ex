@@ -126,27 +126,27 @@ defmodule Rudder.Journal do
   # ethereum block ids status logging
 
   def discover(id) do
-    GenServer.call(Rudder.Journal, {:workitem, :discover, id}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:workitem, :discover, id}, 500_000)
   end
 
   def commit(id) do
-    GenServer.call(Rudder.Journal, {:workitem, :commit, id}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:workitem, :commit, id}, 500_000)
   end
 
   def abort(id) do
-    GenServer.call(Rudder.Journal, {:workitem, :abort, id}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:workitem, :abort, id}, 500_000)
   end
 
   def skip(id) do
-    GenServer.call(Rudder.Journal, {:workitem, :skip, id}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:workitem, :skip, id}, 500_000)
   end
 
   # moonbeam block_height status logging APIs
   def block_height_started(height) do
-    GenServer.call(Rudder.Journal, {:blockh, :start, height}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:blockh, :start, height}, 500_000)
   end
 
   def block_height_committed(height) do
-    GenServer.call(Rudder.Journal, {:blockh, :commit, height}, 5_00_000)
+    GenServer.call(Rudder.Journal, {:blockh, :commit, height}, 500_000)
   end
 end
