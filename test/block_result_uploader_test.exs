@@ -2,15 +2,15 @@ defmodule Rudder.BlockResultUploaderTest do
   use ExUnit.Case, async: true
 
   setup_all do
-    blockResultUploader = start_supervised!(Rudder.BlockResultUploader)
-    iPFSInteractor = start_supervised!(Rudder.IPFSInteractor)
+    block_result_uploader = start_supervised!(Rudder.BlockResultUploader)
+    ipfs_interactor = start_supervised!(Rudder.IPFSInteractor)
 
-    %{blockResultUploader: blockResultUploader, iPFSInteractor: iPFSInteractor}
+    %{block_result_uploader: block_result_uploader, ipfs_interactor: ipfs_interactor}
   end
 
   test "uploads block result to ipfs and sends the block result hash to proof chain", %{
-    blockResultUploader: _blockResultUploader,
-    iPFSInteractor: _iPFSInteractor
+    block_result_uploader: _block_result_uploader,
+    ipfs_interactor: _ipfs_interactor
   } do
     # "bafkreiehfggmf4y7xjzrqhvcvhto6eg44ipnsxuyxwwjytqvatvbn5eg4q"
     expected_cid = "bafkreibm6jg3ux5qumhcn2b3flc3tyu6dmlb4xa7u5bf44yegnrjhc4yeq"
@@ -38,8 +38,8 @@ defmodule Rudder.BlockResultUploaderTest do
   end
 
   test "ipfs contains cid with known cid", %{
-    iPFSInteractor: _iPFSInteractor,
-    blockResultUploader: _blockResultUploader
+    ipfs_interactor: _ipfs_interactor,
+    block_result_uploader: _block_result_uploader
   } do
     file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp.txt")))
     {err, cid} = Rudder.IPFSInteractor.pin(file_path)
@@ -50,8 +50,8 @@ defmodule Rudder.BlockResultUploaderTest do
   end
 
   test "the server works", %{
-    iPFSInteractor: _iPFSInteractor,
-    blockResultUploader: _blockResultUploader
+    ipfs_interactor: _ipfs_interactor,
+    block_result_uploader: _block_result_uploader
   } do
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
     url = "#{ipfs_url}/upload"
