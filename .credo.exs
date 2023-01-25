@@ -74,7 +74,7 @@
           {Credo.Check.Consistency.SpaceAroundOperators, []},
           {Credo.Check.Consistency.SpaceInParentheses, []},
           {Credo.Check.Consistency.TabsOrSpaces, []},
-
+          {Credo.Check.Consistency.ParameterPatternMatching, []},
           #
           ## Design Checks
           #
@@ -160,7 +160,6 @@
           # Disabled for rudder repo
           {Credo.Check.Readability.FunctionNames, []},
           {Credo.Check.Readability.ModuleDoc, []},
-          {Credo.Check.Consistency.ParameterPatternMatching, []},
           {Credo.Check.Refactor.Nesting, []},
           {Credo.Check.Refactor.LongQuoteBlocks, []},
           {Credo.Check.Refactor.CyclomaticComplexity, []},
