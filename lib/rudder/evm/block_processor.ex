@@ -71,6 +71,8 @@ defmodule Rudder.BlockProcessor.Core do
           from,
           state
         ) do
+      Logger.info("submitting #{block_id} to evm plugin...")
+
       worker_sup_child_spec =
         PoolSupervisor.get_worker_supervisor_childspec(
           block_id,

@@ -114,7 +114,8 @@ defmodule Rudder.ProofChain.Interactor do
 
       signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
 
-      with {:ok, _res} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
+      with {:ok, txid} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
+        Logger.info("result is #{txid}")
         {:ok, :submitted}
       end
     rescue
