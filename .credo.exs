@@ -126,7 +126,9 @@
           {Credo.Check.Refactor.FilterFilter, []},
           {Credo.Check.Refactor.RejectReject, []},
           {Credo.Check.Refactor.RedundantWithClauseResult, []},
-
+          {Credo.Check.Refactor.MapJoin, []},
+          {Credo.Check.Refactor.CyclomaticComplexity, max_complexity: [10]},
+          {Credo.Check.Refactor.CondStatements, []},
           #
           ## Warnings
           #
@@ -162,10 +164,8 @@
           {Credo.Check.Readability.ModuleDoc, []},
           {Credo.Check.Refactor.Nesting, []},
           {Credo.Check.Refactor.LongQuoteBlocks, []},
-          {Credo.Check.Refactor.CyclomaticComplexity, []},
-          {Credo.Check.Refactor.CondStatements, []},
           {Credo.Check.Design.TagTODO, [exit_status: 2]},
-          {Credo.Check.Refactor.MapJoin, []},
+
           # disabled by default
           {Credo.Check.Consistency.MultiAliasImportRequireUse, []},
           {Credo.Check.Consistency.UnusedVariableNames, []},
