@@ -26,7 +26,7 @@ defmodule Rudder.Pipeline do
 
   def process_specimen(bsp_key, urls) do
     try do
-      with [_chain_id, _block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
+      with [_chain_id, block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
            {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
            {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimenDecoder.decode(specimen),
            {:ok, block_specimen} <- extract_block_specimen(decoded_specimen),
@@ -39,14 +39,27 @@ defmodule Rudder.Pipeline do
                block_height: block_height,
                block_specimen_hash: specimen_hash,
                file_path: block_result_file_path
-             },
-           {:ok, cid, block_result_hash} <-
-             Rudder.BlockResultUploader.upload_block_result(block_result_metadata),
-           :ok <- Rudder.Journal.commit(bsp_key),
-           :ok <- File.rm(block_result_file_path) do
-        {:ok, cid, block_result_hash}
+             } do
+        return_val =
+          case Rudder.BlockResultUploader.upload_block_result(block_result_metadata) do
+            {:ok, cid, block_result_hash} ->
+              :ok = Rudder.Journal.commit(bsp_key)
+              {:ok, cid, block_result_hash}
+
+            {:error, error, _block_result_hash} ->
+              Logger.info(
+                "#{block_height} has error on upload/proof submission: #{inspect(error)}"
+              )
+
+              write_to_backlog(bsp_key, urls, error)
+              {:error, error}
+          end
+
+        File.rm(block_result_file_path)
+        return_val
       else
-        err -> write_to_backlog(bsp_key, urls, err)
+        err ->
+          write_to_backlog(bsp_key, urls, err)
       end
     rescue
       e -> write_to_backlog(bsp_key, urls, e)
