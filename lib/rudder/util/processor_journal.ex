@@ -107,7 +107,6 @@ defmodule Rudder.Journal do
     if status in [:commit, :abort, :discover, :skip] do
       {:ok, items} = GenServer.call(Rudder.Journal, {:workitem, :fetch, status}, :infinity)
       items
-
     else
       Logger.info("status not supported provided #{status}")
       {:error, "wrong status"}

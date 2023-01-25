@@ -37,8 +37,9 @@ defmodule Rudder.RPC.EthereumClient.Codec do
         n when is_integer(n) -> :binary.encode_unsigned(n)
       end)
       |> Enum.map_join("", &String.pad_leading(&1, 32, <<0>>))
-      # |> Enum.map(&String.pad_leading(&1, 32, <<0>>))
-      # |> Enum.join("")
+
+    # |> Enum.map(&String.pad_leading(&1, 32, <<0>>))
+    # |> Enum.join("")
 
     mem_hash =
       case byte_size(slug) do

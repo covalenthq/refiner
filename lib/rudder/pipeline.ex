@@ -74,6 +74,7 @@ defmodule Rudder.Pipeline do
       {:ok, replica_event} ->
         [replica_event | _] = replica_event
         {:ok, replica_event}
+
       err ->
         err
     end
