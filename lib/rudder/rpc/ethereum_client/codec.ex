@@ -448,7 +448,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
   def decode_addr_balance(nil), do: nil
 
-  def decode_addr_balance(addr_balance_map = %{}) do
+  def decode_addr_balance(%{} = addr_balance_map) do
     Map.new(addr_balance_map, fn {addr, balance} ->
       {decode_address(addr), decode_qty(balance)}
     end)
