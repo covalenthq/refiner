@@ -61,7 +61,7 @@ defmodule Rudder.BlockProcessor.Core do
     def init(state) do
       {
         :ok,
-        %{state | request_queue: :queue.new()}
+        state
       }
     end
 
@@ -109,7 +109,6 @@ defmodule Rudder.BlockProcessor.Core do
     end
 
     def sync_queue(block_specimen = %Rudder.BlockSpecimen{}) do
-      ## TODO: this is supposed to block the caller in case the pool is exhausted.
       GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
     end
 

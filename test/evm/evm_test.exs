@@ -23,7 +23,6 @@ defmodule SupervisionTreeTest do
     contents = get_sample_specimen!()
 
     inp = %Struct.InputParams{block_id: block_id, contents: contents, sender: self()}
-    # TODO: use relative paths
     evm = Struct.EVMParams.new()
 
     _ =
@@ -63,7 +62,6 @@ defmodule SupervisionTreeTest do
       sender: self()
     }
 
-    # TODO: use relative paths
     evm = Struct.EVMParams.new()
 
     _ =
@@ -97,7 +95,6 @@ defmodule SupervisionTreeTest do
     contents = get_sample_specimen!()
 
     inp = %Struct.InputParams{block_id: block_id, contents: contents, sender: self()}
-    # TODO: use relative paths
     evm = %Struct.EVMParams{evm_exec_path: "./blahblahrandomness/evm"}
 
     Process.flag(:trap_exit, true)
