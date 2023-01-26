@@ -70,11 +70,13 @@ defmodule Rudder.Pipeline do
   end
 
   defp fetch_replica_event(decoded_specimen) do
-    with {:ok, replica_event} <- Map.fetch(decoded_specimen, "replicaEvent") do
-      [replica_event | _] = replica_event
-      {:ok, replica_event}
-    else
-      err -> err
+    case Map.fetch(decoded_specimen, "replicaEvent") do
+      {:ok, replica_event} ->
+        [replica_event | _] = replica_event
+        {:ok, replica_event}
+
+      err ->
+        err
     end
   end
 

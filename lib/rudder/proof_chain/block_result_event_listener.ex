@@ -30,7 +30,7 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
           specimen_hash_raw,
           _block_result_hash_raw,
           _url,
-          _submittedStake
+          _submitted_stake
         ] = Rudder.Util.extract_data(log_event, event_signature)
 
         specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
