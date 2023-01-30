@@ -6,5 +6,5 @@ submodules:
 
 build:
 	mkdir -p $(ERIGON_SUBMODULE)/build/bin
-	(cd $(ERIGON_SUBMODULE) && make evm-prod)
-	cp $(ERIGON_SUBMODULE)/build/bin/evm plugins/evm
+	(cd $(ERIGON_SUBMODULE) && make evm-dbg)
+	mv $(ERIGON_SUBMODULE)/build/bin/evm plugins/
