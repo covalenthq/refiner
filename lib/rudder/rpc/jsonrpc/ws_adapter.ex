@@ -48,7 +48,7 @@ defmodule Rudder.RPC.JSONRPC.WSAdapter do
 
       {:ws_resp, {_type, ws_resp}} ->
         case MessageFormat.parse_response_json(ws_resp) do
-          {:server_error, -32000, "RLP tracing in-use by another client"} ->
+          {:server_error, -32_000, "RLP tracing in-use by another client"} ->
             Process.sleep(wait_after + :rand.uniform(500))
             attempt_long_call(sock_opts, req_body, attempts_left - 1, trunc(wait_after * 1.1))
 

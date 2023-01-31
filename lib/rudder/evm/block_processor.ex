@@ -99,7 +99,7 @@ defmodule Rudder.BlockProcessor.Core do
     end
 
     @impl true
-    def handle_info(result = %Struct.ExecResult{}, state) do
+    def handle_info(%Struct.ExecResult{} = result, state) do
       GenServer.reply(result.misc, {result.status, result.output_path})
 
       child_id = result.block_id
@@ -108,7 +108,9 @@ defmodule Rudder.BlockProcessor.Core do
       {:noreply, state}
     end
 
-    def sync_queue(block_specimen = %Rudder.BlockSpecimen{}) do
+
+    def sync_queue(%Rudder.BlockSpecimen{} = block_specimen) do
+
       GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
     end
 

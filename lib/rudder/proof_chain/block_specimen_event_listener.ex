@@ -105,7 +105,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     if curr_block_height > latest_block_number do
       Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
       # ~12 seconds is mining time of one moonbeam block
-      :timer.sleep(12000)
+      :timer.sleep(12_000)
       loop(curr_block_height)
     end
   end
