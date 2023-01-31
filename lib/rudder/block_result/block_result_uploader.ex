@@ -26,21 +26,25 @@ defmodule Rudder.BlockResultUploader do
     case Rudder.IPFSInteractor.pin(file_path) do
       {:ok, cid} ->
         specimen_hash_bytes32 = Rudder.Util.convert_to_bytes32(block_specimen_hash)
-        Logger.info("#{block_height}:#{block_specimen_hash} successfully uploaded ")
+
+        Logger.info(
+          "#{block_height}:#{block_specimen_hash} has been successfully uploaded at ipfs://#{cid}"
+        )
+
         block_result_hash = hash_block_result_file(file_path)
 
-        :ok =
-          Rudder.ProofChain.Interactor.submit_block_result_proof(
-            chain_id,
-            block_height,
-            specimen_hash_bytes32,
-            block_result_hash,
-            cid
-          )
+        Logger.info("#{block_height}:#{block_specimen_hash} proof submitting")
 
-        Logger.info("#{block_height}:#{block_specimen_hash} proof submitted")
-
-        {:reply, {:ok, cid, block_result_hash}, state}
+        case Rudder.ProofChain.Interactor.submit_block_result_proof(
+               chain_id,
+               block_height,
+               specimen_hash_bytes32,
+               block_result_hash,
+               cid
+             ) do
+          {:ok, :submitted} -> {:reply, {:ok, cid, block_result_hash}, state}
+          {:error, error} -> {:reply, {:error, error, ""}, state}
+        end
 
       {:error, error} ->
         {:reply, {:error, error, ""}, state}

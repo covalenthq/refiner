@@ -61,7 +61,7 @@ defmodule Rudder.BlockProcessor.Core do
     def init(state) do
       {
         :ok,
-        %{state | request_queue: :queue.new()}
+        state
       }
     end
 
@@ -71,6 +71,8 @@ defmodule Rudder.BlockProcessor.Core do
           from,
           state
         ) do
+      Logger.info("submitting #{block_id} to evm plugin...")
+
       worker_sup_child_spec =
         PoolSupervisor.get_worker_supervisor_childspec(
           block_id,
@@ -107,7 +109,6 @@ defmodule Rudder.BlockProcessor.Core do
     end
 
     def sync_queue(%Rudder.BlockSpecimen{} = block_specimen) do
-      ## TODO: this is supposed to block the caller in case the pool is exhausted.
       GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
     end
 
