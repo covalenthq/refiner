@@ -75,8 +75,8 @@ jobs:
       - name: Check Code Format
         run: mix format --check-formatted
 
-      # - name: Run Credo (SCA)
-      #   run: mix credo
+      - name: Run Credo (SCA)
+        run: mix credo
 
       # - name: Run Dialyzer (SCA)
       #   run: mix dialyzer --plt

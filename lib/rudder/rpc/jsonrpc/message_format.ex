@@ -51,13 +51,13 @@ defmodule Rudder.RPC.JSONRPC.MessageFormat do
   end
 
   # client may be attempting methods to determine existence, so raise only if invalid syntactically
-  def req_error(-32700, _), do: raise(ArgumentError, "client sent malformed JSON")
-  def req_error(-32600, _), do: raise(ArgumentError, "invalid request")
-  def req_error(-32601, _), do: :notfound
-  def req_error(-32602, _), do: :invalid_parameters
-  def req_error(-32603, msg), do: {:rpc_error, msg}
+  def req_error(-32_700, _), do: raise(ArgumentError, "client sent malformed JSON")
+  def req_error(-32_600, _), do: raise(ArgumentError, "invalid request")
+  def req_error(-32_601, _), do: :notfound
+  def req_error(-32_602, _), do: :invalid_parameters
+  def req_error(-32_603, msg), do: {:rpc_error, msg}
 
-  def req_error(code, error_msg) when code >= -32099 and code <= -32000 do
+  def req_error(code, error_msg) when code >= -32_099 and code <= -32_000 do
     {:server_error, code, error_msg}
   end
 

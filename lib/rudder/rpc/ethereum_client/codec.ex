@@ -36,8 +36,10 @@ defmodule Rudder.RPC.EthereumClient.Codec do
         bin when is_binary(bin) -> bin
         n when is_integer(n) -> :binary.encode_unsigned(n)
       end)
-      |> Enum.map(&String.pad_leading(&1, 32, <<0>>))
-      |> Enum.join("")
+      |> Enum.map_join("", &String.pad_leading(&1, 32, <<0>>))
+
+    # |> Enum.map(&String.pad_leading(&1, 32, <<0>>))
+    # |> Enum.join("")
 
     mem_hash =
       case byte_size(slug) do
@@ -448,7 +450,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
   def decode_addr_balance(nil), do: nil
 
-  def decode_addr_balance(addr_balance_map = %{}) do
+  def decode_addr_balance(%{} = addr_balance_map) do
     Map.new(addr_balance_map, fn {addr, balance} ->
       {decode_address(addr), decode_qty(balance)}
     end)

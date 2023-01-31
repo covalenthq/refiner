@@ -29,12 +29,12 @@ defmodule Rudder.BlockProcessor.Worker do
   end
 
   defmodule Executor do
-    def start_link(inp = %Struct.InputParams{}, evm = %Struct.EVMParams{}) do
+    def start_link(%Struct.InputParams{} = inp, %Struct.EVMParams{} = evm) do
       pid = spawn_link(__MODULE__, :execute, [inp, evm])
       {:ok, pid}
     end
 
-    def execute(inp = %Struct.InputParams{}, evm = %Struct.EVMParams{}) do
+    def execute(%Struct.InputParams{} = inp, %Struct.EVMParams{} = evm) do
       {handler, output_path} = process_handler(inp.block_id, evm)
 
       case handler do
@@ -79,11 +79,11 @@ defmodule Rudder.BlockProcessor.Worker do
     defp adapt_result(_, block_id, _, misc),
       do: %Struct.ExecResult{block_id: block_id, status: :failure, misc: misc}
 
-    defp handle_result(sender, res = %Struct.ExecResult{}) do
+    defp handle_result(sender, %Struct.ExecResult{} = res) do
       send(sender, res)
     end
 
-    defp process_handler(block_id, evm = %Struct.EVMParams{}) do
+    defp process_handler(block_id, %Struct.EVMParams{} = evm) do
       output_file = block_id <> "-result.json"
       result_path = Path.join(Path.expand(evm.output_basedir), output_file)
 
