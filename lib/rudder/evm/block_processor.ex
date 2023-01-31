@@ -108,9 +108,7 @@ defmodule Rudder.BlockProcessor.Core do
       {:noreply, state}
     end
 
-
     def sync_queue(%Rudder.BlockSpecimen{} = block_specimen) do
-
       GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
     end
 
