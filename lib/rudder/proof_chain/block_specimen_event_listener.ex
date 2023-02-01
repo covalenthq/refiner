@@ -16,10 +16,27 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   end
 
   def start() do
+    reregister_process()
+    Logger.info("starting event listener")
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
     push_bsps_to_process(Rudder.Journal.items_with_status(:discover))
     block_height = load_last_checked_block()
     listen_for_event(proofchain_address, block_height)
+  end
+
+  def reregister_process() do
+    register_name = :bspec_listener
+
+    case Process.whereis(register_name) do
+      nil ->
+        :ok
+
+      _pid ->
+        _ = Process.unregister(register_name)
+        :ok
+    end
+
+    Process.register(self(), register_name)
   end
 
   def load_last_checked_block() do
@@ -103,7 +120,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
 
     if curr_block_height > latest_block_number do
-      Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
       # ~12 seconds is mining time of one moonbeam block
       :timer.sleep(12_000)
       loop(curr_block_height)

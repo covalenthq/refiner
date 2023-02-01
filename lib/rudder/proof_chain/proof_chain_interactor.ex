@@ -115,7 +115,7 @@ defmodule Rudder.ProofChain.Interactor do
       signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
 
       with {:ok, txid} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
-        Logger.info("result is #{txid}")
+        Logger.info("#{block_height} txid is #{txid}")
         {:ok, :submitted}
       end
     rescue
@@ -124,16 +124,14 @@ defmodule Rudder.ProofChain.Interactor do
           String.contains?(e.message, "Operator already submitted for the provided block hash") ->
             {:ok, :submitted}
 
-          String.contains?(e.message, "Session submissions have closed") ->
-            Logger.error(
-              "error when submitting block result proof for chain id #{chain_id} block height #{block_height}: #{inspect(e)}"
-            )
-
-            {:error, :session_closed}
+          String.contains?(e.message, "Sender is not BLOCK_RESULT_PRODUCER_ROLE") or
+            String.contains?(e.message, "Invalid chain ID") or
+              String.contains?(e.message, "Insufficiently staked to submit") ->
+            {:error, :irreparable, e.message}
 
           true ->
             Logger.error("error in connecting to RPC: #{inspect(e)}")
-            {:error, e}
+            {:error, e.message}
         end
     end
   end
