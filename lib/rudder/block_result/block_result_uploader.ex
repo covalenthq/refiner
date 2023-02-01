@@ -42,8 +42,18 @@ defmodule Rudder.BlockResultUploader do
                block_result_hash,
                cid
              ) do
-          {:ok, :submitted} -> {:reply, {:ok, cid, block_result_hash}, state}
-          {:error, error} -> {:reply, {:error, error, ""}, state}
+          {:ok, :submitted} ->
+            {:reply, {:ok, cid, block_result_hash}, state}
+
+          {:error, errormsg} ->
+            Logger.error(
+              "#{block_height}:#{block_specimen_hash} proof submission error: #{errormsg}"
+            )
+
+            {:reply, {:error, errormsg, ""}, state}
+
+          {:error, :irreparable, errormsg} ->
+            {:reply, {:error, :irreparable, errormsg}, state}
         end
 
       {:error, error} ->
