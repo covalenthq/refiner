@@ -102,7 +102,7 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
   def decode_http_resp({:ok, %{status: http_resp_code, body: http_resp_body}}),
     do: batch_error(http_resp_code, http_resp_body)
 
-  def decode_http_resp({:error, %Finch.Error{reason: :request_timeout}}),
+  def decode_http_resp({:error, %Mint.TransportError{reason: :timeout}}),
     do: :timeout
 
   def decode_http_resp({:error, %Finch.Error{reason: :normal}}),
