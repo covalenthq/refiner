@@ -1,5 +1,4 @@
 defmodule Rudder.BlockProcessor.Struct do
-  require Logger
   require System
 
   defmodule PoolState do
@@ -13,11 +12,9 @@ defmodule Rudder.BlockProcessor.Struct do
 
   defmodule EVMParams do
     alias Rudder.BlockProcessor.Struct.EVMParams
-    @default_input_replica_path "stdin"
     @default_output_dir "./evm-out"
-    @default_evm_exec_path "./plugins/evm"
-    defstruct evm_exec_path: @default_evm_exec_path,
-              input_replica_path: @default_input_replica_path,
+    @default_evm_url "http://127.0.0.1/3002"
+    defstruct evm_server_url: @default_evm_url,
               output_basedir: @default_output_dir
 
     @spec new :: %Rudder.BlockProcessor.Struct.EVMParams{
@@ -26,16 +23,16 @@ defmodule Rudder.BlockProcessor.Struct do
             output_basedir: <<_::72>>
           }
     def new() do
-      evm_path = Application.get_env(:rudder, :evm_path)
+      evm_server_url = Application.get_env(:rudder, :evm_server_url)
 
-      evm_path =
-        if evm_path != nil do
-          evm_path
+      evm_server_url =
+        if evm_server_url != nil do
+          evm_server_url
         else
-          @default_evm_exec_path
+          @default_evm_url
         end
 
-      %EVMParams{evm_exec_path: evm_path}
+      %EVMParams{evm_server_url: evm_server_url}
     end
   end
 
