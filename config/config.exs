@@ -14,7 +14,7 @@ config :rudder,
   proofchain_chain_id: 1284,
   proofchain_node: "https://rpc.api.moonbeam.network",
   journal_path: "logs/",
-  evm_path: System.get_env("EVM_EXEC_PATH")
+  evm_server_url: System.get_env("EVM_SERVER_URL")
 
 # Configures Elixir's Logger
 
