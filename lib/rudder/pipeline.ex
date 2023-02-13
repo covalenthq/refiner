@@ -1,6 +1,10 @@
 defmodule Rudder.Pipeline do
   require Logger
 
+  defmodule ProofSubmissionIrreparableError do
+    defexception message: "default message"
+  end
+
   defmodule Spawner do
     use DynamicSupervisor
 
@@ -46,6 +50,9 @@ defmodule Rudder.Pipeline do
               :ok = Rudder.Journal.commit(bsp_key)
               {:ok, cid, block_result_hash}
 
+            {:error, :irreparable, errormsg} ->
+              raise(Rudder.Pipeline.ProofSubmissionIrreparableError, errormsg)
+
             {:error, error, _block_result_hash} ->
               Logger.info(
                 "#{block_height} has error on upload/proof submission: #{inspect(error)}"
@@ -62,7 +69,13 @@ defmodule Rudder.Pipeline do
           write_to_backlog(bsp_key, urls, err)
       end
     rescue
-      e -> write_to_backlog(bsp_key, urls, e)
+      e in Rudder.Pipeline.ProofSubmissionIrreparableError ->
+        write_to_backlog(bsp_key, urls, e)
+        Logger.error(Exception.format(:error, e, __STACKTRACE__))
+        Process.exit(Process.whereis(:bspec_listener), :irreparable)
+
+      e ->
+        write_to_backlog(bsp_key, urls, e)
     end
   end
 
