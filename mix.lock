@@ -1,6 +1,7 @@
 %{
   "abi": {:git, "https://github.com/tsutsu/ethereum_abi.git", "f0796f6f5c2e04ebbd5f9bdb8f87b919d5711087", [branch: "feature-parse-events-from-abi-specifications"]},
   "avrora": {:hex, :avrora, "0.26.0", "860f4ef386ffc685144f5fb7fcf2976f7896adb22382cbc46e11fcb6b583a132", [:mix], [{:erlavro, "~> 2.9.3", [hex: :erlavro, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: false]}], "hexpm", "01a93a195b1408e056a57445916760613c25a0cf2ecf455a05bc881383f492e2"},
+  "briefly": {:hex, :briefly, "0.4.1", "c90c0511e64bde1fe8da7e244e14acf5bc78c3f6d033db778205e1fa2feafa5c", [:mix], [], "hexpm", "fc0cafcd19c4ed0d0906ae5cf627cc6ce76b8652a160c6bde0ab9d77304ebb0a"},
   "broadway": {:hex, :broadway, "1.0.6", "b26b690151f9a5bdd81a2029a0b259fafe0486ffc76dd10116e879795ac4a0b5", [:mix], [{:gen_stage, "~> 1.0", [hex: :gen_stage, repo: "hexpm", optional: false]}, {:nimble_options, "~> 0.3.7 or ~> 0.4.0 or ~> 0.5.0", [hex: :nimble_options, repo: "hexpm", optional: false]}, {:telemetry, "~> 0.4.3 or ~> 1.0", [hex: :telemetry, repo: "hexpm", optional: false]}], "hexpm", "ebef2d26eccbaf0b1fa7802119b027989d5e50abc55e3640504887fb530790f9"},
   "bunt": {:hex, :bunt, "0.2.1", "e2d4792f7bc0ced7583ab54922808919518d0e57ee162901a16a1b6664ef3b14", [:mix], [], "hexpm", "a330bfb4245239787b15005e66ae6845c9cd524a288f0d141c148b02603777a5"},
   "castore": {:hex, :castore, "0.1.22", "4127549e411bedd012ca3a308dede574f43819fe9394254ca55ab4895abfa1a2", [:mix], [], "hexpm", "c17576df47eb5aa1ee40cc4134316a99f5cad3e215d5c77b8dd3cfef12a22cac"},
