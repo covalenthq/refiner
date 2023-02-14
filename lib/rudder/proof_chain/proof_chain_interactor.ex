@@ -35,8 +35,6 @@ defmodule Rudder.ProofChain.Interactor do
     tx = [
       from: nil,
       to: to,
-      gas: 1_000_000,
-      gas_price: gas_price,
       value: 0,
       data: data
     ]
