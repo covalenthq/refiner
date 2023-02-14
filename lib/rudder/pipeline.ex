@@ -1,4 +1,5 @@
 defmodule Rudder.Pipeline do
+  alias Rudder.Events
   require Logger
 
   defmodule ProofSubmissionIrreparableError do
@@ -29,6 +30,8 @@ defmodule Rudder.Pipeline do
   end
 
   def process_specimen(bsp_key, urls) do
+    start_pipeline_ms = System.monotonic_time(:millisecond)
+
     try do
       with [_chain_id, block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
            {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
@@ -63,6 +66,7 @@ defmodule Rudder.Pipeline do
           end
 
         File.rm(block_result_file_path)
+        Events.brp_pipeline(System.monotonic_time(:millisecond) - start_pipeline_ms)
         return_val
       else
         err ->
@@ -80,6 +84,8 @@ defmodule Rudder.Pipeline do
   end
 
   defp extract_block_specimen(decoded_specimen) do
+    start_extract_ms = System.monotonic_time(:millisecond)
+
     with {:ok, block_height} <- Map.fetch(decoded_specimen, "startBlock"),
          {:ok, replica_event} <- fetch_replica_event(decoded_specimen),
          {:ok, data} <- Map.fetch(replica_event, "data"),
@@ -90,6 +96,8 @@ defmodule Rudder.Pipeline do
          block_height: Integer.to_string(block_height),
          contents: Poison.encode!(data)
        }}
+
+      Events.bsp_extract(System.monotonic_time(:millisecond) - start_extract_ms)
     else
       err -> err
     end

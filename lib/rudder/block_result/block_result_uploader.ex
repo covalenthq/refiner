@@ -1,5 +1,6 @@
 defmodule Rudder.BlockResultUploader do
   require Logger
+  alias Rudder.Events
   use GenServer
 
   def start_link(opts) do
@@ -23,6 +24,8 @@ defmodule Rudder.BlockResultUploader do
         _from,
         state
       ) do
+    start_upload_ms = System.monotonic_time(:millisecond)
+
     case Rudder.IPFSInteractor.pin(file_path) do
       {:ok, cid} ->
         specimen_hash_bytes32 = Rudder.Util.convert_to_bytes32(block_specimen_hash)
@@ -43,6 +46,7 @@ defmodule Rudder.BlockResultUploader do
                cid
              ) do
           {:ok, :submitted} ->
+            Events.brp_upload(System.monotonic_time(:millisecond) - start_upload_ms)
             {:reply, {:ok, cid, block_result_hash}, state}
 
           {:error, errormsg} ->

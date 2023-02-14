@@ -2,6 +2,7 @@ defmodule Rudder.IPFSInteractor do
   use GenServer
 
   alias Multipart.Part
+  alias Rudder.Events
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
@@ -32,7 +33,7 @@ defmodule Rudder.IPFSInteractor do
     body_map = body |> Poison.decode!()
 
     end_pin_ms = System.monotonic_time(:millisecond)
-    :telemetry.execute([:rudder, :events, :ipfs_pin], %{value: end_pin_ms - start_pin_ms})
+    Events.ipfs_pin(end_pin_ms - start_pin_ms)
 
     case body_map do
       %{"error" => error} -> {:reply, {:error, error}, state}
@@ -52,7 +53,7 @@ defmodule Rudder.IPFSInteractor do
       |> Finch.request(Rudder.Finch, receive_timeout: 60_000_000, pool_timeout: 60_000_000)
 
     end_fetch_ms = System.monotonic_time(:millisecond)
-    :telemetry.execute([:rudder, :events, :ipfs_fetch], %{value: end_fetch_ms - start_fetch_ms})
+    Events.ipfs_fetch(end_fetch_ms - start_fetch_ms)
 
     {:reply, body, state}
   end
