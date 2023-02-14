@@ -10,6 +10,13 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     {:ok, state}
   end
 
+  @spec start_link([
+          {:debug, [:log | :statistics | :trace | {any, any}]}
+          | {:hibernate_after, :infinity | non_neg_integer}
+          | {:name, atom | {:global, any} | {:via, atom, any}}
+          | {:spawn_opt, [:link | :monitor | {any, any}]}
+          | {:timeout, :infinity | non_neg_integer}
+        ]) :: :ignore | {:error, any} | {:ok, pid}
   @doc """
   Starts the block specimen decoder.
   """
@@ -17,6 +24,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
+  @spec start :: {:ok, pid}
   def start() do
     {:ok, _pid} = Avrora.start_link()
   end
@@ -48,7 +56,10 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
   def decode(binary) do
     start_decode_ms = System.monotonic_time(:millisecond)
     Avrora.decode_plain(binary, schema_name: @schema_name)
-    Events.bsp_decode(System.monotonic_time(:millisecond) - start_decode_ms)
+    # Events.bsp_decode(System.monotonic_time(:millisecond) - start_decode_ms)
+    :telemetry.execute([:rudder, :events, :bsp_decode], %{
+      duration: System.monotonic_time(:millisecond) - start_decode_ms
+    })
   end
 
   @doc """

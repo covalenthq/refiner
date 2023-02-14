@@ -9,15 +9,26 @@ defmodule Rudder.Pipeline do
   defmodule Spawner do
     use DynamicSupervisor
 
+    @spec start_link(any) :: none
     def start_link(_) do
       DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__, strategy: :one_for_one)
     end
 
     @impl true
+    @spec init(any) ::
+            {:ok,
+             %{
+               extra_arguments: list,
+               intensity: non_neg_integer,
+               max_children: :infinity | non_neg_integer,
+               period: pos_integer,
+               strategy: :one_for_one
+             }}
     def init(_) do
       DynamicSupervisor.init(strategy: :one_for_one)
     end
 
+    @spec push_hash(any, any) :: :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
     def push_hash(bsp_key, urls) do
       DynamicSupervisor.start_child(
         __MODULE__,
@@ -29,6 +40,7 @@ defmodule Rudder.Pipeline do
     end
   end
 
+  @spec process_specimen(any, any) :: any
   def process_specimen(bsp_key, urls) do
     start_pipeline_ms = System.monotonic_time(:millisecond)
 

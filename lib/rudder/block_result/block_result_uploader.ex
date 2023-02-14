@@ -3,11 +3,19 @@ defmodule Rudder.BlockResultUploader do
   alias Rudder.Events
   use GenServer
 
+  @spec start_link([
+          {:debug, [:log | :statistics | :trace | {any, any}]}
+          | {:hibernate_after, :infinity | non_neg_integer}
+          | {:name, atom | {:global, any} | {:via, atom, any}}
+          | {:spawn_opt, [:link | :monitor | {any, any}]}
+          | {:timeout, :infinity | non_neg_integer}
+        ]) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   @impl true
+  @spec init(:ok) :: {:ok, []}
   def init(:ok) do
     {:ok, []}
   end
@@ -65,6 +73,7 @@ defmodule Rudder.BlockResultUploader do
     end
   end
 
+  @spec upload_block_result(any) :: any
   def upload_block_result(block_result_metadata) do
     GenServer.call(
       Rudder.BlockResultUploader,

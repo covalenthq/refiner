@@ -40,6 +40,17 @@ defmodule Rudder.Telemetry.CustomReporter do
     end
   end
 
+  @doc """
+  Telemetry.Metrics.Counter: Used to keep a running count of the number of events.
+
+  Telemetry.Metrics.Sum: Used to track the sum total of specific measurements.
+
+  Telemetry.Metrics.LastValue: Use this metric to hold the measurement of the most recent event.
+
+  Telemetry.Metrics.Summary: Used to track and calculate statistics of the selected measurement such as min/max, average, percentile, etc.
+
+  Telemetry.Metrics.Distribution: Used to group event measurements into buckets
+  """
   @spec handle_metric(
           %{
             :__struct__ =>
