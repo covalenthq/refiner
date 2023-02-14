@@ -7,8 +7,20 @@ defmodule Rudder.Telemetry do
   end
 
   def init(_arg) do
+    metrics = [
+      # event_emitting
+      Telemetry.Metrics.counter("rudder.events.emit.duration"),
+      Telemetry.Metrics.sum("rudder.events.emit.duration",unit: {:native, :millisecond}),
+      Telemetry.Metrics.last_value("rudder.events.emit.duration", unit: {:native, :millisecond}),
+      Telemetry.Metrics.summary("rudder.events.emit.duration", unit: {:native, :millisecond}),
+      Telemetry.Metrics.distribution("rudder.events.emit.duration",
+        buckets: [0.0003, 0.0006, 0.0010],
+        unit: {:native, :millisecond}
+      )
+    ]
+
     children = [
-      {Rudder.Telemetry.CustomReporter, metrics: metrics()}
+      {Rudder.Telemetry.CustomReporter, metrics: metrics}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
