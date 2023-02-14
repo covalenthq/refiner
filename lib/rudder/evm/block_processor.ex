@@ -8,6 +8,7 @@ defmodule Rudder.BlockProcessor.Core do
   defmodule PoolSupervisor do
     use Supervisor
 
+    @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
     def start_link(workers_limit) do
       Supervisor.start_link(__MODULE__, %Struct.PoolState{workers_limit: workers_limit},
         name: :evm_pool_supervisor
@@ -15,6 +16,7 @@ defmodule Rudder.BlockProcessor.Core do
     end
 
     @impl true
+    @spec init(any) :: {:ok, {%{intensity: any, period: any, strategy: any}, list}}
     def init(state) do
       children = [
         %{
@@ -30,6 +32,12 @@ defmodule Rudder.BlockProcessor.Core do
       Supervisor.init(children, strategy: :one_for_one, max_restarts: 2, max_seconds: 20)
     end
 
+    @spec get_worker_supervisor_childspec(any, any) :: %{
+            id: any,
+            restart: :temporary,
+            start: {Rudder.BlockProcessor.Worker.WorkerSupervisor, :start_link, [...]},
+            type: :supervisor
+          }
     def get_worker_supervisor_childspec(id, args) do
       %{
         id: id,
@@ -39,6 +47,7 @@ defmodule Rudder.BlockProcessor.Core do
       }
     end
 
+    @spec stop :: :ok
     def stop() do
       pid = Process.whereis(:evm_pool_supervisor)
 
@@ -54,11 +63,13 @@ defmodule Rudder.BlockProcessor.Core do
   defmodule Server do
     use GenServer
 
+    @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
     def start_link(state) do
       GenServer.start_link(__MODULE__, state, name: :evm_server)
     end
 
     @impl true
+    @spec init(any) :: {:ok, any}
     def init(state) do
       {
         :ok,
@@ -111,7 +122,7 @@ defmodule Rudder.BlockProcessor.Core do
       {:noreply, state}
     end
 
-    def sync_queue(%Rudder.BlockSpecimen{} = block_specimen) do
+    def sync_queue(%Rudder.BlockSpecimen{} = block_specimen, _state) do
       GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
     end
 
