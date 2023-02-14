@@ -9,35 +9,35 @@ defmodule Rudder.Events do
     })
   end
 
-  def ipfs_pin(value) do
-    :telemetry.execute([:rudder, :events, :ipfs_pin], %{value: value})
+  def ipfs_pin(duration) do
+    :telemetry.execute([:rudder, :events, :ipfs_pin], %{duration: duration})
   end
 
-  def ipfs_fetch(value) do
-    :telemetry.execute([:rudder, :events, :ipfs_fetch], %{value: value})
+  def ipfs_fetch(duration) do
+    :telemetry.execute([:rudder, :events, :ipfs_fetch], %{duration: duration})
   end
 
-  def bsp_decode(value) do
-    :telemetry.execute([:rudder, :events, :bsp_decode], %{value: value})
+  def bsp_decode(duration) do
+    :telemetry.execute([:rudder, :events, :bsp_decode], %{duration: duration})
   end
 
-  def bsp_extract(value) do
-    :telemetry.execute([:rudder, :events, :bsp_extract], %{value: value})
+  def bsp_extract(duration) do
+    :telemetry.execute([:rudder, :events, :bsp_extract], %{duration: duration})
   end
 
-  def evm_execute(value) do
-    :telemetry.execute([:rudder, :events, :evm_execute], %{value: value})
+  def evm_execute(duration) do
+    :telemetry.execute([:rudder, :events, :evm_execute], %{duration: duration})
   end
 
-  def brp_upload(value) do
-    :telemetry.execute([:rudder, :events, :brp_upload], %{value: value})
+  def brp_upload(duration) do
+    :telemetry.execute([:rudder, :events, :brp_upload], %{duration: duration})
   end
 
-  def tx_proof(value) do
-    :telemetry.execute([:rudder, :events, :tx_proof], %{value: value})
+  def tx_proof(duration) do
+    :telemetry.execute([:rudder, :events, :tx_proof], %{duration: duration})
   end
 
-  def brp_pipeline(value) do
-    :telemetry.execute([:rudder, :events, :brp_pipeline], %{value: value})
+  def brp_pipeline(duration) do
+    :telemetry.execute([:rudder, :events, :brp_pipeline], %{duration: duration})
   end
 end
