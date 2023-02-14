@@ -7,6 +7,18 @@ defmodule Rudder.Application do
 
   @impl true
   def start(_type, _args) do
+    metrics = [
+      # event_emitting
+      Telemetry.Metrics.counter("rudder.events.emit.duration"),
+      Telemetry.Metrics.sum("rudder.events.emit.duration",unit: {:native, :millisecond}),
+      Telemetry.Metrics.last_value("rudder.events.emit.duration", unit: {:native, :millisecond}),
+      Telemetry.Metrics.summary("rudder.events.emit.duration", unit: {:native, :millisecond}),
+      Telemetry.Metrics.distribution("rudder.events.emit.duration",
+        buckets: [0.0003, 0.0006, 0.0010],
+        unit: {:native, :millisecond}
+      )
+    ]
+
     children = [
       {Finch,
        name: Rudder.Finch,
@@ -23,8 +35,7 @@ defmodule Rudder.Application do
         start: {Rudder.BlockProcessor.Core.PoolSupervisor, :start_link, [10]}
       },
       {Rudder.Pipeline.Spawner, name: Rudder.Pipeline.Spawner},
-      {Rudder.Telemetry, name: Rudder.Telemetry},
-      {Rudder.Telemetry.ReporterState, {0, 0}}
+      {Rudder.Telemetry.PlugReporter, metrics: metrics}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

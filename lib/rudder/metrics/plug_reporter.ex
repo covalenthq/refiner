@@ -1,4 +1,4 @@
-defmodule Rudder.Telemetry.CustomReporter do
+defmodule Rudder.Telemetry.PlugReporter do
   use GenServer
 
   require Logger

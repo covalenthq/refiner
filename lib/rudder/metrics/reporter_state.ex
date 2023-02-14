@@ -16,4 +16,15 @@ defmodule Rudder.Telemetry.ReporterState do
   def sum(value) do
     Agent.update(__MODULE__, fn {count, sum} -> {count, sum + value} end)
   end
+
+  def summary(value) do
+    Agent.update(__MODULE__, fn {count, sum, min, max} ->
+      {
+        count,
+        sum + value,
+        min(min, value),
+        max(max, value)
+      }
+    end)
+  end
 end
