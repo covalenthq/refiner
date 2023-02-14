@@ -28,22 +28,25 @@ defmodule Rudder.Journal do
     start_journal_ms = System.monotonic_time(:millisecond)
     Logger.info("getting the last unprocessed block height")
 
-    {result, max_height} =
-      ETFs.DebugFile.stream!(blockh_log.disk_log_name, blockh_log.path)
-      |> Enum.reduce({MapSet.new(), 0}, fn elem, {running_set, max_height} ->
-        case elem do
-          {:start, height} ->
-            set = MapSet.put(running_set, height)
-            max_height = max(max_height, height)
-            {set, max_height}
+    task =
+      Task.async(fn ->
+        ETFs.DebugFile.stream!(blockh_log.disk_log_name, blockh_log.path)
+        |> Enum.reduce({MapSet.new(), 0}, fn elem, {running_set, max_height} ->
+          case elem do
+            {:start, height} ->
+              set = MapSet.put(running_set, height)
+              max_height = max(max_height, height)
+              {set, max_height}
 
-          {:commit, height} ->
-            set = MapSet.delete(running_set, height)
-            max_height = max(max_height, height)
-            {set, max_height}
-        end
+            {:commit, height} ->
+              set = MapSet.delete(running_set, height)
+              max_height = max(max_height, height)
+              {set, max_height}
+          end
+        end)
       end)
 
+    {result, max_height} = Task.await(task)
     Events.journal_fetch_last(System.monotonic_time(:millisecond) - start_journal_ms)
     {:reply, {:ok, Enum.min(result, &<=/2, fn -> max_height + 1 end)}, state}
   end
@@ -76,13 +79,15 @@ defmodule Rudder.Journal do
           end
       end
 
+    task =
+      Task.async(fn ->
+        ETFs.DebugFile.stream!(workitem_log.disk_log_name, workitem_log.path)
+        |> Enum.reduce(MapSet.new(), filter_fn)
+        |> Enum.to_list()
+      end)
+
+    result = Task.await(task)
     Events.journal_fetch_items(System.monotonic_time(:millisecond) - start_journal_ms)
-
-    result =
-      ETFs.DebugFile.stream!(workitem_log.disk_log_name, workitem_log.path)
-      |> Enum.reduce(MapSet.new(), filter_fn)
-      |> Enum.to_list()
-
     {:reply, {:ok, result}, state}
   end
 
