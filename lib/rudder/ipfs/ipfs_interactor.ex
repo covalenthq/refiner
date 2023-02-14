@@ -14,6 +14,8 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
+    start_pin_ms = System.monotonic_time(:millisecond)
+
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
     url = "#{ipfs_url}/upload"
 
@@ -29,6 +31,9 @@ defmodule Rudder.IPFSInteractor do
 
     body_map = body |> Poison.decode!()
 
+    end_pin_ms = System.monotonic_time(:millisecond)
+    :telemetry.execute([:rudder, :events, :ipfs_pin], %{value: end_pin_ms - start_pin_ms})
+
     case body_map do
       %{"error" => error} -> {:reply, {:error, error}, state}
       %{"cid" => cid} -> {:reply, {:ok, cid}, state}
@@ -37,12 +42,17 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:fetch, cid}, _from, state) do
+    start_fetch_ms = System.monotonic_time(:millisecond)
+
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
     url = "#{ipfs_url}"
 
     {:ok, %Finch.Response{body: body, headers: _, status: _}} =
       Finch.build(:get, "#{url}/get?cid=#{cid}")
       |> Finch.request(Rudder.Finch, receive_timeout: 60_000_000, pool_timeout: 60_000_000)
+
+    end_fetch_ms = System.monotonic_time(:millisecond)
+    :telemetry.execute([:rudder, :events, :ipfs_fetch], %{value: end_fetch_ms - start_fetch_ms})
 
     {:reply, body, state}
   end
