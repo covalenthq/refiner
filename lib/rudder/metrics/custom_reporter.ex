@@ -5,6 +5,7 @@ defmodule Rudder.Telemetry.CustomReporter do
 
   alias Telemetry.Metrics.{Counter, Distribution, LastValue, Sum, Summary}
 
+  @spec start_link(nil | maybe_improper_list | map) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts[:metrics])
   end
@@ -39,6 +40,19 @@ defmodule Rudder.Telemetry.CustomReporter do
     end
   end
 
+  @spec handle_metric(
+          %{
+            :__struct__ =>
+              Telemetry.Metrics.Counter
+              | Telemetry.Metrics.Distribution
+              | Telemetry.Metrics.LastValue
+              | Telemetry.Metrics.Sum
+              | Telemetry.Metrics.Summary,
+            optional(any) => any
+          },
+          any,
+          any
+        ) :: :ok
   def handle_metric(%Counter{}, _measurements, _metadata) do
     :ets.update_counter(:rudder_metrics, :counter, 1, {:counter, 0})
 

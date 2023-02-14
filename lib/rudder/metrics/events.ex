@@ -1,4 +1,5 @@
 defmodule Rudder.Events do
+  @spec emit :: :ok
   def emit() do
     start_emit_ms = System.monotonic_time(:millisecond)
     random_number = :rand.uniform(9)

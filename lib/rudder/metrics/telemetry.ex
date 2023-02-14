@@ -2,10 +2,12 @@ defmodule Rudder.Telemetry do
   use Supervisor
   import Telemetry.Metrics
 
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
+  @spec init(any) :: {:ok, {%{intensity: any, period: any, strategy: any}, list}}
   def init(_arg) do
     metrics = [
       # event_emitting (all available metrics)
