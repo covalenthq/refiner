@@ -23,7 +23,7 @@ defmodule Rudder.Application do
         start: {Rudder.BlockProcessor.Core.PoolSupervisor, :start_link, [10]}
       },
       {Rudder.Pipeline.Spawner, name: Rudder.Pipeline.Spawner},
-      {Rudder.Telemetry, name: Rudder.Telemetry }
+      {Rudder.Telemetry, name: Rudder.Telemetry}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

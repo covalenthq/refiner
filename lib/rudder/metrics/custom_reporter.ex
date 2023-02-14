@@ -54,20 +54,20 @@ defmodule Rudder.Telemetry.CustomReporter do
     Logger.info("LastValue - #{inspect(:ets.lookup(:rudder_metrics, key))}")
   end
 
-  def handle_metric(%Sum{} = metric , measurements, _metadata) do
+  def handle_metric(%Sum{} = metric, measurements, _metadata) do
     duration = extract_measurement(metric, measurements)
     key = :total_exec_time
 
-    IO.inspect(:ets.lookup(:rudder_metrics, :last_exec_time))
-
     total_exec_time =
       case :ets.lookup(:rudder_metrics, :last_exec_time) do
-        [last_exec_time: time] -> time + duration
+        [last_exec_time: time] ->
+          time + duration
+
         _ ->
           duration
       end
 
-      :ets.insert(:rudder_metrics, {key, total_exec_time})
+    :ets.insert(:rudder_metrics, {key, total_exec_time})
 
     Logger.info("Sum - #{inspect(:ets.lookup(:rudder_metrics, key))}")
   end
@@ -89,7 +89,7 @@ defmodule Rudder.Telemetry.CustomReporter do
 
     :ets.insert(:rudder_metrics, {:summary, summary})
 
-    Logger.info "Summary - #{inspect summary}"
+    Logger.info("Summary - #{inspect(summary)}")
   end
 
   def handle_metric(%Distribution{} = metric, measurements, _metadata) do
