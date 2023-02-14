@@ -23,8 +23,8 @@ defmodule Rudder.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    # system exec
     [
+      # system exec
       {:poison, "~> 5.0"},
       {:porcelain, "~> 2.0"},
 
@@ -74,13 +74,13 @@ defmodule Rudder.MixProject do
       {:etfs, "~> 0.2.0"},
 
       # tracing metrics
-      {:telemetry, "~> 1.2", override: true},
-      {:telemetry_metrics, "~> 0.6.1"}
-      # {:telemetry_metrics_prometheus, "~> 1.1"}
+      {:telemetry, "~> 1.2.1", override: true},
+      {:telemetry_metrics, "~> 0.3.0"}
 
-      # redundant
+      # Unused
       # {:erlexec, "~> 2.0"},
       # {:etfs, path: "/Users/sudeep/repos/experiment/etfs"}
+      # {:telemetry_metrics_prometheus, "~> 1.1"}
     ]
   end
 end
