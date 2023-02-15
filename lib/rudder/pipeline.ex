@@ -1,5 +1,5 @@
 defmodule Rudder.Pipeline do
-  alias Rudder.Events
+  # alias Rudder.Events
   require Logger
 
   defmodule ProofSubmissionIrreparableError do
@@ -78,7 +78,7 @@ defmodule Rudder.Pipeline do
           end
 
         File.rm(block_result_file_path)
-        Events.brp_pipeline(System.monotonic_time(:millisecond) - start_pipeline_ms)
+        # Events.brp_pipeline(System.monotonic_time(:millisecond) - start_pipeline_ms)
         return_val
       else
         err ->
@@ -109,7 +109,7 @@ defmodule Rudder.Pipeline do
          contents: Poison.encode!(data)
        }}
 
-      Events.bsp_extract(System.monotonic_time(:millisecond) - start_extract_ms)
+      # Events.bsp_extract(System.monotonic_time(:millisecond) - start_extract_ms)
     else
       err -> err
     end

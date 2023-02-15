@@ -13,7 +13,14 @@ defmodule Rudder.Telemetry.CustomReporter do
   def init(metrics) do
     Process.flag(:trap_exit, true)
 
-    :ets.new(:rudder_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # :ets.new(:rudder_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # all events
+    :ets.new(:emit_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # only ipfs events
+    :ets.new(:ipfs_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # :ets.new(:bsp_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # :ets.new(:evm_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # :ets.new(:pipeline_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
 
     groups = Enum.group_by(metrics, & &1.event_name)
 
@@ -64,81 +71,99 @@ defmodule Rudder.Telemetry.CustomReporter do
           any,
           any
         ) :: :ok
-  def handle_metric(%Counter{}, _measurements, _metadata) do
-    :ets.update_counter(:rudder_metrics, :counter, 1, {:counter, 0})
+  def handle_metric(%Counter{}, _measurements, metadata) do
+    table_name = String.to_atom(metadata.table)
+    event_name = String.to_atom(metadata.operation)
 
-    Logger.info("Counter - #{inspect(:ets.lookup(:rudder_metrics, :counter))}")
+    :ets.update_counter(table_name, event_name, 1, {event_name, 0})
+
+    Logger.info("Counter for #{table_name} - #{inspect(:ets.lookup(table_name, event_name))}")
   end
 
-  def handle_metric(%LastValue{} = metric, measurements, _metadata) do
+  def handle_metric(%LastValue{} = metric, measurements, metadata) do
     duration = extract_measurement(metric, measurements)
-    key = :last_exec_time
+    table_name = String.to_atom(metadata.table)
+    event_name = String.to_atom(metadata.operation)
+    last_exec_time_key = :"#{event_name}#{:_last_exec_time}"
 
-    :ets.insert(:rudder_metrics, {key, duration})
+    :ets.insert(table_name, {last_exec_time_key, duration})
 
-    Logger.info("LastValue - #{inspect(:ets.lookup(:rudder_metrics, key))}")
+    Logger.info(
+      "LastValue for #{table_name} - #{inspect(:ets.lookup(table_name, last_exec_time_key))}"
+    )
   end
 
-  def handle_metric(%Sum{} = metric, measurements, _metadata) do
+  def handle_metric(%Sum{} = metric, measurements, metadata) do
     duration = extract_measurement(metric, measurements)
-    key = :total_exec_time
+    table_name = String.to_atom(metadata.table)
+    event_name = String.to_atom(metadata.operation)
+    total_exec_time_key = :"#{event_name}#{:_total_exec_time}"
 
     total_exec_time =
-      case :ets.lookup(:rudder_metrics, :last_exec_time) do
-        [last_exec_time: time] ->
+      case Keyword.fetch(:ets.lookup(table_name, total_exec_time_key), total_exec_time_key) do
+        {:ok, time} ->
           time + duration
 
-        _ ->
+        :error ->
           duration
       end
 
-    :ets.insert(:rudder_metrics, {key, total_exec_time})
+    :ets.insert(table_name, {total_exec_time_key, total_exec_time})
 
-    Logger.info("Sum - #{inspect(:ets.lookup(:rudder_metrics, key))}")
+    Logger.info(
+      "Sum for #{table_name} - #{inspect(:ets.lookup(table_name, total_exec_time_key))}"
+    )
   end
 
-  def handle_metric(%Summary{} = metric, measurements, _metadata) do
+  def handle_metric(%Summary{} = metric, measurements, metadata) do
     duration = extract_measurement(metric, measurements)
+    table_name = String.to_atom(metadata.table)
+    event_name = String.to_atom(metadata.operation)
+    summary_key = :"#{event_name}#{:_summary}"
 
     summary =
-      case :ets.lookup(:rudder_metrics, :summary) do
-        [summary: {min, max}] ->
+      case Keyword.fetch(:ets.lookup(table_name, summary_key), summary_key) do
+        {:ok, {min, max}} ->
           {
             min(min, duration),
             max(max, duration)
           }
 
-        _ ->
+        :error ->
           {duration, duration}
       end
 
-    :ets.insert(:rudder_metrics, {:summary, summary})
+    :ets.insert(table_name, {summary_key, summary})
 
-    Logger.info("Summary - #{inspect(summary)}")
+    Logger.info("Summary for #{table_name}  - #{inspect(summary)}")
   end
 
-  def handle_metric(%Distribution{} = metric, measurements, _metadata) do
+  def handle_metric(%Distribution{} = metric, measurements, metadata) do
     duration = extract_measurement(metric, measurements)
+    table_name = String.to_atom(metadata.table)
+    event_name = String.to_atom(metadata.operation)
+    distribution_key = :"#{event_name}#{:_distribution}"
 
-    update_distribution(metric.buckets, duration)
+    update_distribution(metric.buckets, duration, table_name, distribution_key)
 
     Logger.info(
-      "Distribution - #{inspect(:ets.match_object(:rudder_metrics, {{:distribution, :_}, :_}))}"
+      "Distribution for #{table_name} - #{inspect(:ets.match_object(table_name, {{distribution_key, :_}, :_}))}"
     )
   end
 
-  defp update_distribution([], _duration) do
-    key = {:distribution, "1000+"}
-    :ets.update_counter(:rudder_metrics, key, 1, {key, 0})
+  defp update_distribution([], _duration, table_name, key_name) do
+    key = {key_name, "1000+"}
+    :ets.update_counter(table_name, key, 1, {key, 0})
   end
 
-  defp update_distribution([head | _buckets], duration) when duration <= head do
-    key = {:distribution, head}
-    :ets.update_counter(:rudder_metrics, key, 1, {key, 0})
+  defp update_distribution([head | _buckets], duration, table_name, key_name)
+       when duration <= head do
+    key = {key_name, head}
+    :ets.update_counter(table_name, key, 1, {key, 0})
   end
 
-  defp update_distribution([_head | buckets], duration) do
-    update_distribution(buckets, duration)
+  defp update_distribution([_head | buckets], duration, table_name, key_name) do
+    update_distribution(buckets, duration, table_name, key_name)
   end
 
   def terminate(_, events) do

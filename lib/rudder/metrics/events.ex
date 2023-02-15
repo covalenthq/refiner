@@ -5,19 +5,29 @@ defmodule Rudder.Events do
     random_number = :rand.uniform(9)
     :timer.sleep(100 * random_number)
 
-    :telemetry.execute([:rudder, :events, :emit], %{
-      duration: System.monotonic_time(:millisecond) - start_emit_ms
-    })
+    :telemetry.execute(
+      [:rudder, :events, :emit],
+      %{
+        duration: System.monotonic_time(:millisecond) - start_emit_ms
+      },
+      %{table: "emit_metrics", operation: "event"}
+    )
   end
 
   @spec ipfs_pin(any) :: :ok
   def ipfs_pin(duration) do
-    :telemetry.execute([:rudder, :events, :ipfs_pin], %{duration: duration})
+    :telemetry.execute([:rudder, :events, :ipfs_pin], %{duration: duration}, %{
+      table: "ipfs_metrics",
+      operation: "pin"
+    })
   end
 
   @spec ipfs_fetch(any) :: :ok
   def ipfs_fetch(duration) do
-    :telemetry.execute([:rudder, :events, :ipfs_fetch], %{duration: duration})
+    :telemetry.execute([:rudder, :events, :ipfs_fetch], %{duration: duration}, %{
+      table: "ipfs_metrics",
+      operation: "fetch"
+    })
   end
 
   @spec bsp_decode(any) :: :ok
