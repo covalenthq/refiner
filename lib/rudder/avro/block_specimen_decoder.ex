@@ -1,7 +1,7 @@
 defmodule Rudder.Avro.BlockSpecimenDecoder do
   use GenServer, restart: :temporary
 
-  alias Rudder.Events
+  # alias Rudder.Events
   @schema_name "block-ethereum"
 
   @impl true
@@ -57,9 +57,9 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     start_decode_ms = System.monotonic_time(:millisecond)
     Avrora.decode_plain(binary, schema_name: @schema_name)
     # Events.bsp_decode(System.monotonic_time(:millisecond) - start_decode_ms)
-    :telemetry.execute([:rudder, :events, :bsp_decode], %{
-      duration: System.monotonic_time(:millisecond) - start_decode_ms
-    })
+    # :telemetry.execute([:rudder, :events, :bsp_decode], %{
+    #   duration: System.monotonic_time(:millisecond) - start_decode_ms
+    # })
   end
 
   @doc """

@@ -3,7 +3,7 @@ defmodule Rudder.BlockProcessor.Core do
   alias Rudder.BlockProcessor.Struct
   alias Rudder.BlockProcessor.Worker
   alias Rudder.BlockProcessor.Core
-  alias Rudder.Events
+  # alias Rudder.Events
 
   defmodule PoolSupervisor do
     use Supervisor
@@ -84,7 +84,7 @@ defmodule Rudder.BlockProcessor.Core do
           state
         ) do
       Logger.info("submitting #{block_id} to evm plugin...")
-      start_execute_ms = System.monotonic_time(:millisecond)
+      # start_execute_ms = System.monotonic_time(:millisecond)
 
       worker_sup_child_spec =
         PoolSupervisor.get_worker_supervisor_childspec(
@@ -107,7 +107,7 @@ defmodule Rudder.BlockProcessor.Core do
 
         _ ->
           Logger.info("#{block_id} will be processed now")
-          Events.evm_execute(System.monotonic_time(:millisecond) - start_execute_ms)
+          # Events.evm_execute(System.monotonic_time(:millisecond) - start_execute_ms)
           {:noreply, state}
       end
     end
@@ -122,7 +122,7 @@ defmodule Rudder.BlockProcessor.Core do
       {:noreply, state}
     end
 
-    def sync_queue(%Rudder.BlockSpecimen{} = block_specimen, _state) do
+    def sync_queue(%Rudder.BlockSpecimen{} = block_specimen) do
       GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
     end
 

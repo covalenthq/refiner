@@ -1,6 +1,6 @@
 defmodule Rudder.BlockResultUploader do
   require Logger
-  alias Rudder.Events
+  # alias Rudder.Events
   use GenServer
 
   @spec start_link([
@@ -54,7 +54,7 @@ defmodule Rudder.BlockResultUploader do
                cid
              ) do
           {:ok, :submitted} ->
-            Events.brp_upload(System.monotonic_time(:millisecond) - start_upload_ms)
+            # Events.brp_upload(System.monotonic_time(:millisecond) - start_upload_ms)
             {:reply, {:ok, cid, block_result_hash}, state}
 
           {:error, errormsg} ->
