@@ -32,31 +32,41 @@ defmodule Rudder.Events do
 
   @spec bsp_decode(any) :: :ok
   def bsp_decode(duration) do
-    :telemetry.execute([:rudder, :events, :bsp_decode], %{duration: duration})
+    :telemetry.execute([:rudder, :events, :bsp_decode], %{duration: duration}, %{
+      table: "bsp_metrics",
+      operation: "decode"
+    })
   end
 
-  @spec bsp_extract(any) :: :ok
-  def bsp_extract(duration) do
-    :telemetry.execute([:rudder, :events, :bsp_extract], %{duration: duration})
-  end
-
-  @spec evm_execute(any) :: :ok
-  def evm_execute(duration) do
-    :telemetry.execute([:rudder, :events, :evm_execute], %{duration: duration})
+  @spec bsp_execute(any) :: :ok
+  def bsp_execute(duration) do
+    :telemetry.execute([:rudder, :events, :bsp_execute], %{duration: duration}, %{
+      table: "bsp_metrics",
+      operation: "execute"
+    })
   end
 
   @spec brp_upload(any) :: :ok
   def brp_upload(duration) do
-    :telemetry.execute([:rudder, :events, :brp_upload], %{duration: duration})
+    :telemetry.execute([:rudder, :events, :brp_upload], %{duration: duration}, %{
+      table: "brp_metrics",
+      operation: "upload"
+    })
   end
 
-  @spec tx_proof(any) :: :ok
-  def tx_proof(duration) do
-    :telemetry.execute([:rudder, :events, :tx_proof], %{duration: duration})
+  @spec brp_proof(any) :: :ok
+  def brp_proof(duration) do
+    :telemetry.execute([:rudder, :events, :brp_proof], %{duration: duration}, %{
+      table: "brp_metrics",
+      operation: "proof"
+    })
   end
 
-  @spec brp_pipeline(any) :: :ok
-  def brp_pipeline(duration) do
-    :telemetry.execute([:rudder, :events, :brp_pipeline], %{duration: duration})
+  @spec rudder_pipeline(any) :: :ok
+  def rudder_pipeline(duration) do
+    :telemetry.execute([:rudder, :events, :rudder_pipeline], %{duration: duration}, %{
+      table: "rudder_metrics",
+      operation: "pipeline"
+    })
   end
 end
