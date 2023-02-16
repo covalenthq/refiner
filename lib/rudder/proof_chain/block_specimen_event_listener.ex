@@ -3,6 +3,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   use GenServer
 
   @impl true
+  @spec init(any) :: none
   def init(_) do
     start()
     {:ok, []}
@@ -11,10 +12,12 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   @bsp_submitted_event_hash "0x57b0cb34d2ff9ed661f8b3c684aaee6cbf0bda5da02f4044205556817fa8e76c"
   @bsp_awarded_event_hash "0xf05ac779af1ec75a7b2fbe9415b33a67c00294a121786f7ce2eb3f92e4a6424a"
 
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
+  @spec start :: no_return
   def start() do
     reregister_process()
     Logger.info("starting event listener")
@@ -24,6 +27,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     listen_for_event(proofchain_address, block_height)
   end
 
+  @spec reregister_process :: true
   def reregister_process() do
     register_name = :bspec_listener
 
@@ -39,6 +43,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     Process.register(self(), register_name)
   end
 
+  @spec load_last_checked_block :: any
   def load_last_checked_block() do
     {:ok, block_height} = Rudder.Journal.last_started_block()
 

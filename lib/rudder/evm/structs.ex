@@ -20,6 +20,11 @@ defmodule Rudder.BlockProcessor.Struct do
               input_replica_path: @default_input_replica_path,
               output_basedir: @default_output_dir
 
+    @spec new :: %Rudder.BlockProcessor.Struct.EVMParams{
+            evm_exec_path: any,
+            input_replica_path: <<_::40>>,
+            output_basedir: <<_::72>>
+          }
     def new() do
       evm_path = Application.get_env(:rudder, :evm_path)
 

@@ -1,4 +1,5 @@
 defmodule Rudder.Pipeline do
+  alias Rudder.Events
   require Logger
 
   defmodule ProofSubmissionIrreparableError do
@@ -8,15 +9,26 @@ defmodule Rudder.Pipeline do
   defmodule Spawner do
     use DynamicSupervisor
 
+    @spec start_link(any) :: none
     def start_link(_) do
       DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__, strategy: :one_for_one)
     end
 
     @impl true
+    @spec init(any) ::
+            {:ok,
+             %{
+               extra_arguments: list,
+               intensity: non_neg_integer,
+               max_children: :infinity | non_neg_integer,
+               period: pos_integer,
+               strategy: :one_for_one
+             }}
     def init(_) do
       DynamicSupervisor.init(strategy: :one_for_one)
     end
 
+    @spec push_hash(any, any) :: :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
     def push_hash(bsp_key, urls) do
       DynamicSupervisor.start_child(
         __MODULE__,
@@ -28,7 +40,10 @@ defmodule Rudder.Pipeline do
     end
   end
 
+  @spec process_specimen(any, any) :: any
   def process_specimen(bsp_key, urls) do
+    start_pipeline_ms = System.monotonic_time(:millisecond)
+
     try do
       with [_chain_id, block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
            {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
@@ -63,6 +78,7 @@ defmodule Rudder.Pipeline do
           end
 
         File.rm(block_result_file_path)
+        Events.rudder_pipeline_success(System.monotonic_time(:millisecond) - start_pipeline_ms)
         return_val
       else
         err ->
@@ -72,6 +88,7 @@ defmodule Rudder.Pipeline do
       e in Rudder.Pipeline.ProofSubmissionIrreparableError ->
         write_to_backlog(bsp_key, urls, e)
         Logger.error(Exception.format(:error, e, __STACKTRACE__))
+        Events.rudder_pipeline_failure(System.monotonic_time(:millisecond) - start_pipeline_ms)
         Process.exit(Process.whereis(:bspec_listener), :irreparable)
 
       e ->
@@ -80,10 +97,14 @@ defmodule Rudder.Pipeline do
   end
 
   defp extract_block_specimen(decoded_specimen) do
+    start_decode_ms = System.monotonic_time(:millisecond)
+
     with {:ok, block_height} <- Map.fetch(decoded_specimen, "startBlock"),
          {:ok, replica_event} <- fetch_replica_event(decoded_specimen),
          {:ok, data} <- Map.fetch(replica_event, "data"),
          {:ok, chain_id} <- Map.fetch(data, "NetworkId") do
+      :ok = Events.bsp_decode(System.monotonic_time(:millisecond) - start_decode_ms)
+
       {:ok,
        %Rudder.BlockSpecimen{
          chain_id: chain_id,

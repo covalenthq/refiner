@@ -1,8 +1,10 @@
 defmodule Rudder.ProofChain.Interactor do
   require Logger
+  alias Rudder.Events
   use GenServer
 
   @impl true
+  @spec init(any) :: {:ok, []}
   def init(_) do
     {:ok, []}
   end
@@ -13,6 +15,7 @@ defmodule Rudder.ProofChain.Interactor do
                             )
   @get_urls_selector ABI.FunctionSelector.decode("getURLS(bytes32) -> string[] memory")
 
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -44,12 +47,14 @@ defmodule Rudder.ProofChain.Interactor do
     end
   end
 
+  @spec get_urls(any) :: any
   def get_urls(hash) do
     rpc_params = [hash]
     data = {@get_urls_selector, rpc_params}
     make_call(data)
   end
 
+  @spec is_block_result_session_open(binary) :: any
   def is_block_result_session_open(block_height) do
     {block_height, _} = Integer.parse(block_height)
     operator = get_operator_wallet()
@@ -64,6 +69,7 @@ defmodule Rudder.ProofChain.Interactor do
     Rudder.Wallet.load(Base.decode16!(operator_private_key, case: :lower))
   end
 
+  @spec submit_block_result_proof(any, any, any, any, any) :: any
   def submit_block_result_proof(
         chain_id,
         block_height,
@@ -71,6 +77,8 @@ defmodule Rudder.ProofChain.Interactor do
         block_result_hash,
         url
       ) do
+    start_proof_ms = System.monotonic_time(:millisecond)
+
     data =
       ABI.encode_call_payload(@submit_brp_selector, [
         chain_id,
@@ -113,6 +121,7 @@ defmodule Rudder.ProofChain.Interactor do
       signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
 
       with {:ok, txid} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
+        :ok = Events.brp_proof(System.monotonic_time(:millisecond) - start_proof_ms)
         Logger.info("#{block_height} txid is #{txid}")
         {:ok, :submitted}
       end

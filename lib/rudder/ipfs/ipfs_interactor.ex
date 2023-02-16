@@ -2,18 +2,28 @@ defmodule Rudder.IPFSInteractor do
   use GenServer
 
   alias Multipart.Part
+  alias Rudder.Events
 
+  @spec start_link([
+          {:debug, [:log | :statistics | :trace | {any, any}]}
+          | {:hibernate_after, :infinity | non_neg_integer}
+          | {:name, atom | {:global, any} | {:via, atom, any}}
+          | {:spawn_opt, [:link | :monitor | {any, any}]}
+          | {:timeout, :infinity | non_neg_integer}
+        ]) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   @impl true
+  @spec init(:ok) :: {:ok, []}
   def init(:ok) do
     {:ok, []}
   end
 
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
+    start_pin_ms = System.monotonic_time(:millisecond)
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
     url = "#{ipfs_url}/upload"
 
@@ -29,6 +39,9 @@ defmodule Rudder.IPFSInteractor do
 
     body_map = body |> Poison.decode!()
 
+    end_pin_ms = System.monotonic_time(:millisecond)
+    Events.ipfs_pin(end_pin_ms - start_pin_ms)
+
     case body_map do
       %{"error" => error} -> {:reply, {:error, error}, state}
       %{"cid" => cid} -> {:reply, {:ok, cid}, state}
@@ -37,6 +50,8 @@ defmodule Rudder.IPFSInteractor do
 
   @impl true
   def handle_call({:fetch, cid}, _from, state) do
+    start_fetch_ms = System.monotonic_time(:millisecond)
+
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
     url = "#{ipfs_url}"
 
@@ -44,17 +59,22 @@ defmodule Rudder.IPFSInteractor do
       Finch.build(:get, "#{url}/get?cid=#{cid}")
       |> Finch.request(Rudder.Finch, receive_timeout: 60_000_000, pool_timeout: 60_000_000)
 
+    end_fetch_ms = System.monotonic_time(:millisecond)
+    Events.ipfs_fetch(end_fetch_ms - start_fetch_ms)
     {:reply, body, state}
   end
 
+  @spec pin(any) :: any
   def pin(path) do
     GenServer.call(Rudder.IPFSInteractor, {:pin, path}, :infinity)
   end
 
+  @spec fetch(any) :: any
   def fetch(cid) do
     GenServer.call(Rudder.IPFSInteractor, {:fetch, cid}, :infinity)
   end
 
+  @spec discover_block_specimen(nonempty_maybe_improper_list) :: {:ok, any}
   def discover_block_specimen([url | _]) do
     ["ipfs", cid] = String.split(url, "://")
 

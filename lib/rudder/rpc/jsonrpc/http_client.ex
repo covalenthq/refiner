@@ -3,6 +3,11 @@ defmodule Rudder.RPC.JSONRPC.HTTPClient do
   alias Rudder.RPC.JSONRPC.HTTPAdapter, as: Adapter
   alias Rudder.RPC.JSONRPC.WSAdapter, as: LongCallAdapter
 
+  @spec get_or_create(any, binary | URI.t()) :: %Rudder.RPC.JSONRPC.HTTPClient{
+          request_headers: [{any, any}, ...],
+          request_uri: binary,
+          ws_request_uri: binary
+        }
   def get_or_create(owner, conn_uri) when is_binary(conn_uri) do
     get_or_create(owner, URI.parse(conn_uri))
   end
@@ -55,10 +60,12 @@ defmodule Rudder.RPC.JSONRPC.HTTPClient do
   end
 
   defimpl Rudder.RPC.JSONRPC.Client do
+    @spec call(%Rudder.RPC.JSONRPC.HTTPClient{}, any, any, any) :: none
     def call(client, rpc_method, rpc_params, opts \\ []) do
       Adapter.call(client.request_uri, client.request_headers, rpc_method, rpc_params, opts)
     end
 
+    @spec long_call(%Rudder.RPC.JSONRPC.HTTPClient{}, any, any) :: none
     def long_call(client, rpc_method, rpc_params) do
       # Adapter.call(client.request_uri, client.request_headers, rpc_method, rpc_params)
       LongCallAdapter.long_call(
@@ -69,6 +76,9 @@ defmodule Rudder.RPC.JSONRPC.HTTPClient do
       )
     end
 
+    @spec delete(%Rudder.RPC.JSONRPC.HTTPClient{}, binary | URI.t()) ::
+            {:error, %{:__exception__ => true, :__struct__ => atom, optional(atom) => any}}
+            | {:ok, Finch.Response.t()}
     def delete(client, uri_ref) do
       Adapter.delete(URI.merge(client.request_uri, uri_ref), client.request_headers)
     end

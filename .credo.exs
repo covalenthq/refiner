@@ -141,7 +141,6 @@
           {Credo.Check.Warning.OperationOnSameValues, []},
           {Credo.Check.Warning.OperationWithConstantResult, []},
           {Credo.Check.Warning.RaiseInsideRescue, []},
-          {Credo.Check.Warning.SpecWithStruct, []},
           {Credo.Check.Warning.WrongTestFileExtension, []},
           {Credo.Check.Warning.UnusedEnumOperation, []},
           {Credo.Check.Warning.UnusedFileOperation, []},
@@ -165,6 +164,7 @@
           {Credo.Check.Refactor.LongQuoteBlocks, []},
           {Credo.Check.Design.TagTODO, [exit_status: 2]},
           {Credo.Check.Readability.ModuleDoc, []},
+          {Credo.Check.Warning.SpecWithStruct, []},
           # Disabled by default
           {Credo.Check.Consistency.MultiAliasImportRequireUse, []},
           {Credo.Check.Consistency.UnusedVariableNames, []},

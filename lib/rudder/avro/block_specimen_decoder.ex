@@ -1,14 +1,23 @@
 defmodule Rudder.Avro.BlockSpecimenDecoder do
   use GenServer, restart: :temporary
+  require Logger
 
   @schema_name "block-ethereum"
 
   @impl true
+  @spec init(any) :: {:ok, any}
   def init(state) do
     start()
     {:ok, state}
   end
 
+  @spec start_link([
+          {:debug, [:log | :statistics | :trace | {any, any}]}
+          | {:hibernate_after, :infinity | non_neg_integer}
+          | {:name, atom | {:global, any} | {:via, atom, any}}
+          | {:spawn_opt, [:link | :monitor | {any, any}]}
+          | {:timeout, :infinity | non_neg_integer}
+        ]) :: :ignore | {:error, any} | {:ok, pid}
   @doc """
   Starts the block specimen decoder.
   """
@@ -16,10 +25,12 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
+  @spec start :: {:ok, pid}
   def start() do
     {:ok, _pid} = Avrora.start_link()
   end
 
+  @spec list :: any
   def list do
     GenServer.call(__MODULE__, :list)
   end
@@ -29,6 +40,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     {:reply, state, state}
   end
 
+  @spec get_schema :: binary
   @doc """
   Looks up AVRO schema stored in priv/schema using @schema name.
 
@@ -39,6 +51,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     schema.full_name
   end
 
+  @spec decode(binary) :: {:error, any} | {:ok, map}
   @doc """
   Decodes `<<binary>>` using AVRO schema.
 
@@ -48,6 +61,13 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     Avrora.decode_plain(binary, schema_name: @schema_name)
   end
 
+  @spec decode_file(
+          binary
+          | maybe_improper_list(
+              binary | maybe_improper_list(any, binary | []) | char,
+              binary | []
+            )
+        ) :: {:error, any} | {:ok, map}
   @doc """
   Decodes binary file @`file_path` using AVRO schema.
 
@@ -58,6 +78,13 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     decode(binary)
   end
 
+  @spec decode_dir(
+          binary
+          | maybe_improper_list(
+              binary | maybe_improper_list(any, binary | []) | char,
+              binary | []
+            )
+        ) :: list
   @doc """
   Decodes all binary files @`dir_path` using AVRO schema.
 

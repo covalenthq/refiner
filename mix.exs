@@ -24,12 +24,13 @@ defmodule Rudder.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      # system exec
       {:poison, "~> 5.0"},
       {:porcelain, "~> 2.0"},
+
+      # frameworks
       {:broadway, "~> 1.0", override: true},
-      # {:erlexec, "~> 2.0"},
       {:off_broadway_redis, "~> 0.4.3"},
-      {:cors_plug, "~> 3.0"},
       {:phoenix, "~> 1.4.9"},
       {:phoenix_pubsub, "~> 1.1"},
       {:gettext, "~> 0.11"},
@@ -38,7 +39,7 @@ defmodule Rudder.MixProject do
       {:ranch, "~> 2.1.0",
        [env: :prod, hex: "ranch", repo: "hexpm", optional: false, override: true]},
 
-      # parsing and encoding
+      # eth parsing and encoding
       {:abi,
        github: "tsutsu/ethereum_abi",
        branch: "feature-parse-events-from-abi-specifications",
@@ -55,6 +56,7 @@ defmodule Rudder.MixProject do
 
       # networking
       {:certifi, "~> 2.9", override: true},
+      {:cors_plug, "~> 3.0"},
       {:finch, "~> 0.14.0"},
       {:downstream, "~> 1.0"},
       {:websockex, "~> 0.4.3"},
@@ -69,8 +71,16 @@ defmodule Rudder.MixProject do
 
       # logging
       {:logger_file_backend, "~> 0.0.12"},
-      {:etfs, "~> 0.2.0"}
+      {:etfs, "~> 0.2.0"},
+
+      # tracing metrics
+      {:telemetry, "~> 1.2.1", override: true},
+      {:telemetry_metrics, "~> 0.3.0"}
+
+      # Unused
+      # {:erlexec, "~> 2.0"},
       # {:etfs, path: "/Users/sudeep/repos/experiment/etfs"}
+      # {:telemetry_metrics_prometheus, "~> 1.1"}
     ]
   end
 end

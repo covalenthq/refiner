@@ -2,6 +2,7 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
   use GenServer
 
   @impl true
+  @spec init(any) :: none
   def init(_) do
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
     listen_for_event(proofchain_address)
@@ -10,10 +11,12 @@ defmodule Rudder.ProofChain.BlockResultEventListener do
 
   @brp_submitted_event_hash "0x8741f5bf89731b15f24deb1e84e2bbd381947f009ee378a2daa15ed8abfb9485"
 
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
+  @spec start :: no_return
   def start() do
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
     listen_for_event(proofchain_address)

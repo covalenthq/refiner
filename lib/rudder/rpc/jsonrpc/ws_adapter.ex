@@ -4,6 +4,7 @@ defmodule Rudder.RPC.JSONRPC.WSAdapter do
   use WebSockex
   require Logger
 
+  @spec long_call(any, any, any, any) :: none
   def long_call(req_uri, req_headers, rpc_method, rpc_params) do
     req_rpc_method = to_string(rpc_method)
 

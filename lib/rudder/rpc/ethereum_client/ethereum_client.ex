@@ -1,4 +1,5 @@
 defmodule Rudder.RPC.EthereumClient do
+  @spec __using__(any) :: {:__block__, [], [{:=, [], [...]} | {:__block__, [...], [...]}, ...]}
   defmacro __using__(opts) do
     quote location: :keep, bind_quoted: [used_with_opts: opts] do
       use Confex, used_with_opts
