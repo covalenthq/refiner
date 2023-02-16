@@ -21,9 +21,11 @@ defmodule Rudder.SHA256 do
     Base.encode16(bytes, case: :lower)
   end
 
+  @spec type :: :binary
   @doc false
   def type, do: :binary
 
+  @spec equal?(any, any) :: boolean
   @doc false
   def equal?(a, b), do: a == b
 
@@ -35,6 +37,7 @@ defmodule Rudder.SHA256 do
   def cast(%__MODULE__{} = h), do: {:ok, h}
   def cast(_), do: :error
 
+  @spec load(any) :: :error | {:ok, %Rudder.SHA256{bytes: binary}}
   @doc false
   def load(data) when is_binary(data) and byte_size(data) == 32 do
     {:ok, %__MODULE__{bytes: data}}
@@ -42,6 +45,7 @@ defmodule Rudder.SHA256 do
 
   def load(_), do: :error
 
+  @spec dump(any) :: :error | {:ok, any}
   @doc false
   def dump(%__MODULE__{bytes: data}), do: {:ok, data}
   def dump(_), do: :error
@@ -73,6 +77,15 @@ defimpl Inspect, for: Rudder.SHA256 do
       end
 
     _ ->
+      @spec inspect(%Rudder.SHA256{}, Inspect.Opts.t()) ::
+              :doc_line
+              | :doc_nil
+              | binary
+              | {:doc_collapse, pos_integer}
+              | {:doc_force, any}
+              | {:doc_break | :doc_color | :doc_cons | :doc_fits | :doc_group | :doc_string, any,
+                 any}
+              | {:doc_nest, any, :cursor | :reset | non_neg_integer, :always | :break}
       def inspect(%Rudder.SHA256{bytes: hash}, opts) do
         hash_hex = Base.encode16(hash, case: :lower)
 

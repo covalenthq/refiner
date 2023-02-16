@@ -3,6 +3,9 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
 
   @http_retries 5
 
+  @spec delete(binary | URI.t(), [{binary, binary}]) ::
+          {:error, %{:__exception__ => true, :__struct__ => atom, optional(atom) => any}}
+          | {:ok, Finch.Response.t()}
   def delete(req_uri, req_headers) do
     Finch.build(
       :delete,
@@ -12,6 +15,7 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
     |> Finch.request(Rudder.Finch)
   end
 
+  @spec call(any, any, any, any, any) :: none
   def call(req_uri, req_headers, rpc_method, rpc_params, opts) do
     with_keepalive = Keyword.get(opts, :keepalive, true)
     request_timeout = Keyword.get(opts, :request_timeout, 1_200_000)
@@ -50,6 +54,7 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
     end
   end
 
+  @spec collate_jsonrpc_results(any) :: list
   def collate_jsonrpc_results(jsonrpc_results) do
     Enum.sort(jsonrpc_results)
     |> Enum.map(&elem(&1, 1))
@@ -85,6 +90,32 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
     end
   end
 
+  @spec decode_http_resp(
+          {:error,
+           %{
+             :__struct__ => Finch.Error | Mint.TransportError,
+             :reason =>
+               :closed
+               | :normal
+               | :timeout
+               | {:closed, any}
+               | {:stop, {any, any, any, any}, any}
+               | {:stream_error, :internal_error, any},
+             optional(any) => any
+           }}
+          | {:ok, %{:body => any, :status => any, optional(any) => any}}
+        ) ::
+          :connection_closed
+          | :forbidden
+          | :gateway_error
+          | :notfound
+          | :overload
+          | :rate_limited
+          | :timeout
+          | {:ok, maybe_improper_list}
+          | {:server_error, any}
+          | {:server_error, any, any}
+          | {:unknown_error, any, any}
   def decode_http_resp({:ok, %{status: http_resp_code, body: http_resp_body}})
       when http_resp_code >= 200 and http_resp_code < 300 do
     case Jason.decode!(http_resp_body) do
@@ -136,6 +167,15 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
     do: {seq, {:ok, result}}
 
   # raise on logic errors; return on environment errors; return if unsure
+  @spec batch_error(any, any) ::
+          :forbidden
+          | :gateway_error
+          | :notfound
+          | :overload
+          | :rate_limited
+          | {:server_error, any}
+          | {:server_error, any, any}
+          | {:unknown_error, any, any}
   def batch_error(401, _), do: :forbidden
   def batch_error(404, _), do: :notfound
   def batch_error(500, error_msg), do: {:server_error, 500, error_msg}
@@ -173,6 +213,12 @@ defmodule Rudder.RPC.JSONRPC.HTTPAdapter do
   def batch_error(code, msg), do: {:unknown_error, code, msg}
 
   # client may be attempting methods to determine existence, so raise only if invalid syntactically
+  @spec req_error(any, any) ::
+          :notfound
+          | {:invalid_parameters, any}
+          | {:rpc_error, any}
+          | {:server_error, any, any}
+          | {:unknown_error, any, any}
   def req_error(-32_700, _), do: raise(Rudder.RPCError, "client sent malformed JSON")
   def req_error(-32_600, _), do: raise(Rudder.RPCError, "invalid request")
   def req_error(-32_601, _), do: :notfound

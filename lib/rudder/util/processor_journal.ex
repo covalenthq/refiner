@@ -5,6 +5,7 @@ defmodule Rudder.Journal do
   """
   use GenServer
 
+  alias Rudder.Events
   require Logger
   require Application
 
@@ -24,6 +25,7 @@ defmodule Rudder.Journal do
 
   @impl true
   def handle_call({:blockh, :fetch}, _from, {_workitem_log, blockh_log} = state) do
+    start_journal_ms = System.monotonic_time(:millisecond)
     Logger.info("getting the last unprocessed block height")
 
     {result, max_height} =
@@ -42,6 +44,7 @@ defmodule Rudder.Journal do
         end
       end)
 
+    Events.journal_fetch_last(System.monotonic_time(:millisecond) - start_journal_ms)
     {:reply, {:ok, Enum.min(result, &<=/2, fn -> max_height + 1 end)}, state}
   end
 
@@ -50,6 +53,7 @@ defmodule Rudder.Journal do
   """
   @impl true
   def handle_call({:workitem, :fetch, status}, _from, {workitem_log, _blockh_log} = state) do
+    start_journal_ms = System.monotonic_time(:millisecond)
     Logger.info("getting ids with status=#{status}")
 
     ## filter function for Enum.reduce/3
@@ -71,6 +75,8 @@ defmodule Rudder.Journal do
             end
           end
       end
+
+    Events.journal_fetch_items(System.monotonic_time(:millisecond) - start_journal_ms)
 
     result =
       ETFs.DebugFile.stream!(workitem_log.disk_log_name, workitem_log.path)

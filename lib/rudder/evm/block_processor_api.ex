@@ -1,6 +1,7 @@
 defmodule Rudder.BlockProcessor do
   alias Rudder.BlockProcessor.Core
 
+  @spec start(any) :: :ignore | {:error, any} | {:ok, pid}
   @doc """
   Starts a worker pool with given maximum number of workers (not enforced right now).
   """
@@ -8,6 +9,7 @@ defmodule Rudder.BlockProcessor do
     Core.PoolSupervisor.start_link(workers_limit)
   end
 
+  @spec stop :: :ok
   @doc """
   Stops the block processor worker pool
   """

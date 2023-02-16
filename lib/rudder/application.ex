@@ -6,6 +6,7 @@ defmodule Rudder.Application do
   use Application
 
   @impl true
+  @spec start(any, any) :: {:error, any} | {:ok, pid}
   def start(_type, _args) do
     children = [
       {Finch,
@@ -22,7 +23,8 @@ defmodule Rudder.Application do
         id: Rudder.BlockProcessor.Core.PoolSupervisor,
         start: {Rudder.BlockProcessor.Core.PoolSupervisor, :start_link, [10]}
       },
-      {Rudder.Pipeline.Spawner, name: Rudder.Pipeline.Spawner}
+      {Rudder.Pipeline.Spawner, name: Rudder.Pipeline.Spawner},
+      {Rudder.Telemetry, name: Rudder.Telemetry}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -12,6 +12,12 @@ defmodule Rudder.PublicKeyHash do
 
   @zero_address EthereumCodec.decode_address("0x0000000000000000000000000000000000000000")
 
+  @spec zero_address :: %Rudder.PublicKeyHash{
+          bytes: <<_::160>>,
+          chain_id: nil,
+          format: :ethpub,
+          namespace: 0
+        }
   def zero_address(), do: @zero_address
 
   def sigil_a(bin, []), do: parse!(bin)
@@ -33,17 +39,36 @@ defmodule Rudder.PublicKeyHash do
     pkh
   end
 
+  @spec parse_raw(any) ::
+          :error
+          | {:ok,
+             nil
+             | %Rudder.PublicKeyHash{
+                 bytes: bitstring,
+                 chain_id: nil,
+                 format: :ethpub,
+                 namespace: 0
+               }}
   def parse_raw(bin) when is_binary(bin) and byte_size(bin) == 20 do
     {:ok, EthereumCodec.decode_address(bin)}
   end
 
   def parse_raw(_), do: :error
 
+  @spec parse_raw!(any) ::
+          nil
+          | %Rudder.PublicKeyHash{bytes: bitstring, chain_id: nil, format: :ethpub, namespace: 0}
   def parse_raw!(v) do
     {:ok, pkh} = parse_raw(v)
     pkh
   end
 
+  @spec new(any, any, any, any) :: %Rudder.PublicKeyHash{
+          bytes: any,
+          chain_id: any,
+          format: any,
+          namespace: any
+        }
   def new(format, namespace, chain_id, bytes) do
     %__MODULE__{format: format, namespace: namespace, chain_id: chain_id, bytes: bytes}
   end
@@ -70,24 +95,41 @@ defmodule Rudder.PublicKeyHash do
     str
   end
 
+  @spec type :: :binary
   @doc false
   def type, do: :binary
 
   @doc false
   def cast(v), do: parse(v)
 
+  @spec load(any) ::
+          :error
+          | {:ok,
+             nil
+             | %Rudder.PublicKeyHash{
+                 bytes: bitstring,
+                 chain_id: nil,
+                 format: :ethpub,
+                 namespace: 0
+               }}
   @doc false
   def load(bin), do: parse_raw(bin)
 
+  @spec dump(any) :: :error | {:ok, any}
   @doc false
   def dump(%__MODULE__{} = pkh), do: as_external(pkh)
   def dump(_), do: :error
 
+  @spec equal?(any, any) :: boolean
   @doc false
   def equal?(a, b), do: a == b
 end
 
 defimpl Jason.Encoder, for: Rudder.PublicKeyHash do
+  @spec encode(%Rudder.PublicKeyHash{}, Jason.Encode.opts()) :: [
+          binary | maybe_improper_list(any, binary | []) | byte,
+          ...
+        ]
   def encode(%Rudder.PublicKeyHash{} = pkh, opts) do
     Rudder.PublicKeyHash.as_string!(pkh)
     |> Jason.Encode.string(opts)
@@ -95,12 +137,21 @@ defimpl Jason.Encoder, for: Rudder.PublicKeyHash do
 end
 
 defimpl String.Chars, for: Rudder.PublicKeyHash do
+  @spec to_string(%Rudder.PublicKeyHash{}) :: any
   def to_string(pkh), do: Rudder.PublicKeyHash.as_string!(pkh)
 end
 
 defimpl Inspect, for: Rudder.PublicKeyHash do
   import Inspect.Algebra
 
+  @spec inspect(%Rudder.PublicKeyHash{}, Inspect.Opts.t()) ::
+          :doc_line
+          | :doc_nil
+          | binary
+          | {:doc_collapse, pos_integer}
+          | {:doc_force, any}
+          | {:doc_break | :doc_color | :doc_cons | :doc_fits | :doc_group | :doc_string, any, any}
+          | {:doc_nest, any, :cursor | :reset | non_neg_integer, :always | :break}
   def inspect(
         %Rudder.PublicKeyHash{format: format, namespace: namespace, chain_id: chain_id} = pkh,
         opts
