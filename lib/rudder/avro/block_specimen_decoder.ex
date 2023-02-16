@@ -5,6 +5,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
   @schema_name "block-ethereum"
 
   @impl true
+  @spec init(any) :: {:ok, any}
   def init(state) do
     start()
     {:ok, state}
@@ -29,6 +30,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     {:ok, _pid} = Avrora.start_link()
   end
 
+  @spec list :: any
   def list do
     GenServer.call(__MODULE__, :list)
   end
@@ -38,6 +40,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     {:reply, state, state}
   end
 
+  @spec get_schema :: binary
   @doc """
   Looks up AVRO schema stored in priv/schema using @schema name.
 
@@ -48,6 +51,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     schema.full_name
   end
 
+  @spec decode(binary) :: {:error, any} | {:ok, map}
   @doc """
   Decodes `<<binary>>` using AVRO schema.
 
@@ -57,6 +61,13 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     Avrora.decode_plain(binary, schema_name: @schema_name)
   end
 
+  @spec decode_file(
+          binary
+          | maybe_improper_list(
+              binary | maybe_improper_list(any, binary | []) | char,
+              binary | []
+            )
+        ) :: {:error, any} | {:ok, map}
   @doc """
   Decodes binary file @`file_path` using AVRO schema.
 
@@ -67,6 +78,13 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     decode(binary)
   end
 
+  @spec decode_dir(
+          binary
+          | maybe_improper_list(
+              binary | maybe_improper_list(any, binary | []) | char,
+              binary | []
+            )
+        ) :: list
   @doc """
   Decodes all binary files @`dir_path` using AVRO schema.
 

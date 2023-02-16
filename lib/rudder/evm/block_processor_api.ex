@@ -9,6 +9,7 @@ defmodule Rudder.BlockProcessor do
     Core.PoolSupervisor.start_link(workers_limit)
   end
 
+  @spec stop :: :ok
   @doc """
   Stops the block processor worker pool
   """

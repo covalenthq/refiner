@@ -4,11 +4,19 @@ defmodule Rudder.IPFSInteractor do
   alias Multipart.Part
   alias Rudder.Events
 
+  @spec start_link([
+          {:debug, [:log | :statistics | :trace | {any, any}]}
+          | {:hibernate_after, :infinity | non_neg_integer}
+          | {:name, atom | {:global, any} | {:via, atom, any}}
+          | {:spawn_opt, [:link | :monitor | {any, any}]}
+          | {:timeout, :infinity | non_neg_integer}
+        ]) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   @impl true
+  @spec init(:ok) :: {:ok, []}
   def init(:ok) do
     {:ok, []}
   end
@@ -56,14 +64,17 @@ defmodule Rudder.IPFSInteractor do
     {:reply, body, state}
   end
 
+  @spec pin(any) :: any
   def pin(path) do
     GenServer.call(Rudder.IPFSInteractor, {:pin, path}, :infinity)
   end
 
+  @spec fetch(any) :: any
   def fetch(cid) do
     GenServer.call(Rudder.IPFSInteractor, {:fetch, cid}, :infinity)
   end
 
+  @spec discover_block_specimen(nonempty_maybe_improper_list) :: {:ok, any}
   def discover_block_specimen([url | _]) do
     ["ipfs", cid] = String.split(url, "://")
 

@@ -10,6 +10,7 @@ defmodule Rudder.Telemetry.CustomReporter do
     GenServer.start_link(__MODULE__, opts[:metrics])
   end
 
+  @spec init(any) :: {:ok, list}
   def init(metrics) do
     Process.flag(:trap_exit, true)
 
@@ -36,6 +37,7 @@ defmodule Rudder.Telemetry.CustomReporter do
     {:ok, Map.keys(groups)}
   end
 
+  @spec handle_event(any, any, any, any) :: list
   def handle_event(_event_name, measurements, metadata, metrics) do
     metrics
     |> Enum.map(&handle_metric(&1, measurements, metadata))

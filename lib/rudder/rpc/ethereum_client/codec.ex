@@ -28,6 +28,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end
   end
 
+  @spec encode_slot_key_path(any) :: <<_::16, _::_*8>>
   def encode_slot_key_path(parts) do
     slug =
       Enum.map(parts, fn
@@ -53,6 +54,9 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     |> encode_bin()
   end
 
+  @spec decode_address(nil | bitstring) ::
+          nil
+          | %Rudder.PublicKeyHash{bytes: bitstring, chain_id: nil, format: :ethpub, namespace: 0}
   def decode_address(nil), do: nil
 
   def decode_address("") do
@@ -73,6 +77,8 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     decode_address(bytes)
   end
 
+  @spec encode_default_block(:earliest | :latest | nil | :pending | integer) ::
+          nil | <<_::16, _::_*8>>
   def encode_default_block(:latest), do: "latest"
   def encode_default_block(:earliest), do: "earliest"
   def encode_default_block(:pending), do: "pending"
@@ -83,6 +89,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     |> encode_bin()
   end
 
+  @spec encode_call_transaction(keyword) :: any
   def encode_call_transaction(call_tx) do
     call_tx
     |> Keyword.delete(:decode)
@@ -96,6 +103,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end)
   end
 
+  @spec encode_hl_call_payload(ABI.FunctionSelector.t(), any) :: <<_::16, _::_*8>>
   def encode_hl_call_payload(selector, params) do
     params_bins =
       normalize_hl_call_payload_part(params)
@@ -134,6 +142,8 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   defp normalize_hl_call_payload_part(%Rudder.PublicKeyHash{bytes: bytes}), do: bytes
   defp normalize_hl_call_payload_part(other), do: other
 
+  @spec encode_call_payload(binary | {binary | ABI.FunctionSelector.t(), any}) ::
+          <<_::16, _::_*8>>
   def encode_call_payload({selector, params}) do
     ABI.encode_call_payload(selector, params)
     |> encode_call_payload()
@@ -143,6 +153,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     encode_bin(bin)
   end
 
+  @spec decode_call_result(nil | binary, keyword) :: any
   def decode_call_result(bin, call_tx) do
     {selector, _} = call_tx[:data]
     selector = decode_selector(selector)
@@ -170,6 +181,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end
   end
 
+  @spec decode_multicall_result(ABI.FunctionSelector.t(), any) :: nil | map
   def decode_multicall_result(%ABI.FunctionSelector{returns: sel_rt}, results_by_contract) do
     with {:ok, sel_rt_fixed} <- normalize_selector_return_type(sel_rt) do
       Map.new(results_by_contract, fn {contract_addr_enc, results_bins} ->
@@ -200,25 +212,30 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end
   end
 
+  @spec normalize_selector_return_type(any) :: nil | {:ok, [{:tuple, any}, ...]}
   def normalize_selector_return_type(""), do: nil
   def normalize_selector_return_type({:tuple, _} = t), do: {:ok, [t]}
   def normalize_selector_return_type(t), do: {:ok, [{:tuple, [t]}]}
 
   defp unwrap_selector_return_tuple([t]) when is_tuple(t), do: Tuple.to_list(t)
 
+  @spec decode_selector(binary | ABI.FunctionSelector.t()) :: any
   def decode_selector(%ABI.FunctionSelector{} = s), do: s
   def decode_selector(str), do: ABI.FunctionSelector.decode(str)
 
+  @spec encode_qty(nil | integer) :: nil | <<_::16, _::_*8>>
   def encode_qty(nil), do: nil
 
   def encode_qty(n) when is_integer(n) do
     "0x" <> String.downcase(Integer.to_string(n, 16))
   end
 
+  @spec encode_bin(binary) :: <<_::16, _::_*8>>
   def encode_bin(bin) when is_binary(bin) do
     "0x" <> Base.encode16(bin, case: :lower)
   end
 
+  @spec decode_block(nil | map, any) :: nil | map
   def decode_block(block, discovered_on_network \\ nil)
 
   def decode_block(nil, _), do: nil
@@ -256,6 +273,8 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     without_nils(block)
   end
 
+  @spec extract_signed_at_from_raw_block(nil | map) ::
+          :error | {:error, :incompatible_calendars | :invalid_unix_time} | {:ok, DateTime.t()}
   def extract_signed_at_from_raw_block(block) when is_map(block) do
     with {:ok, qty} <- Map.fetch(block, "timestamp"),
          unix_ts <- decode_qty(qty) do
@@ -265,6 +284,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
   def extract_signed_at_from_raw_block(nil), do: :error
 
+  @spec decode_seal_fields(nil | binary, nil | maybe_improper_list) :: list
   def decode_seal_fields(nonce, seal_fields) do
     fields =
       case {seal_fields, nonce} do
@@ -279,14 +299,17 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     |> Enum.sort_by(&byte_size/1)
   end
 
+  @spec decode_uncles(nil | maybe_improper_list) :: nil | list
   def decode_uncles(uncles) when is_list(uncles),
     do: Enum.map(uncles, &decode_sha256/1)
 
   def decode_uncles(nil), do: nil
 
+  @spec decode_transactions(maybe_improper_list) :: list
   def decode_transactions(txs) when is_list(txs),
     do: Enum.map(txs, &decode_transaction/1)
 
+  @spec decode_transaction(binary | map) :: nil | map
   def decode_transaction(transaction_id) when is_binary(transaction_id) do
     decode_sha256(transaction_id)
   end
@@ -306,9 +329,11 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     )
   end
 
+  @spec decode_transaction_receipts(maybe_improper_list) :: list
   def decode_transaction_receipts(receipts) when is_list(receipts),
     do: Enum.map(receipts, &decode_transaction_receipt/1)
 
+  @spec decode_transaction_receipt(map) :: map
   def decode_transaction_receipt(receipt) when is_map(receipt) do
     without_nils(
       successful: decode_boolean_qty(receipt["status"]),
@@ -319,6 +344,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     )
   end
 
+  @spec decode_log(map) :: map
   def decode_log(log) when is_map(log) do
     without_nils(
       log_offset: decode_qty(log["logIndex"]) || 0,
@@ -330,6 +356,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     )
   end
 
+  @spec decode_log_topics(nil | maybe_improper_list) :: list
   def decode_log_topics(nil), do: []
   def decode_log_topics([]), do: []
 
@@ -352,6 +379,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     |> Enum.reverse()
   end
 
+  @spec linearize_log_offsets(any, any) :: nonempty_maybe_improper_list
   def linearize_log_offsets(log, []), do: [log]
 
   def linearize_log_offsets(%{log_offset: a} = e, [%{log_offset: b} | _] = acc) when a <= b,
@@ -359,6 +387,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
   def linearize_log_offsets(e, acc), do: [e | acc]
 
+  @spec decode_fees_paid(nil | map) :: nil | number
   def decode_fees_paid(nil), do: nil
 
   def decode_fees_paid(fees) when is_map(fees) do
@@ -376,9 +405,11 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end
   end
 
+  @spec decode_timestamp(nil | binary | integer) :: nil | DateTime.t()
   def decode_timestamp(nil), do: nil
   def decode_timestamp(qty), do: DateTime.from_unix!(decode_qty(qty))
 
+  @spec decode_sync_status(false | map) :: any
   def decode_sync_status(false), do: false
 
   def decode_sync_status(status) when is_map(status) do
@@ -388,10 +419,12 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end)
   end
 
+  @spec decode_map_key(atom | binary) :: atom
   def decode_map_key(key) do
     String.to_atom(Macro.underscore(key))
   end
 
+  @spec decode_evm_argdata(nil | binary) :: nil | binary
   def decode_evm_argdata(hex_data) do
     case decode_bin(hex_data) do
       "" -> nil
@@ -399,6 +432,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end
   end
 
+  @spec decode_evm_bytecode(binary) :: {nil | binary, list}
   def decode_evm_bytecode(""), do: {nil, []}
   def decode_evm_bytecode("0x" <> hex_with_externs), do: decode_evm_bytecode(hex_with_externs)
 
@@ -432,12 +466,14 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     {cleaned_bytecode_bin, externs}
   end
 
+  @spec decode_boolean_qty(nil | binary) :: false | nil | true
   def decode_boolean_qty(nil), do: nil
 
   def decode_boolean_qty(qty) when is_binary(qty) do
     decode_qty(qty) == 1
   end
 
+  @spec decode_qty(nil | binary | integer) :: nil | integer
   def decode_qty(nil), do: nil
   def decode_qty("0x" <> hex), do: decode_qty(hex)
   def decode_qty(""), do: 0
@@ -448,6 +484,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     qty
   end
 
+  @spec decode_addr_balance(nil | map) :: nil | map
   def decode_addr_balance(nil), do: nil
 
   def decode_addr_balance(%{} = addr_balance_map) do
@@ -456,6 +493,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end)
   end
 
+  @spec decode_bin(nil | binary) :: nil | binary
   def decode_bin(nil), do: nil
   def decode_bin("0x" <> hex), do: decode_bin(hex)
   def decode_bin(""), do: ""
