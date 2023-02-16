@@ -136,6 +136,13 @@ defmodule Rudder.ProofChain.Interactor do
               String.contains?(e.message, "Insufficiently staked to submit") ->
             {:error, :irreparable, e.message}
 
+          String.contains?(e.message, "Module(ModuleError") ->
+            Logger.error(
+              "error for block_height:#{block_height}; bspech:bresulth = (#{inspect(block_specimen_hash)}, #{inspect(block_result_hash)}); url:#{inspect(url)}"
+            )
+
+            {:error, e.message}
+
           true ->
             Logger.error("error in connecting to RPC: #{inspect(e)}")
             {:error, e.message}
