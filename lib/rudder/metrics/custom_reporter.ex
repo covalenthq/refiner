@@ -17,9 +17,9 @@ defmodule Rudder.Telemetry.CustomReporter do
     :ets.new(:emit_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
     # ipfs events (instrumented)
     :ets.new(:ipfs_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
-    # bsp events ()
+    # bsp events (instrumented)
     :ets.new(:bsp_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
-    # brp events
+    # brp events (instrumented)
     :ets.new(:brp_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
     # application wide events (instrumented)
     :ets.new(:rudder_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
@@ -51,13 +51,9 @@ defmodule Rudder.Telemetry.CustomReporter do
 
   @doc """
   Telemetry.Metrics.Counter: Used to keep a running count of the number of events.
-
   Telemetry.Metrics.Sum: Used to track the sum total of specific measurements.
-
   Telemetry.Metrics.LastValue: Use this metric to hold the measurement of the most recent event.
-
   Telemetry.Metrics.Summary: Used to track and calculate statistics of the selected measurement such as min/max, average, percentile, etc.
-
   Telemetry.Metrics.Distribution: Used to group event measurements into buckets
   """
   @spec handle_metric(

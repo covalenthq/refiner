@@ -133,6 +133,23 @@ defmodule Rudder.Telemetry do
         tags: [:table, :operation]
       ),
 
+      # rudder_journaling
+      counter("rudder.events.rudder_journal.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.rudder_journal.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.rudder_journal.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.rudder_journal.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+
       # rudder_pipelining
       counter("rudder.events.rudder_pipeline.duration",
         tags: [:table, :operation]

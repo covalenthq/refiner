@@ -62,6 +62,14 @@ defmodule Rudder.Events do
     })
   end
 
+  @spec rudder_journal(any) :: :ok
+  def rudder_journal(duration) do
+    :telemetry.execute([:rudder, :events, :rudder_journal], %{duration: duration}, %{
+      table: "rudder_metrics",
+      operation: "journal"
+    })
+  end
+
   @spec rudder_pipeline(any) :: :ok
   def rudder_pipeline(duration) do
     :telemetry.execute([:rudder, :events, :rudder_pipeline], %{duration: duration}, %{

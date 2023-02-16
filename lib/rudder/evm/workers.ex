@@ -2,6 +2,7 @@ defmodule Rudder.BlockProcessor.Worker do
   require Logger
   alias Rudder.BlockProcessor.Struct
   alias Rudder.BlockProcessor.Worker
+  alias Rudder.Events
 
   defmodule WorkerSupervisor do
     use Supervisor
@@ -35,6 +36,7 @@ defmodule Rudder.BlockProcessor.Worker do
     end
 
     def execute(%Struct.InputParams{} = inp, %Struct.EVMParams{} = evm) do
+      start_execute_ms = System.monotonic_time(:millisecond)
       {handler, output_path} = process_handler(inp.block_id, evm)
 
       case handler do
@@ -65,6 +67,7 @@ defmodule Rudder.BlockProcessor.Worker do
           raise "oops unexecutable"
       end
 
+      Events.bsp_execute(System.monotonic_time(:millisecond) - start_execute_ms)
       Porcelain.Process.stop(handler)
     end
 
