@@ -21,6 +21,8 @@ defmodule Rudder.Telemetry.CustomReporter do
     :ets.new(:bsp_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
     # brp events (instrumented)
     :ets.new(:brp_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # journal events (instrumented)
+    :ets.new(:journal_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
     # application wide events (instrumented)
     :ets.new(:rudder_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
 

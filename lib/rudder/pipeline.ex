@@ -78,7 +78,7 @@ defmodule Rudder.Pipeline do
           end
 
         File.rm(block_result_file_path)
-        Events.rudder_pipeline(System.monotonic_time(:millisecond) - start_pipeline_ms)
+        Events.rudder_pipeline_success(System.monotonic_time(:millisecond) - start_pipeline_ms)
         return_val
       else
         err ->
@@ -88,6 +88,7 @@ defmodule Rudder.Pipeline do
       e in Rudder.Pipeline.ProofSubmissionIrreparableError ->
         write_to_backlog(bsp_key, urls, e)
         Logger.error(Exception.format(:error, e, __STACKTRACE__))
+        Events.rudder_pipeline_failure(System.monotonic_time(:millisecond) - start_pipeline_ms)
         Process.exit(Process.whereis(:bspec_listener), :irreparable)
 
       e ->
@@ -96,10 +97,14 @@ defmodule Rudder.Pipeline do
   end
 
   defp extract_block_specimen(decoded_specimen) do
+    start_decode_ms = System.monotonic_time(:millisecond)
+
     with {:ok, block_height} <- Map.fetch(decoded_specimen, "startBlock"),
          {:ok, replica_event} <- fetch_replica_event(decoded_specimen),
          {:ok, data} <- Map.fetch(replica_event, "data"),
          {:ok, chain_id} <- Map.fetch(data, "NetworkId") do
+      :ok = Events.bsp_decode(System.monotonic_time(:millisecond) - start_decode_ms)
+
       {:ok,
        %Rudder.BlockSpecimen{
          chain_id: chain_id,

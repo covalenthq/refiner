@@ -54,7 +54,7 @@ defmodule Rudder.BlockResultUploader do
                cid
              ) do
           {:ok, :submitted} ->
-            Events.brp_upload(System.monotonic_time(:millisecond) - start_upload_ms)
+            :ok = Events.brp_upload_success(System.monotonic_time(:millisecond) - start_upload_ms)
             {:reply, {:ok, cid, block_result_hash}, state}
 
           {:error, errormsg} ->
@@ -62,10 +62,13 @@ defmodule Rudder.BlockResultUploader do
               "#{block_height}:#{block_specimen_hash} proof submission error: #{errormsg}"
             )
 
+            :ok = Events.brp_upload_failure(System.monotonic_time(:millisecond) - start_upload_ms)
+
             {:reply, {:error, errormsg, ""}, state}
 
           {:error, :irreparable, errormsg} ->
             {:reply, {:error, :irreparable, errormsg}, state}
+            :ok = Events.brp_upload_failure(System.monotonic_time(:millisecond) - start_upload_ms)
         end
 
       {:error, error} ->
