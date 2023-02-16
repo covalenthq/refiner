@@ -11,7 +11,6 @@ defmodule Rudder.Telemetry do
     metrics = [
       # event_emitting (all available metrics for any event)
       counter("rudder.events.emit.duration",
-        unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
       last_value("rudder.events.emit.duration",
@@ -34,7 +33,6 @@ defmodule Rudder.Telemetry do
 
       # ipfs_pinning
       counter("rudder.events.ipfs_pin.duration",
-        unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
       last_value("rudder.events.ipfs_pin.duration",
@@ -52,7 +50,6 @@ defmodule Rudder.Telemetry do
 
       # ipfs_fetching
       counter("rudder.events.ipfs_fetch.duration",
-        unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
       last_value("rudder.events.ipfs_fetch.duration",
@@ -66,37 +63,92 @@ defmodule Rudder.Telemetry do
       summary("rudder.events.ipfs_fetch.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
+      ),
+
+      # bsp_decoding
+      counter("rudder.events.bsp_decode.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.bsp_decode.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.bsp_decode.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.bsp_decode.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+
+      # bsp_executing
+      counter("rudder.events.bsp_execute.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.bsp_execute.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.bsp_execute.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.bsp_execute.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+
+      # brp_uploading
+      counter("rudder.events.brp_upload.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.brp_upload.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.brp_upload.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.brp_upload.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+
+      # brp_proofing
+      counter("rudder.events.brp_proof.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.brp_proof.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.brp_proof.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.brp_proof.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+
+      # rudder_pipelining
+      counter("rudder.events.rudder_pipeline.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.rudder_pipeline.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.rudder_pipeline.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.rudder_pipeline.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
       )
-
-      # # bsp_decoding
-      # counter("rudder.events.bsp_decode.duration"),
-      # sum("rudder.events.bsp_decode.duration", unit: {:native, :millisecond}),
-      # summary("rudder.events.bsp_decode.duration", unit: {:native, :millisecond}),
-
-      # # bsp_extracting
-      # counter("rudder.events.bsp_extract.duration"),
-      # sum("rudder.events.bsp_extract.duration", unit: {:native, :millisecond}),
-      # summary("rudder.events.bsp_extract.duration", unit: {:native, :millisecond}),
-
-      # # evm_executing
-      # counter("rudder.events.evm_execute.duration"),
-      # sum("rudder.events.evm_execute.duration", unit: {:native, :millisecond}),
-      # summary("rudder.events.evm_execute.duration", unit: {:native, :millisecond}),
-
-      # # brp_uploading
-      # counter("rudder.events.bsp_upload.duration"),
-      # sum("rudder.events.bsp_upload.duration", unit: {:native, :millisecond}),
-      # summary("rudder.events.bsp_upload.duration", unit: {:native, :millisecond}),
-
-      # # tx_proofing
-      # counter("rudder.events.tx_proof.duration"),
-      # sum("rudder.events.tx_proof.duration", unit: {:native, :millisecond}),
-      # summary("rudder.events.tx_proof.duration", unit: {:native, :millisecond}),
-
-      # # brp_pipelining
-      # counter("rudder.events.brp_pipeline.duration"),
-      # sum("rudder.events.brp_pipeline.duration", unit: {:native, :millisecond}),
-      # summary("rudder.events.brp_pipeline.duration", unit: {:native, :millisecond})
     ]
 
     children = [

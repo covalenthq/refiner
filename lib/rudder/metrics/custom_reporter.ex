@@ -13,14 +13,16 @@ defmodule Rudder.Telemetry.CustomReporter do
   def init(metrics) do
     Process.flag(:trap_exit, true)
 
-    # :ets.new(:rudder_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
-    # all events
+    # all event metrics
     :ets.new(:emit_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
-    # only ipfs events
+    # ipfs events (instrumented)
     :ets.new(:ipfs_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
-    # :ets.new(:bsp_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
-    # :ets.new(:evm_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
-    # :ets.new(:pipeline_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # bsp events ()
+    :ets.new(:bsp_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # brp events
+    :ets.new(:brp_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
+    # application wide events (instrumented)
+    :ets.new(:rudder_metrics, [:named_table, :public, :set, {:write_concurrency, true}])
 
     groups = Enum.group_by(metrics, & &1.event_name)
 
