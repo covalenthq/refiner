@@ -1,6 +1,6 @@
 defmodule Rudder.ProofChain.Interactor do
   require Logger
-  # alias Rudder.Events
+  alias Rudder.Events
   use GenServer
 
   @impl true
@@ -117,10 +117,9 @@ defmodule Rudder.ProofChain.Interactor do
 
       signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
 
-      # Events.tx_proof(System.monotonic_time(:millisecond) - start_proof_ms)
-
       with {:ok, txid} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
         Logger.info("#{block_height} txid is #{txid}")
+        Events.brp_proof(System.monotonic_time(:millisecond) - start_proof_ms)
         {:ok, :submitted}
       end
     rescue

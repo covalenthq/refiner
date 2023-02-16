@@ -16,7 +16,6 @@ defmodule Rudder.IPFSInteractor do
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
     start_pin_ms = System.monotonic_time(:millisecond)
-
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
     url = "#{ipfs_url}/upload"
 
@@ -34,9 +33,6 @@ defmodule Rudder.IPFSInteractor do
 
     end_pin_ms = System.monotonic_time(:millisecond)
     Events.ipfs_pin(end_pin_ms - start_pin_ms)
-    # :telemetry.execute([:rudder, :events, :ipfs_pin], %{
-    #   duration: end_pin_ms - start_pin_ms
-    # })
 
     case body_map do
       %{"error" => error} -> {:reply, {:error, error}, state}
@@ -57,10 +53,6 @@ defmodule Rudder.IPFSInteractor do
 
     end_fetch_ms = System.monotonic_time(:millisecond)
     Events.ipfs_fetch(end_fetch_ms - start_fetch_ms)
-    # :telemetry.execute([:rudder, :events, :ipfs_pin], %{
-    #   duration: end_fetch_ms - start_fetch_ms
-    # })
-
     {:reply, body, state}
   end
 
