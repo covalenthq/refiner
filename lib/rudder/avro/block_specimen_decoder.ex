@@ -1,7 +1,7 @@
 defmodule Rudder.Avro.BlockSpecimenDecoder do
   use GenServer, restart: :temporary
+  require Logger
 
-  # alias Rudder.Events
   @schema_name "block-ethereum"
 
   @impl true
@@ -54,9 +54,7 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
   Returns `:ok, %{decoded}` if the decoding is successful, `:error` otherwise.
   """
   def decode(binary) do
-    # start_decode_ms = System.monotonic_time(:millisecond)
     Avrora.decode_plain(binary, schema_name: @schema_name)
-    # Events.bsp_decode(System.monotonic_time(:millisecond) - start_decode_ms)
   end
 
   @doc """
@@ -65,10 +63,8 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
   Returns `:ok, %{decoded}` if the decoding is successful, `:error` otherwise.
   """
   def decode_file(file_path) do
-    # start_decode_ms = System.monotonic_time(:millisecond)
     {:ok, binary} = File.read(file_path)
     decode(binary)
-    # Events.bsp_decode(System.monotonic_time(:millisecond) - start_decode_ms)
   end
 
   @doc """

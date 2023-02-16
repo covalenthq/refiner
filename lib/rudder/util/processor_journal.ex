@@ -44,7 +44,7 @@ defmodule Rudder.Journal do
         end
       end)
 
-    Events.rudder_journal(System.monotonic_time(:millisecond) - start_journal_ms)
+    Events.journal_fetch_last(System.monotonic_time(:millisecond) - start_journal_ms)
     {:reply, {:ok, Enum.min(result, &<=/2, fn -> max_height + 1 end)}, state}
   end
 
@@ -76,7 +76,7 @@ defmodule Rudder.Journal do
           end
       end
 
-    Events.rudder_journal(System.monotonic_time(:millisecond) - start_journal_ms)
+    Events.journal_fetch_items(System.monotonic_time(:millisecond) - start_journal_ms)
 
     result =
       ETFs.DebugFile.stream!(workitem_log.disk_log_name, workitem_log.path)

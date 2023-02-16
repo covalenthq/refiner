@@ -4,14 +4,12 @@ defmodule Rudder.Events do
     start_emit_ms = System.monotonic_time(:millisecond)
     random_number = :rand.uniform(9)
     :timer.sleep(100 * random_number)
+    stop_emit_ms = System.monotonic_time(:millisecond)
 
-    :telemetry.execute(
-      [:rudder, :events, :emit],
-      %{
-        duration: System.monotonic_time(:millisecond) - start_emit_ms
-      },
-      %{table: "emit_metrics", operation: "event"}
-    )
+    :telemetry.execute([:rudder, :events, :emit], %{duration: stop_emit_ms - start_emit_ms}, %{
+      table: "emit_metrics",
+      operation: "event"
+    })
   end
 
   @spec ipfs_pin(any) :: :ok
@@ -46,11 +44,19 @@ defmodule Rudder.Events do
     })
   end
 
-  @spec brp_upload(any) :: :ok
-  def brp_upload(duration) do
-    :telemetry.execute([:rudder, :events, :brp_upload], %{duration: duration}, %{
+  @spec brp_upload_success(any) :: :ok
+  def brp_upload_success(duration) do
+    :telemetry.execute([:rudder, :events, :brp_upload_success], %{duration: duration}, %{
       table: "brp_metrics",
-      operation: "upload"
+      operation: "upload_success"
+    })
+  end
+
+  @spec brp_upload_failure(any) :: :ok
+  def brp_upload_failure(duration) do
+    :telemetry.execute([:rudder, :events, :brp_upload_failure], %{duration: duration}, %{
+      table: "brp_metrics",
+      operation: "upload_failure"
     })
   end
 
@@ -62,19 +68,35 @@ defmodule Rudder.Events do
     })
   end
 
-  @spec rudder_journal(any) :: :ok
-  def rudder_journal(duration) do
-    :telemetry.execute([:rudder, :events, :rudder_journal], %{duration: duration}, %{
-      table: "rudder_metrics",
-      operation: "journal"
+  @spec journal_fetch_last(any) :: :ok
+  def journal_fetch_last(duration) do
+    :telemetry.execute([:rudder, :events, :journal_fetch_last], %{duration: duration}, %{
+      table: "journal_metrics",
+      operation: "fetch_last"
     })
   end
 
-  @spec rudder_pipeline(any) :: :ok
-  def rudder_pipeline(duration) do
-    :telemetry.execute([:rudder, :events, :rudder_pipeline], %{duration: duration}, %{
+  @spec journal_fetch_items(any) :: :ok
+  def journal_fetch_items(duration) do
+    :telemetry.execute([:rudder, :events, :journal_fetch_items], %{duration: duration}, %{
+      table: "journal_metrics",
+      operation: "fetch_items"
+    })
+  end
+
+  @spec rudder_pipeline_success(any) :: :ok
+  def rudder_pipeline_success(duration) do
+    :telemetry.execute([:rudder, :events, :rudder_pipeline_success], %{duration: duration}, %{
       table: "rudder_metrics",
-      operation: "pipeline"
+      operation: "pipeline_success"
+    })
+  end
+
+  @spec rudder_pipeline_failure(any) :: :ok
+  def rudder_pipeline_failure(duration) do
+    :telemetry.execute([:rudder, :events, :rudder_pipeline_failure], %{duration: duration}, %{
+      table: "rudder_metrics",
+      operation: "pipeline_failure"
     })
   end
 end

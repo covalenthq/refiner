@@ -100,18 +100,33 @@ defmodule Rudder.Telemetry do
       ),
 
       # brp_uploading
-      counter("rudder.events.brp_upload.duration",
+      counter("rudder.events.brp_upload_success.duration",
         tags: [:table, :operation]
       ),
-      last_value("rudder.events.brp_upload.duration",
+      last_value("rudder.events.brp_upload_success.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      sum("rudder.events.brp_upload.duration",
+      sum("rudder.events.brp_upload_success.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      summary("rudder.events.brp_upload.duration",
+      summary("rudder.events.brp_upload_success.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      counter("rudder.events.brp_upload_failure.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.brp_upload_failure.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.brp_upload_failure.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.brp_upload_failure.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
@@ -133,36 +148,66 @@ defmodule Rudder.Telemetry do
         tags: [:table, :operation]
       ),
 
-      # rudder_journaling
-      counter("rudder.events.rudder_journal.duration",
+      # journal_fetching
+      counter("rudder.events.journal_fetch_last.duration",
         tags: [:table, :operation]
       ),
-      last_value("rudder.events.rudder_journal.duration",
+      last_value("rudder.events.journal_fetch_last.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      sum("rudder.events.rudder_journal.duration",
+      sum("rudder.events.journal_fetch_last.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      summary("rudder.events.rudder_journal.duration",
+      summary("rudder.events.journal_fetch_last.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      counter("rudder.events.journal_fetch_items.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.journal_fetch_items.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.journal_fetch_items.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.journal_fetch_items.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
 
       # rudder_pipelining
-      counter("rudder.events.rudder_pipeline.duration",
+      counter("rudder.events.rudder_pipeline_success.duration",
         tags: [:table, :operation]
       ),
-      last_value("rudder.events.rudder_pipeline.duration",
+      last_value("rudder.events.rudder_pipeline_success.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      sum("rudder.events.rudder_pipeline.duration",
+      sum("rudder.events.rudder_pipeline_success.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      summary("rudder.events.rudder_pipeline.duration",
+      summary("rudder.events.rudder_pipeline_success.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      counter("rudder.events.rudder_pipeline_failure.duration",
+        tags: [:table, :operation]
+      ),
+      last_value("rudder.events.rudder_pipeline_failure.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      sum("rudder.events.rudder_pipeline_failure.duration",
+        unit: {:native, :millisecond},
+        tags: [:table, :operation]
+      ),
+      summary("rudder.events.rudder_pipeline_failure.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       )
