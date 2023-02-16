@@ -7,6 +7,7 @@ defmodule Rudder.Telemetry do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
+  @spec init(any) :: {:ok, {%{intensity: any, period: any, strategy: any}, list}}
   def init(_arg) do
     metrics = [
       # event_emitting (all available metrics for any event)
