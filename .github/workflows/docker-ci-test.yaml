@@ -34,7 +34,7 @@ jobs:
           echo ERIGON_NODE=${{ secrets.ERIGON_NODE }} >> .env
           echo NODE_ETHEREUM_MAINNET=${{ secrets.NODE_ETHEREUM_MAINNET }} >> .env
           echo BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets.BLOCK_RESULT_OPERATOR_PRIVATE_KEY }} >> .env
-          echo EVM_EXEC_PATH=${{ secrets.EVM_EXEC_PATH }} >> .env
+          echo EVM_SERVER_URL=${{ secrets.EVM_SERVER_URL }} >> .env
           cat .env
 
       - name: Load .env file
