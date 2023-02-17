@@ -7,6 +7,5 @@ defmodule Rudder.Avro.Client do
     registry_schemas_autoreg: false,
     convert_null_values: false,
     convert_map_to_proplist: false,
-    names_cache_ttl: :infinity,
-    decoder_hook: &MyClient.decoder_hook/4
+    names_cache_ttl: :infinity
 end
