@@ -39,14 +39,21 @@ defmodule Rudder.BlockProcessor do
 
     start_execute_ms = System.monotonic_time(:millisecond)
 
-    {:ok, block_result} =
-      GenServer.call(Rudder.BlockProcessor, {:process, block_specimen.contents}, 60_000)
+    case GenServer.call(Rudder.BlockProcessor, {:process, block_specimen.contents}, 60_000) do
+      {:ok, block_result} ->
+        block_result_path = Briefly.create!()
+        File.write!(block_result_path, block_result)
+        Logger.info("writing block result into #{inspect(block_result_path)}")
+        Events.bsp_execute(System.monotonic_time(:millisecond) - start_execute_ms)
+        {:ok, block_result_path}
 
-    block_result_path = Briefly.create!()
-    File.write!(block_result_path, block_result)
-    Events.bsp_execute(System.monotonic_time(:millisecond) - start_execute_ms)
-    Logger.info("writing block result into #{inspect(block_result_path)}")
-    {:ok, block_result_path}
+      {:error, errormsg} ->
+        Logger.info(
+          "error in executing #{block_specimen.block_height} specimen: #{inspect(errormsg)}"
+        )
+
+        {:error, errormsg}
+    end
   end
 
   @impl true

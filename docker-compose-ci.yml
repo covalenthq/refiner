@@ -56,6 +56,17 @@ services:
       - "4001:4001"
       - "3000:3000"
 
+  evm-server:
+    image: "gcr.io/covalent-project/evm-server:latest"
+    container_name: evm-server
+    restart: on-failure
+    expose:
+      - "3002:3002"
+    networks:
+      - cqt-net
+    ports:
+      - "3002:3002"
+
   rudder:
     image: "gcr.io/covalent-project/rudder:latest"
     container_name: rudder
@@ -67,6 +78,8 @@ services:
     restart: on-failure
     depends_on:
       ipfs-pinner:
+        condition: service_started
+      evm-server:
         condition: service_started
     entrypoint: >
       /bin/bash -l -c "
