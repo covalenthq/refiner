@@ -9,6 +9,7 @@ defmodule Rudder.Journal do
   require Logger
   require Application
 
+  @spec start_link([...]) :: :ignore | {:error, any} | {:ok, pid}
   def start_link([journal_path | opts]) do
     GenServer.start_link(__MODULE__, journal_path, opts)
   end
@@ -110,6 +111,7 @@ defmodule Rudder.Journal do
     ETFs.DebugFile.close(blockh_log)
   end
 
+  @spec items_with_status(any) :: any
   @doc """
   returns items which are on given status
   status: :discover, :skip, :commit, :abort
@@ -124,6 +126,7 @@ defmodule Rudder.Journal do
     end
   end
 
+  @spec last_started_block :: any
   @doc """
   returns the last block which was "started" but not "commit"/"aborted".
   Returns 1 + last_process_block_height in case no such block exists
@@ -134,27 +137,33 @@ defmodule Rudder.Journal do
 
   # ethereum block ids status logging
 
+  @spec discover(any) :: any
   def discover(id) do
     GenServer.call(Rudder.Journal, {:workitem, :discover, id}, 500_000)
   end
 
+  @spec commit(any) :: any
   def commit(id) do
     GenServer.call(Rudder.Journal, {:workitem, :commit, id}, 500_000)
   end
 
+  @spec abort(any) :: any
   def abort(id) do
     GenServer.call(Rudder.Journal, {:workitem, :abort, id}, 500_000)
   end
 
+  @spec skip(any) :: any
   def skip(id) do
     GenServer.call(Rudder.Journal, {:workitem, :skip, id}, 500_000)
   end
 
   # moonbeam block_height status logging APIs
+  @spec block_height_started(any) :: any
   def block_height_started(height) do
     GenServer.call(Rudder.Journal, {:blockh, :start, height}, 500_000)
   end
 
+  @spec block_height_committed(any) :: any
   def block_height_committed(height) do
     GenServer.call(Rudder.Journal, {:blockh, :commit, height}, 500_000)
   end
