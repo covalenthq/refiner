@@ -4,13 +4,17 @@
 [![compile-format](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml)
 [![hadolint](https://github.com/covalenthq/rudder/actions/workflows/hadolint.yml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/hadolint.yml)
 
-Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations.
+Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations. Further information is included here in a [brief Refiner's Raison d'être](https://docs.google.com/document/d/1ps4HCRUwSPap98Q0lFYuyBVMN079o-s_K4yr7hh2Wws/edit?usp=sharing)
 
 ![Rudder Pipeline](./temp/Rudder.jpg)
 
-The happy path for `rudder` is made up of loosely coupled (some maintain state and some don't) actor processes spawned through gen server processes, that can be called upon to fulfill responsiblities at different sections in the refinement/transformation process - under one umberalla supervisor process, this can bring them back up in case of a failure to continue the operation.
+The happy path for `rudder` is made up of loosely coupled (some maintain state and some don't) actor processes spawned through gen server processes, that can be called upon to fulfill responsiblities at different sections in the refinement/transformation process - under one umberalla dynamic supervisor process, this can bring them back up in case of a failure to continue the operation.
 
 ## Install
+
+Follow the internal workshop document - [Covalent Network Phase 2: Rudder (Refiner) Onboarding.](https://docs.google.com/document/d/1LzBHvNnuDNapBzNT4hLo554bWjj7edhWBlO_bMDVYtQ/edit?usp=sharing)
+
+View and follow the internal workshop - [1st Refiner Workshop (07/02/2023).](https://covalent-hq.slack.com/files/U038D5LJ2S0/F04P6CA3XRN/gmt20230207-160648_recording_1920x1080.mp4)
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `rudder` to your list of dependencies in `mix.exs`:
