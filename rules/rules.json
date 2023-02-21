@@ -1,7 +1,0 @@
-{
-    "input": "./bin/block-specimens/",
-    "output": "./out/block-results/",
-    "exec": "./evm/extractor",
-    "args": "--binary-file-path './test-data/encoded' --codec-path './priv/schemas/block-ethereum.avsc' --indent-json 0 --output-file-path './out/block-results/'",
-    "rule": "./evm/extractor --binary-file-path './test-data/encoded/' --codec-path './priv/schemas/block-ethereum.avsc' --indent-json 0 --output-file-path './out/block-results/'"
-}
