@@ -6,4 +6,4 @@ config :rudder,
   proofchain_chain_id: 31337,
   proofchain_node: "http://127.0.0.1:8545/",
   ipfs_pinner_url: "http://127.0.0.1:3000",
-  evm_server_url: "http://127.0.0.1:3000"
+  evm_server_url: "http://127.0.0.1:3002"
