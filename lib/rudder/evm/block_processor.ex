@@ -22,20 +22,23 @@ defmodule Rudder.BlockProcessor do
     content_type = Multipart.content_type(multipart, "multipart/form-data")
     headers = [{"Content-Type", content_type}, {"Content-Length", to_string(content_length)}]
 
-    {:ok, %Finch.Response{body: body, headers: _, status: _}} =
+    case(
       Finch.build("POST", evm_server_url, headers, {:stream, body_stream})
       |> Finch.request(Rudder.Finch)
+    ) do
+      {:ok, %Finch.Response{body: body, headers: _, status: _}} ->
+        case body |> Poison.decode!() do
+          %{"error" => error} -> {:reply, {:error, error}, state}
+          _ -> {:reply, {:ok, body}, state}
+        end
 
-    body_map = body |> Poison.decode!()
-
-    case body_map do
-      %{"error" => error} -> {:reply, {:error, error}, state}
-      _ -> {:reply, {:ok, body}, state}
+      {:error, errormsg} ->
+        {:reply, {:error, errormsg}, state}
     end
   end
 
   def sync_queue(%Rudder.BlockSpecimen{} = block_specimen) do
-    Logger.info("submitting #{block_specimen.block_height} to evm plugin...")
+    Logger.info("submitting #{block_specimen.block_height} to evm http server...")
 
     start_execute_ms = System.monotonic_time(:millisecond)
 

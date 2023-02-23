@@ -9,13 +9,6 @@ defmodule SupervisionTreeTest do
   alias TestHelper.EVMInputGenerator
   alias TestHelper.SupervisorUtils
 
-  # sync_queue success: successful execution from a stateful worker -> status code = 0, workers executed once, response back to the api, WorkerSupervisor is cleared
-  # sync_queue success (wrong json structure): same as above, except status code != 0, and no retries of the worker (executed once)
-  # sync_queue failures: failure reason: evm executable not present -- test return value, retries of the worker, check if relevant processes are there, poolsupervisor should be closed
-
-  # multiple queueing - pool supervisors should be configured by a worker pool size (maximum # of simultaneous workers), and anything above that should block
-  # registry for worker name
-
   test "successful scenarios - status code 0 execution" do
     block_id = "1234_s_"
 
@@ -36,6 +29,14 @@ defmodule SupervisionTreeTest do
         block_height: specimen.block_height,
         contents: "[" <> specimen.contents <> "]"
       })
+  end
+
+  test "query-ing server at wrong port" do
+    block_id = "1234_f_"
+
+    specimen = get_sample_specimen!()
+    {:ok, bpid} = Rudder.BlockProcessor.start_link(["http://127.0.0.1:3100"])
+    {:error, errormsg} = GenServer.call(bpid, {:process, "dfjkejkjfd"}, 60000)
   end
 
   def get_sample_specimen!() do
