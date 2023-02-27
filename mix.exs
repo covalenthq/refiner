@@ -47,7 +47,7 @@ defmodule Rudder.MixProject do
       {:ex_secp256k1, "~> 0.6.0"},
       {:ex_keccak, "~> 0.6.0", override: true},
       {:mnemonic, "~> 0.3"},
-      {:ex_rlp, "~> 0.5.4", override: true},
+      {:ex_rlp, "~> 0.6.0", override: true},
       {:jason, "~> 1.3"},
 
       # architecture
