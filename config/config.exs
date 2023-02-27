@@ -12,6 +12,7 @@ config :rudder,
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
   proofchain_address: "0x4f2E285227D43D9eB52799D0A28299540452446E",
   proofchain_chain_id: 1284,
+  block_specimen_chain_id: 1,
   proofchain_node: "https://rpc.api.moonbeam.network",
   journal_path: "logs/",
   evm_path: System.get_env("EVM_EXEC_PATH")
