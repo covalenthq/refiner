@@ -18,7 +18,7 @@
   "erlex": {:hex, :erlex, "0.2.6", "c7987d15e899c7a2f34f5420d2a2ea0d659682c06ac607572df55a43753aa12e", [:mix], [], "hexpm", "2ed2e25711feb44d52b17d2780eabf998452f6efda104877a3881c2f8c0c0c75"},
   "etfs": {:hex, :etfs, "0.2.0", "5dba0d765ef673af8ff8367aee1824b06f5ee4fb75ed34d88318f014ae9575ee", [:mix], [], "hexpm", "e80b8d667663e6894525fba9666b372e28a8e07866b242217dc0bab1abc46e07"},
   "ex_keccak": {:hex, :ex_keccak, "0.6.0", "0e1f8974dd6630dd4fb0b64f9eabbceeffb9675da3ab95dea653798365802cf4", [:mix], [{:rustler, "~> 0.26", [hex: :rustler, repo: "hexpm", optional: false]}], "hexpm", "84b20cfe6a063edab311b2c8ff8b221698c84cbd5fbdba059e51636540142538"},
-  "ex_rlp": {:hex, :ex_rlp, "0.5.5", "92af4cc1ded4e2694428fe3adc14606b6f54f840bda1b6463df46c61cb6fed2c", [:mix], [], "hexpm", "22929df57e490e4312350d9914f5810735845e7e92a7ace8a8895d730b4a53f6"},
+  "ex_rlp": {:hex, :ex_rlp, "0.6.0", "985391d2356a7cb8712a4a9a2deb93f19f2fbca0323f5c1203fcaf64d077e31e", [:mix], [], "hexpm", "7135db93b861d9e76821039b60b00a6a22d2c4e751bf8c444bffe7a042f1abaf"},
   "ex_secp256k1": {:hex, :ex_secp256k1, "0.6.0", "a539c50a7b88829fc2803abe8cc94ef11c0237fac6e517c786bda639ac614cde", [:mix], [{:rustler, "~> 0.26", [hex: :rustler, repo: "hexpm", optional: false]}], "hexpm", "550d105541c24ca7d718d38dd420fcc0fe25d3f165beb7435f7e2de0dcdd9b17"},
   "expo": {:hex, :expo, "0.4.0", "bbe4bf455e2eb2ebd2f1e7d83530ce50fb9990eb88fc47855c515bfdf1c6626f", [:mix], [], "hexpm", "a8ed1683ec8b7c7fa53fd7a41b2c6935f539168a6bb0616d7fd6b58a36f3abf2"},
   "file_system": {:hex, :file_system, "0.2.10", "fb082005a9cd1711c05b5248710f8826b02d7d1784e7c3451f9c1231d4fc162d", [:mix], [], "hexpm", "41195edbfb562a593726eda3b3e8b103a309b733ad25f3d642ba49696bf715dc"},
