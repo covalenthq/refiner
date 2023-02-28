@@ -52,4 +52,4 @@ config :rudder,
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
   proofchain_address: "0x19492a5019B30471aA8fa2c6D9d39c99b5Cda20C",
   proofchain_chain_id: 1287,
-  proofchain_node: System.get_env("NODE_ETHEREUM_MAINNET")
+  proofchain_node: System.get_env("NODE_PROOF_CHAIN")

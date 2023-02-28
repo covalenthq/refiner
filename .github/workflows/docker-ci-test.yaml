@@ -31,8 +31,8 @@ jobs:
           touch .env
           echo WEB3_JWT=${{ secrets.WEB3_JWT }} >> .env
           echo IPFS_PINNER_URL=${{ secrets.IPFS_PINNER_URL }} >> .env
-          echo ERIGON_NODE=${{ secrets.ERIGON_NODE }} >> .env
-          echo NODE_ETHEREUM_MAINNET=${{ secrets.NODE_ETHEREUM_MAINNET }} >> .env
+          echo NODE_BLOCK_SPECIMEN=${{ secrets.NODE_BLOCK_SPECIMEN }} >> .env
+          echo NODE_PROOF_CHAIN=${{ secrets.NODE_PROOF_CHAIN }} >> .env
           echo BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets.BLOCK_RESULT_OPERATOR_PRIVATE_KEY }} >> .env
           echo EVM_EXEC_PATH=${{ secrets.EVM_EXEC_PATH }} >> .env
           cat .env

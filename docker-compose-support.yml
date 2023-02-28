@@ -10,15 +10,15 @@ services:
       - 8545:8545
     entrypoint: |
       /bin/bash -l -c "
-        echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET
-        echo "forked-node-address:" $ERIGON_NODE
+        echo "hardhat-node-address:" $NODE_PROOF_CHAIN
+        echo "forked-node-address:" $NODE_BLOCK_SPECIMEN
         echo "ipfs-node-address:" $IPFS_PINNER_URL
         echo "web3-jwt:" $WEB3_JWT
       ./entrypoint.sh;"
     networks:
       - cqt-net
     environment:
-      - ERIGON_NODE=${ERIGON_NODE}
+      - NODE_BLOCK_SPECIMEN=${NODE_BLOCK_SPECIMEN}
     ports:
       - 8545:8545
 
@@ -33,7 +33,7 @@ services:
       echo Waiting for hardhat node to start up...;
       sleep 20;
       echo hard-hat node started!;
-      echo "forked-node-address:" $ERIGON_NODE
+      echo "forked-node-address:" $NODE_BLOCK_SPECIMEN
       npm run docker:deploy;"
     depends_on:
       - eth-node

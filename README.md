@@ -235,10 +235,10 @@ In order to run the listener you need to fork ethereum node, run a script to add
 
 1. Add `.env` file.
 
-2. Inside `.env` add ERIGON_NODE variable and replace the node's url with yours:
+2. Inside `.env` add NODE_BLOCK_SPECIMEN variable and replace the node's url with yours:
 
 ```bash
-export ERIGON_NODE="erigon.node.url"
+export NODE_BLOCK_SPECIMEN="erigon.node.url"
 ```
 
 3. Inside a terminal got to the rudder folder and run:
@@ -266,10 +266,10 @@ In order to run the interactor you need to fork ethereum node and run a script t
 
 1. Add `.env` file.
 
-2. Inside `.env` add ERIGON_NODE variable and replace the node's url with yours:
+2. Inside `.env` add NODE_BLOCK_SPECIMEN variable and replace the node's url with yours:
 
 ```bash
-export ERIGON_NODE="erigon.node.url"
+export NODE_BLOCK_SPECIMEN="erigon.node.url"
 ```
 
 3. Inside a terminal got to the rudder folder and run:
@@ -300,10 +300,10 @@ In order to run the listener you need to fork ethereum node, run a script to add
 1. Download [bsp-agent](https://github.com/covalenthq/bsp-agent).
 2. Navigate to the `bsp-agent` folder.
 3. Add `envrc.local ` file.
-4. Inside `envrc.local` add ERIGON_NODE variable and replace the node's url with yours:
+4. Inside `envrc.local` add NODE_BLOCK_SPECIMEN variable and replace the node's url with yours:
 
 ```
-export ERIGON_NODE="erogone.node.url"
+export NODE_BLOCK_SPECIMEN="erogone.node.url"
 ```
 5. Inside a terminal got to the bsp-agent folder and run:
 ```
