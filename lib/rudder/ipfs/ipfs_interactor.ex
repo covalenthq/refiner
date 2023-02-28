@@ -4,6 +4,8 @@ defmodule Rudder.IPFSInteractor do
   alias Multipart.Part
   alias Rudder.Events
 
+  require Logger
+
   @spec start_link([
           {:debug, [:log | :statistics | :trace | {any, any}]}
           | {:hibernate_after, :infinity | non_neg_integer}
@@ -53,15 +55,24 @@ defmodule Rudder.IPFSInteractor do
     start_fetch_ms = System.monotonic_time(:millisecond)
 
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
-    url = "#{ipfs_url}"
 
     {:ok, %Finch.Response{body: body, headers: _, status: _}} =
-      Finch.build(:get, "#{url}/get?cid=#{cid}")
-      |> Finch.request(Rudder.Finch, receive_timeout: 60_000_000, pool_timeout: 60_000_000)
+      Finch.build(:get, "#{ipfs_url}/get?cid=#{cid}")
+      |> Finch.request(Rudder.Finch, receive_timeout: 120_000_000, pool_timeout: 120_000_000)
 
     end_fetch_ms = System.monotonic_time(:millisecond)
     Events.ipfs_fetch(end_fetch_ms - start_fetch_ms)
-    {:reply, body, state}
+
+    try do
+      body_map = body |> Poison.decode!()
+
+      case body_map do
+        %{"error" => error} -> {:reply, {:error, error}, state}
+        _ -> {:reply, {:ok, body}, state}
+      end
+    rescue
+      _ -> {:reply, {:ok, body}, state}
+    end
   end
 
   @spec pin(any) :: any
@@ -78,7 +89,6 @@ defmodule Rudder.IPFSInteractor do
   def discover_block_specimen([url | _]) do
     ["ipfs", cid] = String.split(url, "://")
 
-    response = Rudder.IPFSInteractor.fetch(cid)
-    {:ok, response}
+    Rudder.IPFSInteractor.fetch(cid)
   end
 end
