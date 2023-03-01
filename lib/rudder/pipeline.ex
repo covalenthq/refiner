@@ -49,7 +49,7 @@ defmodule Rudder.Pipeline do
            {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
            {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimenDecoder.decode(specimen),
            {:ok, block_specimen} <- extract_block_specimen(decoded_specimen),
-           {:success, block_result_file_path} <-
+           {:ok, block_result_file_path} <-
              Rudder.BlockProcessor.sync_queue(block_specimen),
            {block_height, ""} <- Integer.parse(block_specimen.block_height),
            block_result_metadata <-
@@ -77,13 +77,15 @@ defmodule Rudder.Pipeline do
               {:error, error}
           end
 
-        File.rm(block_result_file_path)
         Events.rudder_pipeline_success(System.monotonic_time(:millisecond) - start_pipeline_ms)
         return_val
       else
         err ->
           write_to_backlog(bsp_key, urls, err)
       end
+    after
+      # resource cleanups
+      Briefly.cleanup()
     rescue
       e in Rudder.Pipeline.ProofSubmissionIrreparableError ->
         write_to_backlog(bsp_key, urls, e)

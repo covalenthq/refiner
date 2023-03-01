@@ -19,10 +19,8 @@ defmodule Rudder.Application do
       Rudder.Avro.Client,
       {Rudder.Avro.BlockSpecimenDecoder, name: Rudder.Avro.BlockSpecimenDecoder},
       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader},
-      %{
-        id: Rudder.BlockProcessor.Core.PoolSupervisor,
-        start: {Rudder.BlockProcessor.Core.PoolSupervisor, :start_link, [10]}
-      },
+      {Rudder.BlockProcessor,
+       [Application.get_env(:rudder, :evm_server_url), name: Rudder.BlockProcessor]},
       {Rudder.Pipeline.Spawner, name: Rudder.Pipeline.Spawner},
       {Rudder.Telemetry, name: Rudder.Telemetry}
     ]
