@@ -1,132 +1,66 @@
-defmodule Rudder.BlockProcessor.Core do
+defmodule Rudder.BlockProcessor do
+  use GenServer
   require Logger
-  alias Rudder.BlockProcessor.Struct
-  alias Rudder.BlockProcessor.Worker
-  alias Rudder.BlockProcessor.Core
-  # alias Rudder.Events
+  alias Multipart.Part
+  alias Rudder.Events
 
-  defmodule PoolSupervisor do
-    use Supervisor
+  def start_link([evm_server_url | opts]) do
+    GenServer.start_link(__MODULE__, evm_server_url, opts)
+  end
 
-    @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
-    def start_link(workers_limit) do
-      Supervisor.start_link(__MODULE__, %Struct.PoolState{workers_limit: workers_limit},
-        name: :evm_pool_supervisor
-      )
-    end
+  @impl true
+  def init(evm_server_url) do
+    {:ok, "#{evm_server_url}/process"}
+  end
 
-    @impl true
-    @spec init(any) :: {:ok, {%{intensity: any, period: any, strategy: any}, list}}
-    def init(state) do
-      children = [
-        %{
-          id: __MODULE__,
-          type: :worker,
-          start: {Core.Server, :start_link, [state]},
-          restart: :permanent
-        }
-      ]
+  @impl true
+  def handle_call({:process, block_specimen_content}, _from, state) do
+    evm_server_url = state
+    multipart = Multipart.new() |> Multipart.add_part(Part.binary_body(block_specimen_content))
+    body_stream = Multipart.body_stream(multipart)
+    content_length = Multipart.content_length(multipart)
+    content_type = Multipart.content_type(multipart, "multipart/form-data")
+    headers = [{"Content-Type", content_type}, {"Content-Length", to_string(content_length)}]
 
-      # the worker supervisor fails on 3 restarts in 10 seconds...so if there are two of them in 20 seconds,
-      # the PoolSupervisor fails indicating some problem with the setup
-      Supervisor.init(children, strategy: :one_for_one, max_restarts: 2, max_seconds: 20)
-    end
+    case(
+      Finch.build("POST", evm_server_url, headers, {:stream, body_stream})
+      |> Finch.request(Rudder.Finch)
+    ) do
+      {:ok, %Finch.Response{body: body, headers: _, status: _}} ->
+        case body |> Poison.decode!() do
+          %{"error" => error} -> {:reply, {:error, error}, state}
+          _ -> {:reply, {:ok, body}, state}
+        end
 
-    @spec get_worker_supervisor_childspec(any, any) :: %{
-            id: any,
-            restart: :temporary,
-            start: {Rudder.BlockProcessor.Worker.WorkerSupervisor, :start_link, [...]},
-            type: :supervisor
-          }
-    def get_worker_supervisor_childspec(id, args) do
-      %{
-        id: id,
-        type: :supervisor,
-        start: {Worker.WorkerSupervisor, :start_link, [args]},
-        restart: :temporary
-      }
-    end
-
-    @spec stop :: :ok
-    def stop() do
-      pid = Process.whereis(:evm_pool_supervisor)
-
-      if pid != nil and Process.alive?(pid) do
-        Logger.info("stopping the pool supervisor")
-        Supervisor.stop(:evm_pool_supervisor, :normal, 50_000)
-      else
-        Logger.warn("pool supervisor not alive...can't stop.")
-      end
+      {:error, errormsg} ->
+        {:reply, {:error, errormsg}, state}
     end
   end
 
-  defmodule Server do
-    use GenServer
+  def sync_queue(%Rudder.BlockSpecimen{} = block_specimen) do
+    Logger.info("submitting #{block_specimen.block_height} to evm http server...")
 
-    @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
-    def start_link(state) do
-      GenServer.start_link(__MODULE__, state, name: :evm_server)
-    end
+    start_execute_ms = System.monotonic_time(:millisecond)
 
-    @impl true
-    @spec init(any) :: {:ok, any}
-    def init(state) do
-      {
-        :ok,
-        state
-      }
-    end
+    case GenServer.call(Rudder.BlockProcessor, {:process, block_specimen.contents}, 60_000) do
+      {:ok, block_result} ->
+        block_result_path = Briefly.create!()
+        File.write!(block_result_path, block_result)
+        Logger.info("writing block result into #{inspect(block_result_path)}")
+        Events.bsp_execute(System.monotonic_time(:millisecond) - start_execute_ms)
+        {:ok, block_result_path}
 
-    @impl true
-    def handle_call(
-          {:process, %Rudder.BlockSpecimen{block_height: block_id, contents: contents}},
-          from,
-          state
-        ) do
-      Logger.info("submitting #{block_id} to evm plugin...")
-
-      worker_sup_child_spec =
-        PoolSupervisor.get_worker_supervisor_childspec(
-          block_id,
-          {
-            %Struct.InputParams{
-              block_id: block_id,
-              contents: contents,
-              sender: self(),
-              misc: from
-            },
-            Struct.EVMParams.new()
-          }
+      {:error, errormsg} ->
+        Logger.info(
+          "error in executing #{block_specimen.block_height} specimen: #{inspect(errormsg)}"
         )
 
-      case Supervisor.start_child(:evm_pool_supervisor, worker_sup_child_spec) do
-        {:error, term} ->
-          Logger.error("some error in starting stateful worker #{inspect(term)}")
-          {:reply, {:submission, :failed, block_id}, state}
-
-        _ ->
-          Logger.info("#{block_id} will be processed now")
-          {:noreply, state}
-      end
+        {:error, errormsg}
     end
+  end
 
-    @impl true
-    def handle_info(%Struct.ExecResult{} = result, state) do
-      GenServer.reply(result.misc, {result.status, result.output_path})
-
-      child_id = result.block_id
-      Supervisor.terminate_child(:evm_pool_supervisor, child_id)
-      Supervisor.delete_child(:evm_pool_supervisor, child_id)
-      {:noreply, state}
-    end
-
-    def sync_queue(%Rudder.BlockSpecimen{} = block_specimen) do
-      GenServer.call(:evm_server, {:process, block_specimen}, :infinity)
-    end
-
-    @impl true
-    def terminate(reason, _state) do
-      Logger.info("terminating #{reason}")
-    end
+  @impl true
+  def terminate(reason, _state) do
+    Logger.info("terminating blockprocessor: #{reason}")
   end
 end
