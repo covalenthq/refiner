@@ -70,13 +70,7 @@ Check the `.env_example` for the list of required (and optional) environment var
 
 ## Test
 
-Build the EVM tool binary by running:
-
-```
-make submodules build
-```
-
-To start mock node, ProofChain and IPFS-Pinner in Terminal 1 run:
+To start mock node, ProofChain, IPFS-Pinner and EVM server in Terminal 1 run:
 
 ```
 docker compose --env-file '.env' -f 'docker-compose-support.yml' up --remove-orphans
@@ -87,18 +81,9 @@ Wait a minute then in Terminal 2 run:
 mix test
 ```
 
-## Block Specimen Transformer (using `Go` binary)
+## Block Specimen Transformer
 
-1. Check if the transformer plugin exists.
-
-  ```bash
-    cd rudder/evm
-    drwxr-xr-x   3 pranay  staff        96 Oct  4 10:33 .
-    drwxr-xr-x  28 pranay  staff       896 Oct  5 11:59 ..
-    -rwxr-xr-x   1 pranay  staff  17503704 Oct  4 10:33 extractor
-  ```
-
-2. Start application and apply transform rules.
+1. Start application
 
   ```elixir
     iex -S mix
@@ -107,57 +92,40 @@ mix test
     Generated rudder app
     Interactive Elixir (1.13.4) - press Ctrl+C to exit (type h() ENTER for help)
 
- iex(3)> Rudder.build_sync("rules/rules.json")
-%{
-  "args" => "--binary-file-path './test-data/' --codec-path './priv/schemas/block-ethereum.avsc' --indent-json 0 --output-file-path './out/block-results/'",
-  "exec" => "./evm/extractor",
-  "input" => "./bin/block-specimens/",
-  "output" => "./out/block-results/",
-  "rule" => "./evm/extractor --binary-file-path './test-data/' --codec-path './priv/schemas/block-ethereum.avsc' --indent-json 0 --output-file-path './out/block-results/'"
-}
-%Porcelain.Result{err: nil, out: "", status: 0}
+ iex(3)> Rudder.ProofChain.BlockSpecimenEventListener.start()
   ```
 
-This should generate the JSON output specimen file (results) to the output directory as seen above.
+This should start listening to on-chain events for reward finalization of submitted block specimens. Once one such event is found, the block specimen will be fetched and processed in the pipeline.
 
-3. View generated/transformed files from binary block specimens
-
-  ```bash
-➜ cd out/block-results
-➜ ls
-15548376.result.json   15557220.result.json   15582840.result.json
-15548376.segment.json  15557220.segment.json  15582840.segment.json
-15548376.specimen.json 15557220.specimen.json 15582840.specimen.json
-  ```
-
-
-## Source Discovery
-
+3. You can tail the logs to check the state:
 ```bash
-iex(4)> Rudder.SourceDiscovery.discover(["ipfs://bafybeibs6deu3kx6zmppun4bd6lbmtuqbs676pxkc5oc54dxsinefsi6qy"])
-"From 7ab15490e93e6384cfaa233238777ea88a88b8b6 Mon Sep 17 00:00:00 2001\nFrom: s7v7nislands <s7v7nislands@gmail.com>\nDate: Mon, 25 Apr 2022 17:15:14 +0800\nSubject: [PATCH] all: use 'embed' instead of go-bindata (#24744)\n\n---\n Makefile                                   |      1 -\n build/tools/tools.
-go
-.....
-"
+tail -f logs/log.log
+17:52:11.222 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=100 [info] listening for events at 3707084
+17:52:11.481 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=114 [info] found 0 bsps to process
+17:52:11.742 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=125 [info] curr_block: 3707085 and latest_block_num:3769853
+17:52:11.742 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=100 [info] listening for events at 3707085
+17:52:12.001 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=114 [info] found 0 bsps to process
+17:52:12.260 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=125 [info] curr_block: 3707086 and latest_block_num:3769853
+17:52:12.261 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=100 [info] listening for events at 3707086
+17:52:12.520 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=114 [info] found 0 bsps to process
+17:52:12.913 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=125 [info] curr_block: 3707087 and latest_block_num:3769854
 ```
 
 ## Block Processor
 
-The block processor (`lib/rudder/evm`) takes block_id and block specimen json string and gives the block result. The stateless EVM needed to do this is written in golang, which is invoked via Porcelain in elixir.
+The block processor takes block specimen, runs it through the stateless evm tool (server) and gives the block result. 
 
 ```elixir
-iex(87)> {:ok, contents} = File.read("./out/block-results/15548376.specimen.json")
-
-iex(107)> API.sync_queue({"15548376", contents})
-child spec id is 15548376
-reaches here all right
-15548376 will be processed now
-INFO[10-14|11:43:33.399] Wrote file                               file=evm-out/15548376-result.json
-                      {:success, "15548376"}
+iex(1)> Rudder.ProofChain.BlockSpecimenEventListener.push_bsps_to_process(["1_16582405_7f85dc42062468a6bbe420ae4fe4455b9c2423b798a6031f8ea7826997046907_402705672e34a250dcc798bb9ae3a14593e7cdc49750d57ef6018100503f3024"])
 ```
 
-The gap above is that the `extractor` used for decoding is for codec version 0.2 and an older version of extractor which doesn't play with the stateless evm tool. Additionally, the specimen needs to be extracted from replica structure (json) before being passed to the `sync_queue` API.
-
+the corresponding logs:
+```bash
+17:56:38.124 file=lib/rudder/evm/block_processor.ex line=38 [info] submitting 16582405 to evm plugin...
+17:56:39.028 file=lib/rudder/evm/block_processor.ex line=46 [info] writing block result into "/var/folders/w0/bf3y1c7d6ys15tq97ffk5qhw0000gn/T/briefly-1676/briefly-576460644194238825-5Hm1Jx2ZdSrq7sqPmEsC"
+17:56:44.897 file=lib/rudder/block_result/block_result_uploader.ex line=41 [info] 16582405:402705672e34a250dcc798bb9ae3a14593e7cdc49750d57ef6018100503f3024 has been successfully uploaded at ipfs://bafybeif4mnjugrttv4ru337inkrkji4dwe755yphfpogitivuklvmp4cym
+17:56:44.921 file=lib/rudder/block_result/block_result_uploader.ex line=47 [info] 16582405:402705672e34a250dcc798bb9ae3a14593e7cdc49750d57ef6018100503f3024 proof submitting
+```
 
 
 ## Block Specimen Extractor (`Elixir` native)
@@ -332,6 +300,18 @@ iex(87)> [replica_fp] |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_fil
 ```
 
 The gap above is that the `extractor` used for decoding is for codec version 0.2 and an older version of extractor which doesn't play with the stateless evm tool. Additionally, the specimen needs to be extracted from replica structure (json) before being passed to the `sync_queue` API.
+
+## Journal
+etfs library is used to implement a WAL journal for work items (block specimens) as they proceed through the pipeline. This might be useful for debugging purposes.
+
+e.g. find all aborted work items
+```bash
+iex(2)> Rudder.Journal.items_with_status(:abort)
+["1_16582405_7f85dc42062468a6bbe420ae4fe4455b9c2423b798a6031f8ea7826997046907_402705672e34a250dcc798bb9ae3a14593e7cdc49750d57ef6018100503f3024",
+ "1_16582440_a73dbfde74b0d9b6cf070e4fedb6e625868f00ab58ac1166e912fe1d84b8b19c_c0f8c62fb4447c6957d4fafe5a8471d84a6ed65d18f54ec1a3f42d9c7e0674d2",
+ "1_16582475_bd1ad41c4d8121825822c9c1741fd8d4edba23ff00c82c775306cbdf57811160_3164f2b7839582c8ff9fc0b117d5fb8e452181fb2b803b9eb021776f19b18408",
+ "1_16582510_35f84d62560d271a7fa03cbbb1378e078f2fd4ec78cb1712e2cf060e53b00219_f73a943ec4b6707fb9299908d4a6ddad31311f534c58023380d164299b873755"]
+```
 
 ---
 

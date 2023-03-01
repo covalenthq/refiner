@@ -58,7 +58,7 @@ defmodule Rudder.ProofChain.Interactor do
   def is_block_result_session_open(block_height) do
     {block_height, _} = Integer.parse(block_height)
     operator = get_operator_wallet()
-    chain_id = Application.get_env(:rudder, :proofchain_chain_id)
+    chain_id = Application.get_env(:rudder, :block_specimen_chain_id)
     rpc_params = [chain_id, block_height, false, operator.address.bytes]
     data = {@is_session_open_selector, rpc_params}
     make_call(data)
