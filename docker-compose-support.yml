@@ -5,7 +5,7 @@ services:
   eth-node:
     image: "gcr.io/covalent-project/operational-staking:latest-rudder"
     container_name: hardhat-node
-    restart:  on-failure
+    restart: on-failure
     expose:
       - 8545:8545
     entrypoint: |
@@ -13,6 +13,7 @@ services:
         echo "hardhat-node-address:" $NODE_ETHEREUM_MAINNET
         echo "forked-node-address:" $ERIGON_NODE
         echo "ipfs-node-address:" $IPFS_PINNER_URL
+        echo "evm-server-address:" $EVM_SERVER_URL;
         echo "web3-jwt:" $WEB3_JWT
       ./entrypoint.sh;"
     networks:
@@ -47,7 +48,7 @@ services:
     volumes:
       - /tmp/data/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
-    restart:  on-failure
+    restart: on-failure
     expose:
       - 4001:4001
       - 3000:3000
@@ -58,6 +59,17 @@ services:
     ports:
       - 4001:4001
       - 3000:3000
+
+  evm-server:
+    image: "gcr.io/covalent-project/evm-server:latest"
+    container_name: evm-server
+    restart: on-failure
+    expose:
+      - 3002:3002
+    networks:
+      - cqt-net
+    ports:
+      - 3002:3002
 
 networks:
   cqt-net:
