@@ -60,6 +60,7 @@ defmodule Rudder.IPFSInteractor do
       Finch.build(:get, "#{ipfs_url}/get?cid=#{cid}")
       |> Finch.request(Rudder.Finch, receive_timeout: 150_000_000, pool_timeout: 150_000_000)
 
+
     end_fetch_ms = System.monotonic_time(:millisecond)
     Events.ipfs_fetch(end_fetch_ms - start_fetch_ms)
 
