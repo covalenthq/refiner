@@ -36,7 +36,7 @@ defmodule SupervisionTreeTest do
 
     specimen = get_sample_specimen!()
     {:ok, bpid} = Rudder.BlockProcessor.start_link(["http://127.0.0.1:3100"])
-    {:error, errormsg} = GenServer.call(bpid, {:process, "dfjkejkjfd"}, 60000)
+    {:error, errormsg} = GenServer.call(bpid, {:process, "dfjkejkjfd"}, 60_000)
   end
 
   def get_sample_specimen!() do
