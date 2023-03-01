@@ -63,12 +63,11 @@ defmodule Rudder.BlockResultUploader do
             )
 
             :ok = Events.brp_upload_failure(System.monotonic_time(:millisecond) - start_upload_ms)
-
             {:reply, {:error, errormsg, ""}, state}
 
           {:error, :irreparable, errormsg} ->
-            {:reply, {:error, :irreparable, errormsg}, state}
             :ok = Events.brp_upload_failure(System.monotonic_time(:millisecond) - start_upload_ms)
+            {:reply, {:error, :irreparable, errormsg}, state}
         end
 
       {:error, error} ->

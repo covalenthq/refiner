@@ -47,7 +47,7 @@ defmodule Rudder.MixProject do
       {:ex_secp256k1, "~> 0.6.0"},
       {:ex_keccak, "~> 0.6.0", override: true},
       {:mnemonic, "~> 0.3"},
-      {:ex_rlp, "~> 0.5.4", override: true},
+      {:ex_rlp, "~> 0.6.0", override: true},
       {:jason, "~> 1.3"},
 
       # architecture
@@ -75,7 +75,10 @@ defmodule Rudder.MixProject do
 
       # tracing metrics
       {:telemetry, "~> 1.2.1", override: true},
-      {:telemetry_metrics, "~> 0.3.0"}
+      {:telemetry_metrics, "~> 0.3.0"},
+
+      # utils
+      {:briefly, "~> 0.4.1"}
 
       # Unused
       # {:erlexec, "~> 2.0"},
