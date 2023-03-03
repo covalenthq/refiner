@@ -13,7 +13,7 @@ config :rudder,
   proofchain_address: "0x4f2E285227D43D9eB52799D0A28299540452446E",
   proofchain_chain_id: 1284,
   block_specimen_chain_id: 1,
-  proofchain_node: "https://rpc.api.moonbeam.network",
+  proofchain_node: System.get_env("NODE_ETHEREUM_MAINNET"),
   journal_path: "logs/",
   evm_server_url: System.get_env("EVM_SERVER_URL", "http://127.0.0.1:3002")
 
