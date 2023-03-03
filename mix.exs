@@ -45,7 +45,7 @@ defmodule Rudder.MixProject do
        branch: "feature-parse-events-from-abi-specifications",
        override: true},
       {:ex_secp256k1, "~> 0.6.0"},
-      {:ex_keccak, "~> 0.6.0", override: true},
+      {:ex_keccak, "~> 0.7.1", override: true},
       {:mnemonic, "~> 0.3"},
       {:ex_rlp, "~> 0.6.0", override: true},
       {:jason, "~> 1.3"},
