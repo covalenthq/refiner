@@ -28,6 +28,7 @@ defmodule Rudder.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     options = [strategy: :one_for_one, name: Rudder.Supervisor]
+
     Supervisor.start_link(children, options)
   end
 end
