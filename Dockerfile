@@ -4,6 +4,7 @@
 FROM elixir:1.13.4-otp-25 as builder-elixir
 RUN mkdir -p /mix
 WORKDIR /mix
+
 # Install rust tooling
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 # Add .cargo/bin to PATH
@@ -34,7 +35,6 @@ FROM elixir:1.13.4-otp-25 as deployer
 RUN apt-get update && apt-get install -y git bash curl netcat-traditional && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /app/_build /app/config /app/deps /app/lib /app/priv node/test /app/test-data
-
 # Install rust tooling
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 # Add .cargo/bin to PATH
