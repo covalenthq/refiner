@@ -99,7 +99,6 @@ services:
         echo Test bsp files uploaded!;
         cd /app;
         MIX_ENV=docker mix test --trace --slowest 10;
-        sleep 1000000;
         exit 0;"
     environment:
       - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
