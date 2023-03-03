@@ -24,7 +24,7 @@ RUN mix local.hex --force && \
     MIX_ENV=docker mix do compile
 
 # dev release (copy release to next stage from _build) [Enable once tests work in docker]
-RUN mix release
+RUN MIX_ENV=dev mix release
 
 #================
 #Deployment Stage
