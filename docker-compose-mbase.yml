@@ -1,0 +1,65 @@
+version: '3'
+# runs the entire rudder pipeline with all supporting services (including rudder) in docker
+# set .env such that all services in docker are talking to each other only
+services:
+  ipfs-pinner:
+    image: "gcr.io/covalent-project/ipfs-pinner:latest"
+    volumes:
+      - ~/.ipfs:/root/.ipfs/
+    container_name: ipfs-pinner
+    restart: on-failure
+    expose:
+      - "4001:4001"
+      - "3000:3000"
+    environment:
+      - WEB3_JWT=${WEB3_JWT}
+    networks:
+      - cqt-net
+    ports:
+      - "4001:4001"
+      - "3000:3000"
+
+  evm-server:
+    image: "gcr.io/covalent-project/evm-server:latest"
+    container_name: evm-server
+    restart: on-failure
+    expose:
+      - "3002:3002"
+    networks:
+      - cqt-net
+    ports:
+      - "3002:3002"
+
+  rudder:
+    image: "gcr.io/covalent-project/rudder:latest"
+    container_name: rudder
+    links:
+      - "ipfs-pinner:ipfs-pinner"
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      ipfs-pinner:
+        condition: service_started
+      evm-server:
+        condition: service_started
+    entrypoint: >
+      /bin/bash -l -c "
+        echo "moonbase-node:" $NODE_ETHEREUM_MAINNET;
+        echo "brp-operator:" $BLOCK_RESULT_OPERATOR_PRIVATE_KEY;
+        echo "evm-server:" $EVM_SERVER_URL;
+        echo "ipfs-node:" $IPFS_PINNER_URL;
+        cd /app;
+        MIX_ENV=dev mix release;
+        MIX_ENV=dev mix run --no-halt -e "Rudder.ProofChain.BlockSpecimenEventListener.start";"
+    environment:
+      - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
+      - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
+      - EVM_SERVER_URL=${EVM_SERVER_URL}
+      - IPFS_PINNER_URL=${IPFS_PINNER_URL}
+    networks:
+      - cqt-net
+
+networks:
+  cqt-net:
