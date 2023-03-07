@@ -53,9 +53,38 @@ defmodule Rudder.UtilTest do
     assert Rudder.Util.typeof(self()) == "pid"
   end
 
-  test "returns 'idunno' for other types" do
+  test "returns 'bitstring' for a bitstring" do
+    assert Rudder.Util.typeof(<<3::4>>) == "bitstring"
+  end
+
+  test "returns 'nil' for a nil" do
+    assert Rudder.Util.typeof(:nil) == "nil"
+    assert Rudder.Util.typeof(nil) == "nil"
+  end
+
+  test "returns 'struct' for a struct" do
+    block_result_metadata = %Rudder.BlockResultMetadata{
+      chain_id: 1,
+      block_height: 15892728,
+      block_specimen_hash: 0x816c62d9c077d6d7423bb6ece430f40dcf53b38b9676d96ca0e120ee3ec5dcb9,
+      file_path: "./test-data/block-result/15892728.result.json"
+    }
+
+    assert Rudder.Util.typeof(block_result_metadata) == "struct"
+  end
+
+  test "returns 'exception' for a exception" do
+    assert Rudder.Util.typeof(%RuntimeError{}) == "exception"
+  end
+
+  test "returns 'reference' for a reference" do
+    ref_1 = Kernel.make_ref()
+    assert Rudder.Util.typeof(ref_1) == "reference"
+  end
+
+  test "returns 'port' for a port" do
     port = Port.open({:spawn, "cat"}, [:binary])
-    assert Rudder.Util.typeof(port) == "idunno"
+    assert Rudder.Util.typeof(port) == "port"
   end
 
   test "get_file_paths returns a list of files in the given directory" do
