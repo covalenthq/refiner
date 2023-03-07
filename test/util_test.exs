@@ -34,13 +34,28 @@ defmodule Rudder.UtilTest do
     assert Rudder.Util.typeof({1, 2, 3}) == "tuple"
   end
 
-  test "returns 'idunno' for other types" do
+  test "returns 'map' for a map" do
+    result_path = "./test-data/block-result/15892728.result.json"
+
+    {:ok, result_binary} = File.read(result_path)
+    {:ok, result_decoded_map} = Poison.decode(result_binary)
+
     specimen_path =
       "./test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1"
 
-    {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimenDecoder.decode_file(specimen_path)
+    {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimen.decode_file(specimen_path)
 
-    assert Rudder.Util.typeof(decoded_specimen) == "idunno"
+    assert Rudder.Util.typeof(decoded_specimen) == "map"
+    assert Rudder.Util.typeof(result_decoded_map) == "map"
+  end
+
+  test "returns 'pid' for a pid" do
+    assert Rudder.Util.typeof(self()) == "pid"
+  end
+
+  test "returns 'idunno' for other types" do
+    port = Port.open({:spawn, "cat"}, [:binary])
+    assert Rudder.Util.typeof(port) == "idunno"
   end
 
   test "get_file_paths returns a list of files in the given directory" do
