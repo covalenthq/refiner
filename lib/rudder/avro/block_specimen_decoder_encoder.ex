@@ -125,4 +125,21 @@ defmodule Rudder.Avro.BlockSpecimen do
     {:ok, binary} = File.read(file_path)
     encode(binary)
   end
+
+  @spec encode_dir(
+          binary
+          | maybe_improper_list(
+              binary | maybe_improper_list(any, binary | []) | char,
+              binary | []
+            )
+        ) :: list
+  def encode_dir(dir_path) do
+    Rudder.Util.get_file_paths(dir_path)
+    |> Enum.map(fn file ->
+      [file]
+      |> Stream.map(&Rudder.Avro.BlockSpecimen.encode_file/1)
+    end)
+    |> List.flatten()
+    |> Enum.sort()
+  end
 end

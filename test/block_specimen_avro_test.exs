@@ -139,4 +139,47 @@ defmodule Rudder.BlockSpecimenDecoderTest do
     assert decoded_segment_start_block == expected_start_block
     assert decoded_segment_hash == expected_hash
   end
+
+  test "Rudder.Avro.BlockSpecimen.encode_dir/1 streams encoded .json files", %{
+    block_specimen_decoder: _block_specimen_decoder
+  } do
+    dir_path = "./test-data/segment/*"
+
+    expected_start_block = 15_892_728
+    expected_last_block = 15_892_755
+
+    encoded_segment_stream = Rudder.Avro.BlockSpecimen.encode_dir(dir_path)
+
+    start_segment_stream = List.first(encoded_segment_stream)
+    last_segment_stream = List.last(encoded_segment_stream)
+
+    encoded_start_segment_bytes =
+      start_segment_stream
+      |> Enum.to_list()
+      |> List.keytake(:ok, 0)
+      |> elem(0)
+      |> elem(1)
+
+    {:ok, decoded_start_segment} =
+      Avrora.decode(encoded_start_segment_bytes, schema_name: "block-ethereum")
+
+    [head | _tail] = decoded_start_segment
+    decoded_start_segment_number = Map.get(head, "startBlock")
+
+    encoded_last_segment_bytes =
+      last_segment_stream
+      |> Enum.to_list()
+      |> List.keytake(:ok, 0)
+      |> elem(0)
+      |> elem(1)
+
+    {:ok, decoded_last_segment} =
+      Avrora.decode(encoded_last_segment_bytes, schema_name: "block-ethereum")
+
+    [head | _tail] = decoded_last_segment
+    decoded_last_segment_number = Map.get(head, "startBlock")
+
+    assert decoded_start_segment_number == expected_start_block
+    assert decoded_last_segment_number == expected_last_block
+  end
 end
