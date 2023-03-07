@@ -52,7 +52,7 @@ services:
         echo "ipfs-node:" $IPFS_PINNER_URL;
         cd /app;
         MIX_ENV=dev mix release;
-        MIX_ENV=dev mix run --no-halt -e "Rudder.ProofChain.BlockSpecimenEventListener.start";"
+        MIX_ENV=dev mix run --no-halt --eval "Rudder.ProofChain.BlockSpecimenEventListener.start()";"
     environment:
       - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
       - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}

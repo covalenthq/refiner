@@ -58,15 +58,15 @@ defmodule Rudder.UtilTest do
   end
 
   test "returns 'nil' for a nil" do
-    assert Rudder.Util.typeof(:nil) == "nil"
+    assert Rudder.Util.typeof(nil) == "nil"
     assert Rudder.Util.typeof(nil) == "nil"
   end
 
   test "returns 'struct' for a struct" do
     block_result_metadata = %Rudder.BlockResultMetadata{
       chain_id: 1,
-      block_height: 15892728,
-      block_specimen_hash: 0x816c62d9c077d6d7423bb6ece430f40dcf53b38b9676d96ca0e120ee3ec5dcb9,
+      block_height: 15_892_728,
+      block_specimen_hash: 0x816C62D9C077D6D7423BB6ECE430F40DCF53B38B9676D96CA0E120EE3EC5DCB9,
       file_path: "./test-data/block-result/15892728.result.json"
     }
 
