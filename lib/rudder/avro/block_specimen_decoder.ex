@@ -1,4 +1,4 @@
-defmodule Rudder.Avro.BlockSpecimenDecoder do
+defmodule Rudder.Avro.BlockSpecimen do
   use GenServer, restart: :temporary
   require Logger
 
@@ -94,9 +94,36 @@ defmodule Rudder.Avro.BlockSpecimenDecoder do
     Rudder.Util.get_file_paths(dir_path)
     |> Enum.map(fn file ->
       [file]
-      |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_file/1)
+      |> Stream.map(&Rudder.Avro.BlockSpecimen.decode_file/1)
     end)
     |> List.flatten()
     |> Enum.sort()
+  end
+
+  @spec encode(
+          binary
+          | maybe_improper_list(
+              binary | maybe_improper_list(any, binary | []) | byte,
+              binary | []
+            )
+        ) :: {:error, %{:__exception__ => true, :__struct__ => atom, optional(atom) => any}}
+  def encode(result_json) do
+    with {:ok, result_map} <- Poison.decode(result_json) do
+      Avrora.encode(result_map, schema_name: @schema_name, format: :ocf)
+    else
+      err -> err
+    end
+  end
+
+  @spec encode_file(
+          binary
+          | maybe_improper_list(
+              binary | maybe_improper_list(any, binary | []) | char,
+              binary | []
+            )
+        ) :: {:error, any} | {:ok, map}
+  def encode_file(file_path) do
+    {:ok, binary} = File.read(file_path)
+    encode(binary)
   end
 end
