@@ -43,6 +43,9 @@ rudder-*.tar
 #VSCode
 /.vscode/
 
+#MacOS
+.DS_store
+
 evm-out/
 # Env-vars
 .env
