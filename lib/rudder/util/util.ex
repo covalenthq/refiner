@@ -45,6 +45,7 @@ defmodule Rudder.Util do
     ABI.decode(fs, data |> Base.decode16!(case: :lower))
   end
 
+  @spec convert_to_bytes32(binary) :: binary
   def convert_to_bytes32(str) do
     Base.decode16!(str, case: :mixed)
   end
