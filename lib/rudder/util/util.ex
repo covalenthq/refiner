@@ -9,6 +9,8 @@ defmodule Rudder.Util do
       is_function(a) -> "function"
       is_list(a) -> "list"
       is_tuple(a) -> "tuple"
+      is_map(a) -> "map"
+      is_pid(a) -> "pid"
       true -> "idunno"
     end
   end

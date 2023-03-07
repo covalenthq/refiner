@@ -108,9 +108,8 @@ defmodule Rudder.Avro.BlockSpecimen do
             )
         ) :: {:error, %{:__exception__ => true, :__struct__ => atom, optional(atom) => any}}
   def encode(result_json) do
-    with {:ok, result_map} <- Poison.decode(result_json) do
-      Avrora.encode(result_map, schema_name: @schema_name, format: :ocf)
-    else
+    case Poison.decode(result_json) do
+      {:ok, result_map} -> Avrora.encode(result_map, schema_name: @schema_name, format: :ocf)
       err -> err
     end
   end
