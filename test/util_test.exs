@@ -57,8 +57,7 @@ defmodule Rudder.UtilTest do
     assert Rudder.Util.typeof(<<3::4>>) == "bitstring"
   end
 
-  test "returns 'nil' for a nil" do
-    assert Rudder.Util.typeof(nil) == "nil"
+  test "returns 'nil' for an nil" do
     assert Rudder.Util.typeof(nil) == "nil"
   end
 
@@ -73,7 +72,7 @@ defmodule Rudder.UtilTest do
     assert Rudder.Util.typeof(block_result_metadata) == "struct"
   end
 
-  test "returns 'exception' for a exception" do
+  test "returns 'exception' for an exception" do
     assert Rudder.Util.typeof(%RuntimeError{}) == "exception"
   end
 
@@ -97,5 +96,16 @@ defmodule Rudder.UtilTest do
 
   test "get_file_paths returns an empty list when given a directory with no files or invalid path" do
     assert Rudder.Util.get_file_paths("./evm") == []
+  end
+
+  test "converts a hexadecimal string to a 32-byte binary string" do
+    assert Rudder.Util.convert_to_bytes32("0123456789abcdef") ==
+             <<1, 35, 69, 103, 137, 171, 205, 239>>
+  end
+
+  test "raises an error if the input string is not a hexadecimal string" do
+    assert_raise ArgumentError, "non-alphabet digit found: \"n\" (byte 110)", fn ->
+      Rudder.Util.convert_to_bytes32("not-a-hex-string")
+    end
   end
 end
