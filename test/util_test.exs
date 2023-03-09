@@ -35,13 +35,13 @@ defmodule Rudder.UtilTest do
   end
 
   test "returns 'map' for a map" do
-    result_path = "./test-data/block-result/15892728.result.json"
+    result_path = "./test-data/block-result/16791900.result.json"
 
     {:ok, result_binary} = File.read(result_path)
     {:ok, result_decoded_map} = Poison.decode(result_binary)
 
     specimen_path =
-      "./test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1"
+      "./test-data/encoded/1-16791900-replica-0xcd89a7529f3bd7896ef11681bbf5f58b498d4311ec18479d7b1794101f48a767"
 
     {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimen.decode_file(specimen_path)
 
@@ -64,9 +64,9 @@ defmodule Rudder.UtilTest do
   test "returns 'struct' for a struct" do
     block_result_metadata = %Rudder.BlockResultMetadata{
       chain_id: 1,
-      block_height: 15_892_728,
-      block_specimen_hash: 0x816C62D9C077D6D7423BB6ECE430F40DCF53B38B9676D96CA0E120EE3EC5DCB9,
-      file_path: "./test-data/block-result/15892728.result.json"
+      block_height: 16_791_900,
+      block_specimen_hash: 0xcd89a7529f3bd7896ef11681bbf5f58b498d4311ec18479d7b1794101f48a767,
+      file_path: "./test-data/block-result/16791900.result.json"
     }
 
     assert Rudder.Util.typeof(block_result_metadata) == "struct"
@@ -88,9 +88,9 @@ defmodule Rudder.UtilTest do
 
   test "get_file_paths returns a list of files in the given directory" do
     assert Rudder.Util.get_file_paths("./test-data/block-specimen/*") == [
-             "test-data/block-specimen/15892728.specimen.json",
-             "test-data/block-specimen/15892740.specimen.json",
-             "test-data/block-specimen/15892755.specimen.json"
+             "test-data/block-specimen/16791900.specimen.json",
+             "test-data/block-specimen/16792200.specimen.json",
+             "test-data/block-specimen/16792500.specimen.json"
            ]
   end
 
