@@ -23,10 +23,10 @@ defmodule Rudder.BlockSpecimenDecoderTest do
     block_specimen_decoder: _block_specimen_decoder
   } do
     specimen_path =
-      "./test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1"
+      "./test-data/encoded/1-16791900-replica-0xcd89a7529f3bd7896ef11681bbf5f58b498d4311ec18479d7b1794101f48a767"
 
-    expected_start_block = 15_892_728
-    expected_hash = "0x816c62d9c077d6d7423bb6ece430f40dcf53b38b9676d96ca0e120ee3ec5dcb9"
+    expected_start_block = 16_791_900
+    expected_hash = "0x097b92af3601d850a834d03189a6f7a1a5a0f3cf0791197e3314efcd5c596e85"
 
     {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimen.decode_file(specimen_path)
 
@@ -45,11 +45,11 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   } do
     dir_path = "./test-data/encoded/*"
 
-    expected_start_block = 15_892_728
-    expected_last_block = 15_892_755
+    expected_start_block = 16_791_900
+    expected_last_block = 16_792_500
 
-    expected_start_hash = "0x816c62d9c077d6d7423bb6ece430f40dcf53b38b9676d96ca0e120ee3ec5dcb9"
-    expected_last_hash = "0xf335ebbe317d437b9736299a6ab9222ff20c6fc6252877c92c0e4a1d15ebfb55"
+    expected_start_hash = "0x097b92af3601d850a834d03189a6f7a1a5a0f3cf0791197e3314efcd5c596e85"
+    expected_last_hash = "0x46f97723e7f8736626346a7878e43e07ed0e00bcf06a7dce59ba292ea74b6397"
 
     decode_specimen_stream = Rudder.Avro.BlockSpecimen.decode_dir(dir_path)
 
@@ -118,10 +118,10 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   test "Rudder.Avro.BlockSpecimen.encode_file/1 encodes segment json file", %{
     block_specimen_decoder: _block_specimen_decoder
   } do
-    segment_path = "./test-data/segment/15892728.segment.json"
+    segment_path = "./test-data/segment/16791900.segment.json"
 
-    expected_start_block = 15_892_728
-    expected_hash = "0x816c62d9c077d6d7423bb6ece430f40dcf53b38b9676d96ca0e120ee3ec5dcb9"
+    expected_start_block = 16_791_900
+    expected_hash = "0x097b92af3601d850a834d03189a6f7a1a5a0f3cf0791197e3314efcd5c596e85"
 
     {:ok, encoded_segment_avro} = Rudder.Avro.BlockSpecimen.encode_file(segment_path)
 
@@ -145,8 +145,8 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   } do
     dir_path = "./test-data/segment/*"
 
-    expected_start_block = 15_892_728
-    expected_last_block = 15_892_755
+    expected_start_block = 16_791_900
+    expected_last_block = 16_792_500
 
     encoded_segment_stream = Rudder.Avro.BlockSpecimen.encode_dir(dir_path)
 
