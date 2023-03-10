@@ -1,29 +1,29 @@
-defmodule Rudder.BlockSpecimenDecoderTest do
+defmodule Rudder.BlockSpecimenDecoderEncoderTest do
   use ExUnit.Case, async: true
 
   setup do
-    block_specimen_decoder = start_supervised(Rudder.Avro.BlockSpecimen)
-    %{block_specimen_decoder: block_specimen_decoder}
+    block_specimen_avro = start_supervised(Rudder.Avro.BlockSpecimen)
+    %{block_specimen_avro: block_specimen_avro}
   end
 
   test "Rudder.Avro.BlockSpecimen.list/0 returns an empty list", %{
-    block_specimen_decoder: _block_specimen_decoder
+    block_specimen_avro: _block_specimen_avro
   } do
     assert Rudder.Avro.BlockSpecimen.list() == :ok
   end
 
   test "Rudder.Avro.BlockSpecimen.get_schema/0 returns correct schema", %{
-    block_specimen_decoder: _block_specimen_decoder
+    block_specimen_avro: _block_specimen_avro
   } do
     assert Rudder.Avro.BlockSpecimen.get_schema() ==
              "com.covalenthq.brp.avro.ReplicationSegment"
   end
 
   test "Rudder.Avro.BlockSpecimen.decode_file/1 decodes binary specimen file", %{
-    block_specimen_decoder: _block_specimen_decoder
+    block_specimen_avro: _block_specimen_avro
   } do
     specimen_path =
-      "./test-data/encoded/1-16791900-replica-0xcd89a7529f3bd7896ef11681bbf5f58b498d4311ec18479d7b1794101f48a767"
+      "./test-data/codec-0.32/encoded/1-16791900-replica-0xcd89a7529f3bd7896ef11681bbf5f58b498d4311ec18479d7b1794101f48a767"
 
     expected_start_block = 16_791_900
     expected_hash = "0x097b92af3601d850a834d03189a6f7a1a5a0f3cf0791197e3314efcd5c596e85"
@@ -41,9 +41,9 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   end
 
   test "Rudder.Avro.BlockSpecimen.decode_dir/1 streams directory binary files", %{
-    block_specimen_decoder: _block_specimen_decoder
+    block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/encoded/*"
+    dir_path = "./test-data/codec-0.32/encoded/*"
 
     expected_start_block = 16_791_900
     expected_last_block = 16_792_500
@@ -100,9 +100,9 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   end
 
   test "Rudder.Avro.BlockSpecimen.decode_dir/1 decodes all binary files", %{
-    block_specimen_decoder: _block_specimen_decoder
+    block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/encoded/*"
+    dir_path = "./test-data/codec-0.32/encoded/*"
 
     expected_specimens = 3
 
@@ -116,9 +116,9 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   end
 
   test "Rudder.Avro.BlockSpecimen.encode_file/1 encodes segment json file", %{
-    block_specimen_decoder: _block_specimen_decoder
+    block_specimen_avro: _block_specimen_avro
   } do
-    segment_path = "./test-data/segment/16791900.segment.json"
+    segment_path = "./test-data/codec-0.32/segment/16791900.segment.json"
 
     expected_start_block = 16_791_900
     expected_hash = "0x097b92af3601d850a834d03189a6f7a1a5a0f3cf0791197e3314efcd5c596e85"
@@ -141,9 +141,9 @@ defmodule Rudder.BlockSpecimenDecoderTest do
   end
 
   test "Rudder.Avro.BlockSpecimen.encode_dir/1 streams encoded .json files", %{
-    block_specimen_decoder: _block_specimen_decoder
+    block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/segment/*"
+    dir_path = "./test-data/codec-0.32/segment/*"
 
     expected_start_block = 16_791_900
     expected_last_block = 16_792_500
