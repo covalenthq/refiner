@@ -47,7 +47,7 @@ defmodule Rudder.Pipeline do
     try do
       with [_chain_id, block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
            {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
-           {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimenDecoder.decode(specimen),
+           {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimen.decode(specimen),
            {:ok, block_specimen} <- extract_block_specimen(decoded_specimen),
            {:ok, block_result_file_path} <-
              Rudder.BlockProcessor.sync_queue(block_specimen),
