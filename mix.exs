@@ -4,7 +4,7 @@ defmodule Rudder.MixProject do
   def project do
     [
       app: :rudder,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.13.4",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -45,7 +45,7 @@ defmodule Rudder.MixProject do
        branch: "feature-parse-events-from-abi-specifications",
        override: true},
       {:ex_secp256k1, "~> 0.6.0"},
-      {:ex_keccak, "~> 0.6.0", override: true},
+      {:ex_keccak, "~> 0.7.1", override: true},
       {:mnemonic, "~> 0.3"},
       {:ex_rlp, "~> 0.6.0", override: true},
       {:jason, "~> 1.3"},

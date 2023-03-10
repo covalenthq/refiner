@@ -17,7 +17,7 @@ defmodule Rudder.Application do
       {Rudder.IPFSInteractor, name: Rudder.IPFSInteractor},
       {Rudder.Journal, [Application.get_env(:rudder, :journal_path), name: Rudder.Journal]},
       Rudder.Avro.Client,
-      {Rudder.Avro.BlockSpecimenDecoder, name: Rudder.Avro.BlockSpecimenDecoder},
+      {Rudder.Avro.BlockSpecimen, name: Rudder.Avro.BlockSpecimen},
       {Rudder.BlockResultUploader, name: Rudder.BlockResultUploader},
       {Rudder.BlockProcessor,
        [Application.get_env(:rudder, :evm_server_url), name: Rudder.BlockProcessor]},
