@@ -22,7 +22,7 @@ config :rudder,
 # configuration for the {LoggerFileBackend, :error_log} backend
 if config_env() == :dev || config_env() == :prod do
   config :logger,
-    backends: [{LoggerFileBackend, :file_log}, :console]
+    backends: [{LoggerFileBackend, :file_log}]
 
   config :logger, :file_log,
     path: "./logs/log.log",
