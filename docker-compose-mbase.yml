@@ -51,7 +51,7 @@ services:
         echo "evm-server:" $EVM_SERVER_URL;
         echo "ipfs-node:" $IPFS_PINNER_URL;
         cd /app;
-        MIX_ENV=dev mix release --overwrite;
+        MIX_ENV=dev mix release;
         MIX_ENV=dev mix run --no-halt --eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()';"
     environment:
       - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
