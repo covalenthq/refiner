@@ -26,10 +26,23 @@ defmodule Rudder.BlockProcessor do
       Finch.build("POST", evm_server_url, headers, {:stream, body_stream})
       |> Finch.request(Rudder.Finch)
     ) do
-      {:ok, %Finch.Response{body: body, headers: _, status: _}} ->
-        case body |> Poison.decode!() do
-          %{"error" => error} -> {:reply, {:error, error}, state}
-          _ -> {:reply, {:ok, body}, state}
+      {:ok, %Finch.Response{body: body, headers: headers, status: status}} ->
+        case body |> Poison.decode() do
+          {:ok, %{"error" => error}} ->
+            {:reply, {:error, error}, state}
+
+          {:ok, _} ->
+            {:reply, {:ok, body}, state}
+
+          # parse failure
+          {:error, errormsg} ->
+            Logger.error("parse failure in blockprocessor: #{inspect(errormsg)}")
+
+            Logger.error(
+              "the body is: #{inspect(body)}, and headers: #{inspect(headers)}, and status: #{inspect(status)}"
+            )
+
+            {:reply, {:error, errormsg}, state}
         end
 
       {:error, errormsg} ->
