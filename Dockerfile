@@ -5,11 +5,6 @@ FROM elixir:1.13.4-otp-25 as builder-elixir
 RUN mkdir -p /mix
 WORKDIR /mix
 
-# Install rust tooling
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-# Add .cargo/bin to PATH
-ENV PATH="/root/.cargo/bin:${PATH}"
-
 COPY config ./config
 COPY lib ./lib
 COPY priv ./priv
@@ -35,10 +30,6 @@ FROM elixir:1.13.4-otp-25 as deployer
 RUN apt-get update && apt-get install -y git bash curl netcat-traditional && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /app/_build /app/config /app/deps /app/lib /app/priv node/test /app/test-data
-# Install rust tooling
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-# Add .cargo/bin to PATH
-ENV PATH="/root/.cargo/bin:${PATH}"
 # used in case alpine image are used
 # RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2 curl=7.83.1-r4 go=1.18.7-r0 make=4.3-r0 gcc=11.2.1_git20220219-r2
 WORKDIR /app
