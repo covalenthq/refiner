@@ -35,7 +35,6 @@ defmodule Rudder.MixProject do
       {:phoenix_pubsub, "~> 1.1"},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
-      {:rustler, "~> 0.27.0", override: true},
       {:ranch, "~> 2.1.0",
        [env: :prod, hex: "ranch", repo: "hexpm", optional: false, override: true]},
 
@@ -44,7 +43,7 @@ defmodule Rudder.MixProject do
        github: "tsutsu/ethereum_abi",
        branch: "feature-parse-events-from-abi-specifications",
        override: true},
-      {:ex_secp256k1, "~> 0.6.0"},
+      {:ex_secp256k1, "0.7.0", override: true},
       {:ex_keccak, "~> 0.7.1", override: true},
       {:mnemonic, "~> 0.3"},
       {:ex_rlp, "~> 0.6.0", override: true},
@@ -81,6 +80,7 @@ defmodule Rudder.MixProject do
       {:briefly, "~> 0.4.1"}
 
       # Unused
+
       # {:erlexec, "~> 2.0"},
       # {:etfs, path: "/Users/sudeep/repos/experiment/etfs"}
       # {:telemetry_metrics_prometheus, "~> 1.1"}
