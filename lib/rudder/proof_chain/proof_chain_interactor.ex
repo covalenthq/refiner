@@ -33,8 +33,6 @@ defmodule Rudder.ProofChain.Interactor do
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
     {:ok, to} = Rudder.PublicKeyHash.parse(proofchain_address)
 
-    gas_price = Rudder.Network.EthereumMainnet.eth_gasPrice!()
-
     tx = [
       from: nil,
       to: to,
