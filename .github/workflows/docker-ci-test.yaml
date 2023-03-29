@@ -13,10 +13,10 @@ jobs:
   deploy-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Login to GCR
+      - name: Login to Artifact Registry/GCR
         uses: docker/login-action@v2
         with:
-          registry: gcr.io
+          registry: us-docker.pkg.dev
           username: _json_key
           password: ${{ secrets.GCR_JSON_KEY }}
 
@@ -26,8 +26,8 @@ jobs:
       #   continue-on-error: true
       - name: Build & Publish the Docker image
         run: |
-          docker build . --file Dockerfile --tag gcr.io/covalent-project/rudder:latest
-          docker push gcr.io/covalent-project/rudder:latest;
+          docker build . --file Dockerfile --tag us-docker.pkg.dev/covalent-project/network/rudder:latest
+          docker push us-docker.pkg.dev/covalent-project/network/rudder:latest;
 
       - name: Create .env file
         run: |
