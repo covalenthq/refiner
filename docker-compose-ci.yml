@@ -3,7 +3,7 @@ version: '3'
 # set .env such that all services in docker are talking to each other only
 services:
   eth-node:
-    image: "gcr.io/covalent-project/operational-staking:latest-rudder"
+    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder"
     container_name: hardhat-node
     restart: on-failure
     expose:
@@ -20,7 +20,7 @@ services:
       - "8545:8545"
 
   operational-staking:
-    image: "gcr.io/covalent-project/operational-staking:latest-rudder"
+    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder"
     container_name: proof-chain
     restart: on-failure
     entrypoint: |
@@ -40,7 +40,7 @@ services:
       - "8008:8008"
 
   ipfs-pinner:
-    image: "gcr.io/covalent-project/ipfs-pinner:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:latest"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
@@ -57,7 +57,7 @@ services:
       - "3000:3000"
 
   evm-server:
-    image: "gcr.io/covalent-project/evm-server:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/evm-server:latest"
     container_name: evm-server
     restart: on-failure
     expose:
@@ -68,7 +68,7 @@ services:
       - "3002:3002"
 
   rudder:
-    image: "gcr.io/covalent-project/rudder:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/rudder:latest"
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
