@@ -5,7 +5,7 @@ defmodule Rudder.MixProject do
     [
       app: :rudder,
       version: "0.2.1",
-      elixir: "~> 1.13.4",
+      elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -16,7 +16,7 @@ defmodule Rudder.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      extra_applications: [:logger_file_backend, :runtime_tools, :poison, :avrora, :porcelain],
+      extra_applications: [:logger_file_backend, :runtime_tools, :poison, :avrora],
       mod: {Rudder.Application, []}
     ]
   end
@@ -26,7 +26,6 @@ defmodule Rudder.MixProject do
     [
       # system exec
       {:poison, "~> 5.0"},
-      {:porcelain, "~> 2.0"},
 
       # frameworks
       {:broadway, "~> 1.0", override: true},
