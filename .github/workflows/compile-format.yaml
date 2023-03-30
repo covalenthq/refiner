@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        elixir: [1.13.4]
-        otp: [25]
+        elixir: [1.14.3]
+        otp: [24]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.6.0
@@ -39,7 +39,12 @@ jobs:
       #     otp-version: ${{ matrix.otp }}
 
       - name: Install Elixir
-        run: wget https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.13.4-1~ubuntu~focal_all.deb && sudo dpkg -i 'elixir_1.13.4-1~ubuntu~focal_all.deb'
+        run: |
+          wget https://github.com/elixir-lang/elixir/releases/download/v1.14.3/elixir-otp-24.zip
+          mkdir einstall
+          unzip elixir-otp-24.zip -d einstall
+          echo "$PWD/einstall/bin" >> $GITHUB_PATH
+
 
       - name: Install hex
         run: mix local.hex --force
