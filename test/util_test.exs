@@ -104,7 +104,7 @@ defmodule Rudder.UtilTest do
   end
 
   test "raises an error if the input string is not a hexadecimal string" do
-    assert_raise ArgumentError, "non-alphabet digit found: \"n\" (byte 110)", fn ->
+    assert_raise ArgumentError, "non-alphabet character found: \"n\" (byte 110)", fn ->
       Rudder.Util.convert_to_bytes32("not-a-hex-string")
     end
   end
