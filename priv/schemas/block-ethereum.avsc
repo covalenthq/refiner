@@ -289,7 +289,7 @@
                                  "type":"array",
                                  "items":"Header"
                               },
-                              "default": []
+                              "default":[]
                            },
                            {
                               "name":"Receipts",
@@ -512,7 +512,8 @@
                                        }
                                     ]
                                  }
-                              }
+                              },
+                              "default":[]
                            }
                         ]
                      }
