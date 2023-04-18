@@ -1,8 +1,40 @@
+![banner](./docs/covalent.jpg)
+
+
+<div align="center">
+  <a href="https://github.com/covalenthq/bsp-agent/releases/latest">
+    <img alt="Version" src="https://img.shields.io/github/tag/covalenthq/rudder.svg" />
+  </a>
+  <a href="https://github.com/covalenthq/bsp-agent/blob/main/LICENSE">
+    <img alt="License: " src="https://img.shields.io/badge/license-apache-green" />
+  </a>
+  <a href="http://covalenthq.com/discord">
+    <img alt="Discord" src="https://img.shields.io/badge/discord-join%20chat-blue.svg" />
+  </a>
+</div>
+<div align="center">
+  <a href="http://covalenthq.com/discord">
+    <img alt="Discord" src="https://img.shields.io/discord/715804406842392586.svg" />
+  </a>
+  <a href="https://github.com/covalenthq/rudder/actions/workflows/tag-release.yaml">
+    <img alt="Tag Release" src="https://github.com/covalenthq/rudder/actions/workflows/tag-release.yaml/badge.svg?branch=main" />
+  </a>
+  <a href="https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml?query=branch%3Amain+workflow%3Acompile-format">
+    <img alt="Linter Status" src="https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml/badge.svg?branch=main" />
+  </a>
+  <a href="https://github.com/covalenthq/rudder/actions/workflows/docker-ci-test.yaml?query=branch%3Amain+workflow%3Adocker-ci-test">
+    <img alt="CI Tests Status" src="https://github.com/covalenthq/rudder/actions/workflows/docker-ci-test.yaml/badge.svg?branch=main" />
+  </a>
+  <a href="https://github.com/covalenthq/rudder/actions/workflows/hadolint.ymlquery=branch%3Amain+workflow%3Ahadolint">
+    <img alt="Docker Lint Status" src="https://github.com/covalenthq/rudder/actions/workflows/hadolint.yml/badge.svg?branch=main" />
+  </a>
+  <a href="https://twitter.com/@Covalent_HQ">
+    <img alt="Twitter Follow Covalent" src="https://img.shields.io/twitter/follow/Covalent_HQ"/>
+  </a>
+</div>
+
 # Rudder
 
-[![docker-ci-test](https://github.com/covalenthq/rudder/actions/workflows/docker-ci-test.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/docker-ci-test.yaml)
-[![compile-format](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/compile-format.yaml)
-[![hadolint](https://github.com/covalenthq/rudder/actions/workflows/hadolint.yml/badge.svg)](https://github.com/covalenthq/rudder/actions/workflows/hadolint.yml)
 
 Rudder is the rule engine processor and supervisor for the refiner process in the Covalent Network and further it scalably and securely captures block specimens and their respective transformations. Further information is included here in a [brief Refiner's Raison d'être](https://docs.google.com/document/d/1ps4HCRUwSPap98Q0lFYuyBVMN079o-s_K4yr7hh2Wws/edit?usp=sharing)
 
