@@ -46,12 +46,14 @@
     - [Pipeline Journal](#pipeline-journal)
     - [Pipeline Telemetry](#pipeline-telemetry)
   - [Requirements](#requirements)
-  - [Docker Run](#docker-run)
-    - [Pull](#pull)
+  - [Docker Compose](#docker-compose-setup)
     - [Environment](#environment)
-  - [Build From Source & Run](#build-from-source)
-    - [Run](#run)
-  - [Environment](#environment)
+    - [Pull](#pull)
+    - [Run](#docker-run)
+  - [Build & Run From Source](#build-from-source)
+    - [Linux x86](#linux-x86_64-ubuntu-2204-lts-install-dependencies)
+    - [Environment](#env-vars)
+    - [Run](#source-run)
   - [Troubleshooting](#troubleshooting)
   - [Scripts](#scripts)
 
@@ -438,7 +440,8 @@ Software Requirements (docker setup)
 - 64-bit Linux, Mac OS 13+
 - SSL certificates
 - docker, docker-compose, direnv
-## <span id="rudder_docker">Docker Run</span>
+
+## <span id="rudder_docker">Docker Compose Setup</span>
 
 Install Docker
 
@@ -447,7 +450,6 @@ Follow instructions for your platform/architecture: https://docs.docker.com/engi
 Install direnv
 
 ```bash
-
 sudo apt update
 sudo apt get direnv
 
@@ -460,7 +462,9 @@ eval "$(direnv hook zsh)"
 source ~/.zshrc
 ```
 
-Create envrc.local file
+### <span id="rudder_docker_env">Environment</span>
+
+Create `envrc.local` file and add the following env vars. Note: When passing the private key into the env vars as above please remove the `0x` prefix so the private key env var has exactly 64 characters.
 
 ```env
 export BLOCK_RESULT_OPERATOR_PRIVATE_KEY=block-result-operator-private-key-without-0x-prefix
@@ -468,102 +472,175 @@ export NODE_ETHEREUM_MAINNET="https://moonbeam-alphanet.web3.covalenthq.com/alph
 export IPFS_PINNER_URL="http://ipfs-pinner:3000"
 export EVM_SERVER_URL="http://evm-server:3002"
 export WEB3_JWT="****"
-
 ```
 
-Run all services including rudder in docker with the following -
+Load the env vars.
+
+```bash
+direnv allow .
+```
+
+That will lead to the corresponding logs:
+
+```log
+direnv: loading ~/rudder/.envrc
+direnv: loading ~/rudder/.envrc.local
+direnv: export +BLOCK_RESULT_OPERATOR_PRIVATE_KEY +ERIGON_NODE +EVM_SERVER_URL +IPFS_PINNER_URL +NODE_ETHEREUM_MAINNET +WEB3_JWT
+```
+
+### <span id="rudder_docker_pull">Pull</span>
+
+Run all services including `rudder` with docker compose with the following for moonbase (the `env` file is not required if env vars are alerady loaded)
+
+```bash
+docker compose --env-file ".env" -f "docker-compose-mbase.yml" up --remove-orphans
+```
+
+or for moonbeam
 
 ```bash
 docker compose --env-file ".env" -f "docker-compose-mbeam.yml" up --remove-orphans
 ```
 
-By default this will perform and end to end test and create a release
+Running this will pull images that are ready to run,
+That will lead to the corresponding logs:
 
 ```elixir
-rudder       | [info] starting event listener
-rudder       | [info] getting ids with status=discover
-rudder       | [info] Counter for journal_metrics - [fetch_items: 1]
-rudder       | [info] LastValue for journal_metrics - [fetch_items_last_exec_time: 2.2e-5]
-rudder       | [info] Sum for journal_metrics - [fetch_items_total_exec_time: 2.2e-5]
-rudder       | [info] Summary for journal_metrics  - {2.2e-5, 2.2e-5}
-rudder       | [info] getting the last unprocessed block height
-rudder       | [info] Counter for journal_metrics - [fetch_last: 1]
-rudder       | [info] LastValue for journal_metrics - [fetch_last_last_exec_time: 1.7e-5]
-rudder       | [info] Sum for journal_metrics - [fetch_last_total_exec_time: 1.7e-5]
-rudder       | [info] Summary for journal_metrics  - {1.7e-5, 1.7e-5}
-rudder       | [info] listening for events at 4168403
-rudder       | [info] found 0 bsps to process
-rudder       | [info] curr_block: 4168404 and latest_block_num:4168403
-rudder       | [info] curr_block: 4168404 and latest_block_num:4168404
-rudder       | [info] listening for events at 4168408
-rudder       | [info] found 1 bsps to process
-ipfs-pinner  | 2023/04/17 22:12:49 unixfsApi.Get: getting the cid: bafybeigx7gwkso5iwikf3f2tv2jfgri5naipxavjntejrc24bfusxn6xju
-ipfs-pinner  | 2023/04/17 22:12:49 trying out https://w3s.link/ipfs/bafybeigx7gwkso5iwikf3f2tv2jfgri5naipxavjntejrc24bfusxn6xju
-rudder       | [info] Counter for ipfs_metrics - [fetch: 1]
-rudder       | [info] LastValue for ipfs_metrics - [fetch_last_exec_time: 0.001508]
-rudder       | [info] Sum for ipfs_metrics - [fetch_total_exec_time: 0.001508]
-rudder       | [info] Summary for ipfs_metrics  - {0.001508, 0.001508}
-rudder       | [debug] reading schema `block-ethereum` from the file /app/priv/schemas/block-ethereum.avsc
-rudder       | [info] Counter for bsp_metrics - [decode: 1]
-rudder       | [info] LastValue for bsp_metrics - [decode_last_exec_time: 0.0]
-rudder       | [info] Sum for bsp_metrics - [decode_total_exec_time: 0.0]
-rudder       | [info] Summary for bsp_metrics  - {0.0, 0.0}
-rudder       | [info] submitting 17069220 to evm http server...
-evm-server   | [INFO] [04-17|22:12:51.380] input file at                            loc=/tmp/30064047
-evm-server   | [INFO] [04-17|22:12:51.389] output file at:                          loc=/tmp/3478340040
-evm-server   | [INFO] [04-17|22:12:51.659] Wrote file                               file=/tmp/3478340040
-rudder       | [info] writing block result into "/tmp/briefly-1681/briefly-576460687785480033-OJ3w3e15QdqaGb0t5Z"
-rudder       | [info] Counter for bsp_metrics - [execute: 1]
-rudder       | [info] LastValue for bsp_metrics - [execute_last_exec_time: 3.39e-4]
-rudder       | [info] Sum for bsp_metrics - [execute_total_exec_time: 3.39e-4]
-rudder       | [info] Summary for bsp_metrics  - {3.39e-4, 3.39e-4}
-ipfs-pinner  | 2023/04/17 22:12:51 generated dag has root cid: bafybeihcj2gkfx4zeilbssby4brs22nnncnkc3wy4vopw3vo7qe5re6tqm
-ipfs-pinner  | 2023/04/17 22:12:51 car file location: /tmp/3248414975.car
-ipfs-pinner  | 2023/04/17 22:12:52 uploaded file has root cid: bafybeihcj2gkfx4zeilbssby4brs22nnncnkc3wy4vopw3vo7qe5re6tqm
-rudder       | [info] Counter for ipfs_metrics - [pin: 1]
-rudder       | [info] LastValue for ipfs_metrics - [pin_last_exec_time: 0.001248]
-rudder       | [info] Sum for ipfs_metrics - [pin_total_exec_time: 0.001248]
-rudder       | [info] Summary for ipfs_metrics  - {0.001248, 0.001248}
-rudder       | [info] 17069220:bc86fcbda627565085932b83c91fa3a9638fe660917c6f96742676dd9b967835 has been successfully uploaded at ipfs://bafybe>
-rudder       | [info] 17069220:bc86fcbda627565085932b83c91fa3a9638fe660917c6f96742676dd9b967835 proof submitting
-rudder       | [info] Counter for brp_metrics - [proof: 1]
-rudder       | [info] LastValue for brp_metrics - [proof_last_exec_time: 3.1e-4]
-rudder       | [info] Sum for brp_metrics - [proof_total_exec_time: 3.1e-4]
-rudder       | [info] Summary for brp_metrics  - {3.1e-4, 3.1e-4}
-rudder       | [info] 17069220 txid is 0x0ec13417b62262cc0fff47653d678af8aba082acfc14de364486103180677f3c
-rudder       | [info] Counter for brp_metrics - [upload_success: 1]
-rudder       | [info] LastValue for brp_metrics - [upload_success_last_exec_time: 0.001581]
-rudder       | [info] Sum for brp_metrics - [upload_success_total_exec_time: 0.001581]
-rudder       | [info] Summary for brp_metrics  - {0.001581, 0.001581}
-rudder       | [info] Counter for rudder_metrics - [pipeline_success: 1]
-rudder       | [info] LastValue for rudder_metrics - [pipeline_success_last_exec_time: 0.0036019999999999997]
-rudder       | [info] Sum for rudder_metrics - [pipeline_success_total_exec_time: 0.0036019999999999997]
-rudder       | [info] Summary for rudder_metrics  - {0.0036019999999999997, 0.0036019999999999997}
-rudder       | [info] curr_block: 4168409 and latest_block_num:4168408
+Started rudder compose.
+  rudder Pulling
+  ipfs-pinner Pulling
+  evm-server Pulling
+  4f4fb700ef54 Downloading [==================================================>]      32B/32B
+  4f4fb700ef54 Verifying Checksum
+  4f4fb700ef54 Download complete
+  ipfs-pinner Pulled
+  0b5445b067f6 Extracting [=>                                                 ]  393.2kB/11.45MB
+  0b5445b067f6 Extracting [==========>                                        ]  2.359MB/11.45MB
+  1fd45119e007 Downloading [==============>                                    ]  4.317MB/14.94MB
+  evm-server Pulled
+  1fd45119e007 Extracting [>                                                  ]  163.8kB/14.94MB
+  1fd45119e007 Extracting [=>                                                 ]  491.5kB/14.94MB
+  1fd45119e007 Extracting [==============>                                    ]   4.26MB/14.94MB
+  1fd45119e007 Extracting [=========================>                         ]  7.537MB/14.94MB
+  1fd45119e007 Extracting [====================================>              ]  10.81MB/14.94MB
+  1fd45119e007 Extracting [================================================>  ]  14.42MB/14.94MB
+  1fd45119e007 Extracting [==================================================>]  14.94MB/14.94MB
+  1fd45119e007 Pull complete
+  rudder Pulled
+  Container evm-server  Recreate
+  Container ipfs-pinner  Created
+  Container evm-server  Recreated
+  Container rudder  Recreated
+ Attaching to evm-server, ipfs-pinner, rudder
 ```
 
-### <span id="rudder_docker_pull">Pull</span>
+Following this a `rudder` release is compiled and run by docker.
 
-Pull only the latest containerized version of rudder using the following -
-
-Make sure you're logged into gcr by running
-
-```bash
-gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+ ```elixir
+ ipfs-pinner  | generating 2048-bit RSA keypair...done
+ ipfs-pinner  | peer identity: QmeP85RqKmrTwbW6PTQoX3NGwkgLX8DhGa1mkdy67sHZMZ
+ evm-server   | [INFO] [04-19|16:53:31.113] Listening                                port=3002
+ ipfs-pinner  |
+ ipfs-pinner  | Computing default go-libp2p Resource Manager limits based on:
+ ipfs-pinner  |     - 'Swarm.ResourceMgr.MaxMemory': "4.2 GB"
+ ipfs-pinner  |     - 'Swarm.ResourceMgr.MaxFileDescriptors': 524288
+ ipfs-pinner  |
+ ipfs-pinner  | Applying any user-supplied overrides on top.
+ ipfs-pinner  | Run 'ipfs swarm limit all' to see the resulting limits.
+ ipfs-pinner  |
+ ipfs-pinner  | 2023/04/19 16:53:31 failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 2048 kiB, got: 416 kiB). See https://github.com/lucas-clemente/quic-go/wiki/UDP-Receive-Buffer-Size for details.
+ rudder       | moonbase-node: https://moonbeam-alphanet.web3.covalenthq.com/alphanet/direct-rpc
+ rudder       | brp-operator: ecf0b636233c6580f60f50ee1d809336c3a76640dbd77f7cdd054a82c6fc0a31
+ rudder       | evm-server: http://evm-server:3002
+ rudder       | ipfs-node: http://ipfs-pinner:3000
+ ipfs-pinner  | 2023/04/19 16:53:31 Listening...
+ rudder       | ==> nimble_options
+ rudder       | Compiling 3 files (.ex)
+ rudder       | Generated nimble_options app
+ rudder       | ===> Analyzing applications...
+ rudder       | ===> Compiling parse_trans
+ rudder       | ==> logger_file_backend
+ rudder       | Compiling 1 file (.ex)
+ rudder       | Generated rudder app
+ rudder       | * assembling rudder-0.2.2 on MIX_ENV=dev
+ rudder       | * skipping runtime configuration (config/runtime.exs not found)
+ rudder       | * skipping elixir.bat for windows (bin/elixir.bat not found in the Elixir installation)
+ rudder       | * skipping iex.bat for windows (bin/iex.bat not found in the Elixir installation)
+ rudder       |
+ rudder       | Release created at _build/dev/rel/rudder
+ rudder       |
+ rudder       |     # To start your system
+ rudder       |     _build/dev/rel/rudder/bin/rudder start
+ rudder       |
+ rudder       | Once the release is running:
+ rudder       |
+ rudder       |     # To connect to it remotely
+ rudder       |     _build/dev/rel/rudder/bin/rudder remote
+ rudder       |
+ rudder       |     # To stop it gracefully (you may also send SIGINT/SIGTERM)
+ rudder       |     _build/dev/rel/rudder/bin/rudder stop
+ rudder       |
+ rudder       | To list all commands:
+ rudder       |
+ rudder       |     _build/dev/rel/rudder/bin/rudder
+ rudder       |
+ rudder       | https://hexdocs.pm/telemetry/telemetry.html#attach/4
 ```
 
-Pull image
+### <span id="rudder_docker_run">Docker Run</span>
 
-```docker
-docker pull gcr.io/covalent-project/rudder:latest
+Finally rudder starts to process block specimens into block results.
+
+```elixir
+ rudder       | [info] starting event listener
+ rudder       | [info] getting ids with status=discover
+ rudder       | [info] found 1 bsps to process
+ ipfs-pinner  | 2023/04/19 16:57:32 unixfsApi.Get: getting the cid: bafybeifkn67rc4lzoabvaglsifjitkhrnshhpwavutdhzeohzkxih25jpi
+ ipfs-pinner  | 2023/04/19 16:57:32 trying out https://w3s.link/ipfs/bafybeifkn67rc4lzoabvaglsifjitkhrnshhpwavutdhzeohzkxih25jpi
+ rudder       | [info] Counter for ipfs_metrics - [fetch: 1]
+ rudder       | [info] LastValue for ipfs_metrics - [fetch_last_exec_time: 0.0015149999999999999]
+ rudder       | [info] Sum for ipfs_metrics - [fetch_total_exec_time: 0.0015149999999999999]
+ rudder       | [info] Summary for ipfs_metrics  - {0.0015149999999999999, 0.0015149999999999999}
+ rudder       | [debug] reading schema `block-ethereum` from the file /app/priv/schemas/block-ethereum.avsc
+ rudder       | [info] Counter for bsp_metrics - [decode: 1]
+ rudder       | [info] LastValue for bsp_metrics - [decode_last_exec_time: 0.0]
+ rudder       | [info] Sum for bsp_metrics - [decode_total_exec_time: 0.0]
+ rudder       | [info] Summary for bsp_metrics  - {0.0, 0.0}
+ rudder       | [info] submitting 17081820 to evm http server...
+ evm-server   | [INFO] [04-19|16:57:33.824] input file at                            loc=/tmp/23851799
+ evm-server   | [INFO] [04-19|16:57:33.828] output file at:                          loc=/tmp/1143694015
+ evm-server   | [INFO] [04-19|16:57:34.153] Wrote file                               file=/tmp/1143694015
+ rudder       | [info] writing block result into "/tmp/briefly-1681/briefly-576460651588718236-AE8SrEl8GLI9jKhCKPk"
+ rudder       | [info] Counter for bsp_metrics - [execute: 1]
+ rudder       | [info] LastValue for bsp_metrics - [execute_last_exec_time: 3.9e-4]
+ rudder       | [info] Sum for bsp_metrics - [execute_total_exec_time: 3.9e-4]
+ rudder       | [info] Summary for bsp_metrics  - {3.9e-4, 3.9e-4}
+ ipfs-pinner  | 2023/04/19 16:57:34 generated dag has root cid: bafybeifd6gz6wofk3bwb5uai7zdmmr23q3nz3zt7edfujgj4kjg2es7eee
+ ipfs-pinner  | 2023/04/19 16:57:34 car file location: /tmp/1543170755.car
+ ipfs-pinner  | 2023/04/19 16:57:35 uploaded file has root cid: bafybeifd6gz6wofk3bwb5uai7zdmmr23q3nz3zt7edfujgj4kjg2es7eee
+ rudder       | [info] Counter for ipfs_metrics - [pin: 1]
+ rudder       | [info] LastValue for ipfs_metrics - [pin_last_exec_time: 0.001132]
+ rudder       | [info] Sum for ipfs_metrics - [pin_total_exec_time: 0.001132]
+ rudder       | [info] Summary for ipfs_metrics  - {0.001132, 0.001132}
+ rudder       | [info] 17081820:556753def2ff689c6312241a1ca182d58467319b7c2dca250ca50ed6acb31a5d has been successfully uploaded at ipfs://bafybeifd6gz6wofk3bwb5uai7zdmmr23q3nz3zt7edfujgj4kjg2es7eee
+ rudder       | [info] 17081820:556753def2ff689c6312241a1ca182d58467319b7c2dca250ca50ed6acb31a5d proof submitting
+ rudder       | [info] Counter for brp_metrics - [proof: 1]
+ rudder       | [info] LastValue for brp_metrics - [proof_last_exec_time: 3.03e-4]
+ rudder       | [info] Sum for brp_metrics - [proof_total_exec_time: 3.03e-4]
+ rudder       | [info] Summary for brp_metrics  - {3.03e-4, 3.03e-4}
+ rudder       | [info] 17081820 txid is 0x01557912a0f7e083cbf6d34a2af21d99d129af386b95edc16162202862c60f8d
+ rudder       | [info] Counter for brp_metrics - [upload_success: 1]
+ rudder       | [info] LastValue for brp_metrics - [upload_success_last_exec_time: 0.0014579999999999999]
+ rudder       | [info] Sum for brp_metrics - [upload_success_total_exec_time: 0.0014579999999999999]
+ rudder       | [info] Summary for brp_metrics  - {0.0014579999999999999, 0.0014579999999999999}
+ rudder       | [info] Counter for rudder_metrics - [pipeline_success: 1]
+ rudder       | [info] LastValue for rudder_metrics - [pipeline_success_last_exec_time: 0.0035489999999999996]
+ rudder       | [info] Sum for rudder_metrics - [pipeline_success_total_exec_time: 0.0035489999999999996]
+ rudder       | [info] Summary for rudder_metrics  - {0.0035489999999999996, 0.0035489999999999996}
+ rudder       | [info] curr_block: 4180658 and latest_block_num:4180657
 ```
 
-### <span id="rudder_docker_env">Environment</span>
-
-Add the env vars to a .env file as below. Ask your node operator about these if you have questions.
-Check the `.env_example` for the list of required (and optional) environment variables.
-
-## <span id="rudder_install">Build From Source</span>
+## <span id="rudder_source">Build From Source</span>
 
 Installation Time: 35-40 mins depending on your machine and network.
 
@@ -577,7 +654,9 @@ Install git, go, asdf, erlang, elixir, direnv, go-ipfs
 - IPFS as the InterPlanetary File System (IPFS) is a protocol, hypermedia and file sharing peer-to-peer network for storing and sharing data in a distributed file system.
 - Direnv is used for secret management and control. Since all the necessary parameters to the agent that are sensitive cannot be passed into a command line flag. Direnv allows for safe and easy management of secrets like ethereum private keys for the operator accounts on the CQT network and redis instance access passwords etc. As these applications are exposed to the internet on http ports it’s essential to not have the information be logged anywhere. To enable “direnv” on your machine add these to your ~./bash_profile or ~./zshrc depending on which you use as your default shell after installing it using brew.
 
-### Linux x86_64 (Ubuntu 22.04 LTS) Install dependencies
+### <span id="rudder_source_linux">Linux x86_64 (Ubuntu 22.04 LTS) Install dependencies</span>
+
+Install dependencies for rudder.
 
 ```bash
 sudo apt update
@@ -587,42 +666,123 @@ git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.2
 echo ". $HOME/.asdf/asdf.sh" >> ~/.bashrc
 echo ". $HOME/.asdf/completions/asdf.bash" >> ~/.bashrc
 source ~/.bashrc
-
 ```
 
+Install required asdf version manager plugins for erlang and elixir.
 
-
-
-In order to run it in prod you need to add the operator private key inside `.envrc`:
-
-```env
-export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="put_your_key_here"
+```bash
+asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
+asdf plugin add elixir https://github.com/asdf-vm/asdf-elixir.git
+asdf plugin add golang https://github.com/kennyp/asdf-golang.git
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/rudder>.
+Add to your shell for asdf (check for different shells - https://asdf-vm.com/guide/getting-started.html).
 
+```bash
+`echo -e "\n. \"$(brew --prefix asdf)/etc/bash_completion.d/asdf.bash\"" >> ~/.bash_profile`
+```
 
-### <span id="rudder_run">Run</span>
+Install Erlang and Elixir using the plugins.
 
-Start application
+```bash
+asdf install erlang 25.3
+asdf install elixir 1.14.3-otp-24
+asdf install golang 1.18.1
+```
 
-  ```elixir
-    iex -S mix
+Set the versions.
+
+```bash
+asdf global erlang 25.3
+asdf global elixir 1.14.3-otp-24
+asdf global golang 1.18.1
+```
+
+This will create a .tool-versions file in your home directory. ASDF will use these versions whenever a project doesn't specify versions of its own.
+
+Enable direnv for shell/zsh.
+
+```bash
+# bash users - add the following line to your ~/.bashrc
+eval "$(direnv hook bash)"
+
+# zsh users - add the following line to your ~/.zshrc
+eval "$(direnv hook zsh)"
+```
+
+After adding this line do not forget to source your bash / powershell config with the following, by running it in your terminal.
+
+```bash
+source ~/.zshrc
+source ~/.bashrc
+```
+
+Install go-ipfs (kubo) v0.13.0 and initialize go-ipfs.
+
+```bash
+wget https://dist.ipfs.tech/go-ipfs/v0.13.0/go-ipfs_v0.13.0_linux-amd64.tar.gz
+tar -xzvf go-ipfs_v0.13.0_darwin-arm64.tar.gz
+cd go-ipfs
+bash install.sh
+ipfs init
+```
+
+### <span id="rudder_source_env">Env Vars</span>
+
+Refer to above existing environment var setup for [rudder docker compose](#environment)
+Note: When passing the private key into the env vars as above please remove the 0x prefix so the private key env var has exactly 64 characters.
+
+### <span id="rudder_source_run">Source Run</span>
+
+Run the EVM-Server by cloning the https://github.com/covalenthq/erigon repo and build the evm-server binary.
+
+```bash
+make evm
+./build/bin/evm t8n --server.mode
+```
+
+Run IPFS-Pinner by cloning the https://github.com/covalenthq/ipfs-pinner and build the ipfs-pinner server binary.
+
+```bash
+git clone https://github.com/covalenthq/ipfs-pinner.git --depth 1
+cd ipfs-pinner
+make server-dbg
+```
+
+Set the environment variable required by ipfs-pinner by getting WEB3_JWT from web3.storage and adding it to an `.envrc` file.
+
+```bash
+export WEB3_JWT="WEB3_JWT_TOKEN"
+```
+
+Start the ipfs-pinner server.
+
+```bash
+./build/bin/server
+
+generating 2048-bit RSA keypair...done
+peer identity: Qmd9dT1hRTvaTZn9DAiaCatk3azz86Lwny8FhBd2jV8Kw5
+2023/02/02 21:52:21 failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 2048 kiB, got: 416 kiB). See https://github.com/lucas-clemente/quic-go/wiki/UDP-Receive-Buffer-Size for details...
+2023/02/02 21:52:22 Listening...
+```
+
+Start the application.
+
+```elixir
+iex -S mix
 
     Erlang/OTP 25 [erts-13.0] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit:ns] [dtrace]
     Generated rudder app
     Interactive Elixir (1.13.4) - press Ctrl+C to exit (type h() ENTER for help)
 
- iex(3)> Rudder.ProofChain.BlockSpecimenEventListener.start()
-  ```
+iex(1)> Rudder.ProofChain.BlockSpecimenEventListener.start()
+```
 
 This should start listening to on-chain events for reward finalization of submitted block specimens. Once one such event is found, the block specimen will be fetched and processed in the pipeline.
 
 You can tail the logs to check the state:
 
-```bash
+```elixir
 tail -f logs/log.log
 17:52:11.222 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=100 [info] listening for events at 3707084
 17:52:11.481 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=114 [info] found 0 bsps to process
@@ -635,14 +795,48 @@ tail -f logs/log.log
 17:52:12.913 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=125 [info] curr_block: 3707087 and latest_block_num:3769854
 ```
 
-
-
+Check proof-chain logs for block result proof transactions made by your block result producer on production [moonbeam moonscan](
+https://moonscan.io/address/0x4f2E285227D43D9eB52799D0A28299540452446E)
 
 ## <span id="rudder_troubleshooting">Troubleshooting</span>
 
-- permission errors with ~/.ipfs folder
-In order to run IPFS-Pinner in your home directory you need to run:
-```
-sudo chmod -R 770 .ipfs
+To avoid permission errors with ~/.ipfs folder execute the following in your home directory
+
+```bash
+sudo chmod -R 770 ~/.ipfs
 ```
 
+To avoid netscan issue execute the following against ipfs binary application
+
+```bash
+sudo chmod -R 700 ~/.ipfs
+ipfs config profile apply server
+```
+
+To avoid issues with ipfs-pinner v0.1.9, will require a small repo migration for the local `~/.ipfs` directory https://github.com/ipfs/fs-repo-migrations/blob/master/run.md
+
+```bash
+wget https://dist.ipfs.tech/fs-repo-migrations/v2.0.2/fs-repo-migrations_v2.0.2_linux-amd64.tar.gz
+tar -xvf fs-repo-migrations_v2.0.2_linux-amd64.tar.gz
+cd fs-repo-migrations
+chmod +x ./fs-repo-migrations
+./fs-repo-migrations
+```
+
+## <span id="rudder_scripts">Scripts</span>
+
+In order to run `rudder` docker compose as a service unit. The example service unit file in [docs](./docs/rudder-compose.service) will suffice. After adding the env vars in their respective fields in the service unit file, enable the service and start it.
+
+```bash
+sudo systemctl enable rudder-compose.service
+sudo systemctl start rudder-compose.service
+```
+
+Note 2: In order to run docker compose as a non-root user for the above shown service unit you need to create a docker group (if it doesn't exist) and add the user “blockchain” to the docker group.
+
+```bash
+sudo groupadd docker
+sudo usermod -aG docker blockchain
+sudo su - blockchain
+docker run hello-world
+```
