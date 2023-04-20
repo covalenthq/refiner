@@ -26,6 +26,7 @@ defmodule Rudder.MixProject do
     [
       # system exec
       {:poison, "~> 5.0"},
+      {:distillery, "~> 2.0"},
 
       # frameworks
       {:broadway, "~> 1.0", override: true},
@@ -79,7 +80,6 @@ defmodule Rudder.MixProject do
       {:briefly, "~> 0.4.1"}
 
       # Unused
-
       # {:erlexec, "~> 2.0"},
       # {:etfs, path: "/Users/sudeep/repos/experiment/etfs"}
       # {:telemetry_metrics_prometheus, "~> 1.1"}
