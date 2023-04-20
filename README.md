@@ -51,7 +51,7 @@
     - [Pull](#pull)
     - [Run](#docker-run)
   - [Build & Run From Source](#build-from-source)
-    - [Linux x86](#linux-x86_64-ubuntu-2204-lts-install-dependencies)
+    - [Linux x86_64](#linux-x86_64-ubuntu-2204-lts-install-dependencies)
     - [Environment](#env-vars)
     - [Run](#source-run)
   - [Troubleshooting](#troubleshooting)
@@ -445,7 +445,8 @@ Software Requirements (docker setup)
 
 Install Docker
 
-Follow instructions for your platform/architecture: https://docs.docker.com/engine/install. Onboarding instruction will be based on Ubuntu 22.04 LTS x86_64 / amd64: https://docs.docker.com/engine/install/ubuntu/.
+Follow instructions for your platform/architecture: https://docs.docker.com/engine/install. 
+README instruction will be based on Ubuntu 22.04 LTS x86_64/amd64: https://docs.docker.com/engine/install/ubuntu/.
 
 Install direnv
 
@@ -766,21 +767,46 @@ peer identity: Qmd9dT1hRTvaTZn9DAiaCatk3azz86Lwny8FhBd2jV8Kw5
 2023/02/02 21:52:22 Listening...
 ```
 
-Start the application.
+Once the env vars are passed into the `.envrc.local` file and loaded in the shell with `direnv allow .`, build the `rudder` application for the `prod` env i.e moonbeam mainnet or `dev` env for moonbase alpha.
 
-```elixir
-iex -S mix
-
-    Erlang/OTP 25 [erts-13.0] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit:ns] [dtrace]
-    Generated rudder app
-    Interactive Elixir (1.13.4) - press Ctrl+C to exit (type h() ENTER for help)
-
-iex(1)> Rudder.ProofChain.BlockSpecimenEventListener.start()
+```bash
+MIX_ENV=prod mix release
 ```
 
-This should start listening to on-chain events for reward finalization of submitted block specimens. Once one such event is found, the block specimen will be fetched and processed in the pipeline.
+For moonbase alpha.
 
-You can tail the logs to check the state:
+```bash
+MIX_ENV=dev mix release
+```
+
+Start the application by calling the generated binary for moonbeam.
+
+```elixir
+./_build/prod/rel/rudder/bin/rudder eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()'
+```
+
+For moonbase
+
+```elixir
+./_build/dev/rel/rudder/bin/rudder eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()'
+```
+This should start listening to on-chain events for reward finalization of submitted block specimens. Once one such event is found, the block specimen will be fetched and processed in the pipeline and you should start seeing logs from `rudder` in the shell directly.
+
+```elixir
+[info] starting event listener
+[info] The function passed as a handler with ID {Phoenix.Logger, [:phoenix, :channel_handled_in]} is a local function.
+[info] getting ids with status=discover
+[info] Counter for journal_metrics - [fetch_items: 1]
+[info] LastValue for journal_metrics - [fetch_items_last_exec_time: 4.2e-5]
+[info] Sum for journal_metrics - [fetch_items_total_exec_time: 4.2e-5]
+[info] Summary for journal_metrics  - {4.2e-5, 4.2e-5}
+[info] getting the last unprocessed block height
+[info] Counter for journal_metrics - [fetch_last: 1]
+[info] LastValue for journal_metrics - [fetch_last_last_exec_time: 3.9e-5]
+[info] Sum for journal_metrics - [fetch_last_total_exec_time: 3.9e-5]
+```
+
+You can also tail the logs to check the state:
 
 ```elixir
 tail -f logs/log.log
