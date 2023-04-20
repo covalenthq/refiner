@@ -3,7 +3,7 @@ version: '3'
 # set .env such that all services in docker are talking to each other only
 services:
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
@@ -20,7 +20,7 @@ services:
       - "3000:3000"
 
   evm-server:
-    image: "us-docker.pkg.dev/covalent-project/network/evm-server:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
     container_name: evm-server
     restart: on-failure
     expose:
@@ -31,7 +31,7 @@ services:
       - "3002:3002"
 
   rudder:
-    image: "us-docker.pkg.dev/covalent-project/network/rudder:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/rudder:stable"
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
