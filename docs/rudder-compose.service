@@ -1,0 +1,21 @@
+[Unit]
+Description=rudder docker compose
+PartOf=docker.service
+After=docker.service
+
+[Service]
+User=blockchain
+Group=blockchain
+Environment=HOME=/home/blockchain/tmp
+Environment="BLOCK_RESULT_OPERATOR_PRIVATE_KEY=ba3193ff8df497b5369f0d5c92fe443efd7936ab910084b8d4e1d510f05da1b2"
+Environment="NODE_ETHEREUM_MAINNET=https://moonbeam.web3.com/alphanet/rpc"
+Environment="IPFS_PINNER_URL=http://ipfs-pinner:3000"
+Environment="EVM_SERVER_URL=http://evm-server:3002"
+Environment="WEB3_JWT=iI91eXzhJUCyIJIINC6bsJciVkOIIpniGRc5.UiNjXLQJJYdYE2NfXdN0ziG5zWFeIW3EpjygiLOol1caizyZIz5WkMTiMMzT1MAZNM3ITmCQGcLNbeJOMQb43JOiwQ3TQMJz2zTMWECOnsIQhWdNoi6ZipYtc2XOMixAW3JQR4cwlTNkYgJDmhjiJQFYkQ3ciUbWOR.2Vx73BD3BWoD5FG6alOp7foK8krI7Akysr5lVbhP4Bu"
+Type=simple
+ExecStart=docker compose -f "/home/blockchain/tmp/docker-compose-mbase.yml" up --remove-orphans
+Restart=always
+TimeoutStopSec=infinity
+
+[Install]
+WantedBy=multi-user.target
