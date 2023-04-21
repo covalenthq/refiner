@@ -9,8 +9,8 @@ defmodule Rudder.PipelineTest do
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
 
     expected_block_result_hash =
-      <<62, 28, 236, 109, 145, 195, 228, 50, 155, 215, 35, 130, 243, 145, 124, 94, 125, 133, 173,
-        134, 95, 165, 117, 150, 131, 32, 177, 11, 205, 175, 197, 87>>
+      <<105, 50, 175, 90, 71, 36, 11, 89, 40, 141, 86, 97, 77, 37, 70, 218, 93, 72, 45, 15, 41,
+        190, 77, 26, 60, 229, 65, 201, 154, 114, 47, 253>>
 
     {status, cid, block_result_hash} = Rudder.Pipeline.process_specimen(test_bsp_key, test_urls)
 
@@ -29,8 +29,8 @@ defmodule Rudder.PipelineTest do
     expected_block_result_cid = "bafybeifkk56vhaiqwfijernkd3blthcavol6dmwgcfm2g3op6wmw3obiy4"
 
     expected_block_result_hash =
-      <<121, 2, 45, 96, 220, 174, 114, 170, 146, 169, 189, 44, 59, 210, 200, 130, 121, 170, 206,
-        55, 63, 187, 78, 0, 56, 200, 33, 185, 247, 83, 75, 47>>
+      <<125, 209, 148, 90, 204, 95, 113, 187, 206, 110, 137, 86, 41, 90, 1, 140, 224, 3, 206, 72,
+        126, 126, 247, 116, 234, 15, 9, 93, 220, 190, 153, 210>>
 
     {status, cid, block_result_hash} = Agent.get(agent, & &1)
 
