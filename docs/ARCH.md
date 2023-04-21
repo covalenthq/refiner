@@ -10,22 +10,22 @@
   - [Pipeline Journal](#pipeline-journal)
   - [Pipeline Telemetry](#pipeline-telemetry)
 
-![Rudder Supervisor](./docs/supervisor.png)
+![Rudder Supervisor](./supervisor.png)
 
 The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation.
 
-There are currently 7 main components to the refiner.
+There are currently 8 main components to the refiner.
 
-  1. [Block Specimen Event Listener](#block-specimen-event-listener)
-  2. [Block Specimen Decoder/Encoder](#block-specimen-encoder-decoder)
-  3. [Block Specimen Processor](#block-specimen-processor)
-  4. [Proof Chain Interactor](#proof-chain-interactor)
-  5. [Block Result Uploader](#block-result-uploader)
-  6. [IPFS Interactor](#ipfs-interactor)
-  7. [Pipeline Journal](#pipeline-journal)
-  8. [Pipeline Telemetry](#pipeline-telemetry)
+  1. Block Specimen Event Listener
+  2. Block Specimen Decoder/Encoder
+  3. Block Specimen Processor
+  4. Proof Chain Interactor
+  5. Block Result Uploader
+  6. IPFS Interactor
+  7. Pipeline Journal
+  8. Pipeline Telemetry
 
-![Rudder Pipeline](./docs/pipeline.jpg)
+![Rudder Pipeline](./pipeline.jpg)
 
 ## <span id="rudder_arch_listen">Block Specimen Event Listener</span>
 
