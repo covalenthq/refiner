@@ -126,12 +126,10 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     {:ok, encoded_segment_avro} = Rudder.Avro.BlockSpecimen.encode_file(segment_path)
 
     {:ok, decoded_segment_avro} =
-      Avrora.decode(encoded_segment_avro, schema_name: "block-ethereum")
+      Avrora.decode_plain(encoded_segment_avro, schema_name: "block-ethereum")
 
-    [head | tail] = decoded_segment_avro
-
-    {:ok, decoded_segment_start_block} = Map.fetch(head, "startBlock")
-    {:ok, replica_event} = Map.fetch(head, "replicaEvent")
+    {:ok, decoded_segment_start_block} = Map.fetch(decoded_segment_avro, "startBlock")
+    {:ok, replica_event} = Map.fetch(decoded_segment_avro, "replicaEvent")
 
     [head | _tail] = replica_event
     decoded_segment_hash = Map.get(head, "hash")
@@ -161,10 +159,9 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
       |> elem(1)
 
     {:ok, decoded_start_segment} =
-      Avrora.decode(encoded_start_segment_bytes, schema_name: "block-ethereum")
+      Avrora.decode_plain(encoded_start_segment_bytes, schema_name: "block-ethereum")
 
-    [head | _tail] = decoded_start_segment
-    decoded_start_segment_number = Map.get(head, "startBlock")
+    decoded_start_segment_number = Map.get(decoded_start_segment, "startBlock")
 
     encoded_last_segment_bytes =
       last_segment_stream
@@ -174,10 +171,9 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
       |> elem(1)
 
     {:ok, decoded_last_segment} =
-      Avrora.decode(encoded_last_segment_bytes, schema_name: "block-ethereum")
+      Avrora.decode_plain(encoded_last_segment_bytes, schema_name: "block-ethereum")
 
-    [head | _tail] = decoded_last_segment
-    decoded_last_segment_number = Map.get(head, "startBlock")
+    decoded_last_segment_number = Map.get(decoded_last_segment, "startBlock")
 
     assert decoded_start_segment_number == expected_start_block
     assert decoded_last_segment_number == expected_last_block
