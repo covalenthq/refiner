@@ -56,7 +56,7 @@ defmodule Rudder.MixProject do
       # networking
       {:certifi, "~> 2.9", override: true},
       {:cors_plug, "~> 3.0"},
-      {:finch, "~> 0.15.0"},
+      {:finch, "~> 0.16.0"},
       {:downstream, "~> 1.0"},
       {:websockex, "~> 0.4.3"},
       {:multipart, "~> 0.3.1"},
