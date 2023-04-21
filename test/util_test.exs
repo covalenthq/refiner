@@ -65,7 +65,7 @@ defmodule Rudder.UtilTest do
     block_result_metadata = %Rudder.BlockResultMetadata{
       chain_id: 1,
       block_height: 17_090_940,
-      block_specimen_hash: 0x54245042c6cc9a9d80888db816525d097984c3c2ba4f11d64e9cdf6aaefe5e8d,
+      block_specimen_hash: 0x54245042C6CC9A9D80888DB816525D097984C3C2BA4F11D64E9CDF6AAEFE5E8D,
       file_path: "./test-data/codec-0.35/block-result/17090940.result.json"
     }
 
