@@ -35,7 +35,7 @@ defmodule Rudder.UtilTest do
   end
 
   test "returns 'map' for a map" do
-    result_path = "./test-data/codec-0.32/block-result/16791900.result.json"
+    result_path = "./test-data/codec-0.35/block-result/17090940.result.json"
 
     {:ok, result_binary} = File.read(result_path)
     {:ok, result_decoded_map} = Poison.decode(result_binary)
