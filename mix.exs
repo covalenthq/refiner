@@ -4,7 +4,7 @@ defmodule Rudder.MixProject do
   def project do
     [
       app: :rudder,
-      version: "0.2.2",
+      version: "0.2.6",
       elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -26,6 +26,7 @@ defmodule Rudder.MixProject do
     [
       # system exec
       {:poison, "~> 5.0"},
+      {:distillery, "~> 2.0"},
 
       # frameworks
       {:broadway, "~> 1.0", override: true},
@@ -55,7 +56,7 @@ defmodule Rudder.MixProject do
       # networking
       {:certifi, "~> 2.9", override: true},
       {:cors_plug, "~> 3.0"},
-      {:finch, "~> 0.15.0"},
+      {:finch, "~> 0.16.0"},
       {:downstream, "~> 1.0"},
       {:websockex, "~> 0.4.3"},
       {:multipart, "~> 0.3.1"},
@@ -79,7 +80,6 @@ defmodule Rudder.MixProject do
       {:briefly, "~> 0.4.1"}
 
       # Unused
-
       # {:erlexec, "~> 2.0"},
       # {:etfs, path: "/Users/sudeep/repos/experiment/etfs"}
       # {:telemetry_metrics_prometheus, "~> 1.1"}

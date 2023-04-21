@@ -94,8 +94,8 @@ services:
         done;
         echo Proof-chain contracts deployed!;
         echo Uploading test files to local .ipfs...;
-        curl -F "filedata=@/app/test-data/encoded/1-15892728-replica-0x84a541916d6d3c974b4da961e2f00a082c03a071132f5db27787124597c094c1" http://ipfs-pinner:3000/upload;
-        curl -F "filedata=@/app/test-data/encoded/1-15892755-replica-0x0e7bfa908e3fc04003e00afde7eb31772a012e51e0e094e4add1734da92297f7" http://ipfs-pinner:3000/upload;
+        curl -F "filedata=@/app/test-data/codec-0.35/encoded/1-17090940-replica-0x7b8e1d463a0fbc6fce05b31c5c30e605aa13efaca14a1f3ba991d33ea979b12b" http://ipfs-pinner:3000/upload;
+        curl -F "filedata=@/app/test-data/codec-0.35/encoded/1-17090960-replica-0xc95d44182ee006e79f1352ef32664210f383baa016988d5ab2fd950b52bf22ff" http://ipfs-pinner:3000/upload;
         echo Test bsp files uploaded!;
         cd /app;
         MIX_ENV=docker mix test --trace --slowest 10;

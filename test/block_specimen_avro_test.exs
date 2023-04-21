@@ -23,10 +23,10 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     block_specimen_avro: _block_specimen_avro
   } do
     specimen_path =
-      "./test-data/codec-0.32/encoded/1-16791900-replica-0xcd89a7529f3bd7896ef11681bbf5f58b498d4311ec18479d7b1794101f48a767"
+      "./test-data/codec-0.35/encoded/1-17090940-replica-0x7b8e1d463a0fbc6fce05b31c5c30e605aa13efaca14a1f3ba991d33ea979b12b"
 
-    expected_start_block = 16_791_900
-    expected_hash = "0x097b92af3601d850a834d03189a6f7a1a5a0f3cf0791197e3314efcd5c596e85"
+    expected_start_block = 17_090_940
+    expected_hash = "0x54245042c6cc9a9d80888db816525d097984c3c2ba4f11d64e9cdf6aaefe5e8d"
 
     {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimen.decode_file(specimen_path)
 
@@ -43,13 +43,13 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
   test "Rudder.Avro.BlockSpecimen.decode_dir/1 streams directory binary files", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/codec-0.32/encoded/*"
+    dir_path = "./test-data/codec-0.35/encoded/*"
 
-    expected_start_block = 16_791_900
-    expected_last_block = 16_792_500
+    expected_start_block = 17_090_940
+    expected_last_block = 17_090_960
 
-    expected_start_hash = "0x097b92af3601d850a834d03189a6f7a1a5a0f3cf0791197e3314efcd5c596e85"
-    expected_last_hash = "0x46f97723e7f8736626346a7878e43e07ed0e00bcf06a7dce59ba292ea74b6397"
+    expected_start_hash = "0x54245042c6cc9a9d80888db816525d097984c3c2ba4f11d64e9cdf6aaefe5e8d"
+    expected_last_hash = "0x6a1a24cfbee3d64c7f6c7fd478ec0e1112176d1340f18d0ba933352c6ce2026a"
 
     decode_specimen_stream = Rudder.Avro.BlockSpecimen.decode_dir(dir_path)
 
@@ -102,7 +102,7 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
   test "Rudder.Avro.BlockSpecimen.decode_dir/1 decodes all binary files", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/codec-0.32/encoded/*"
+    dir_path = "./test-data/codec-0.35/encoded/*"
 
     expected_specimens = 3
 
@@ -118,20 +118,18 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
   test "Rudder.Avro.BlockSpecimen.encode_file/1 encodes segment json file", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    segment_path = "./test-data/codec-0.32/segment/16791900.segment.json"
+    segment_path = "./test-data/codec-0.35/segment/17090940.segment.json"
 
-    expected_start_block = 16_791_900
-    expected_hash = "0x097b92af3601d850a834d03189a6f7a1a5a0f3cf0791197e3314efcd5c596e85"
+    expected_start_block = 17_090_940
+    expected_hash = "0x54245042c6cc9a9d80888db816525d097984c3c2ba4f11d64e9cdf6aaefe5e8d"
 
     {:ok, encoded_segment_avro} = Rudder.Avro.BlockSpecimen.encode_file(segment_path)
 
     {:ok, decoded_segment_avro} =
-      Avrora.decode(encoded_segment_avro, schema_name: "block-ethereum")
+      Avrora.decode_plain(encoded_segment_avro, schema_name: "block-ethereum")
 
-    [head | tail] = decoded_segment_avro
-
-    {:ok, decoded_segment_start_block} = Map.fetch(head, "startBlock")
-    {:ok, replica_event} = Map.fetch(head, "replicaEvent")
+    {:ok, decoded_segment_start_block} = Map.fetch(decoded_segment_avro, "startBlock")
+    {:ok, replica_event} = Map.fetch(decoded_segment_avro, "replicaEvent")
 
     [head | _tail] = replica_event
     decoded_segment_hash = Map.get(head, "hash")
@@ -143,10 +141,10 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
   test "Rudder.Avro.BlockSpecimen.encode_dir/1 streams encoded .json files", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/codec-0.32/segment/*"
+    dir_path = "./test-data/codec-0.35/segment/*"
 
-    expected_start_block = 16_791_900
-    expected_last_block = 16_792_500
+    expected_start_block = 17_090_940
+    expected_last_block = 17_090_960
 
     encoded_segment_stream = Rudder.Avro.BlockSpecimen.encode_dir(dir_path)
 
@@ -161,10 +159,9 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
       |> elem(1)
 
     {:ok, decoded_start_segment} =
-      Avrora.decode(encoded_start_segment_bytes, schema_name: "block-ethereum")
+      Avrora.decode_plain(encoded_start_segment_bytes, schema_name: "block-ethereum")
 
-    [head | _tail] = decoded_start_segment
-    decoded_start_segment_number = Map.get(head, "startBlock")
+    decoded_start_segment_number = Map.get(decoded_start_segment, "startBlock")
 
     encoded_last_segment_bytes =
       last_segment_stream
@@ -174,10 +171,9 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
       |> elem(1)
 
     {:ok, decoded_last_segment} =
-      Avrora.decode(encoded_last_segment_bytes, schema_name: "block-ethereum")
+      Avrora.decode_plain(encoded_last_segment_bytes, schema_name: "block-ethereum")
 
-    [head | _tail] = decoded_last_segment
-    decoded_last_segment_number = Map.get(head, "startBlock")
+    decoded_last_segment_number = Map.get(decoded_last_segment, "startBlock")
 
     assert decoded_start_segment_number == expected_start_block
     assert decoded_last_segment_number == expected_last_block
