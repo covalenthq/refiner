@@ -33,3 +33,13 @@ docker pull us-docker.pkg.dev/covalent-project/network/rudder
 ### <span id="rudder_docker_env">Environment</span>
 
 Add the env vars to a .env file as below. Ask your node operator about these if you have questions. Check the `.env_example` for the list of required (and optional) environment variables.
+
+**Note**: When passing the private key into the env vars as above please remove the `0x` prefix so the private key env var has exactly 64 characters.
+
+```bash
+export BLOCK_RESULT_OPERATOR_PRIVATE_KEY=block-result-operator-private-key-without-0x-prefix
+export NODE_ETHEREUM_MAINNET="https://moonbeam-alphanet.web3.covalenthq.com/alphanet/direct-rpc"
+export IPFS_PINNER_URL="http://ipfs-pinner:3000"
+export EVM_SERVER_URL="http://evm-server:3002"
+export WEB3_JWT="****"
+```
