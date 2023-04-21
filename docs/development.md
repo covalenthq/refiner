@@ -27,7 +27,7 @@ gcloud auth print-access-token | docker login -u oauth2accesstoken --password-st
 Pull image
 
 ```docker
-docker pull gcr.io/covalent-project/rudder:latest
+docker pull us-docker.pkg.dev/covalent-project/network/rudder
 ```
 
 ### <span id="rudder_docker_env">Environment</span>

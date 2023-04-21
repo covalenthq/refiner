@@ -45,9 +45,9 @@ Contributing to this repo can mean many things such as participating in discussi
        if you are eager and do not get a prompt response, feel free to dive on in!
     4. Follow standard Github best practices:
         1. Fork the repo
-        2. Branch from the HEAD of `main`(For core developers working within the `rudder` repo, to ensure a clear ownership of branches, branches must be named with the convention `{moniker}/{issue#}-branch-name`).
+        2. Branch from the HEAD of `develop`(For core developers working within the `rudder` repo, to ensure a clear ownership of branches, branches must be named with the convention `{moniker}/{issue#}-branch-name`).
         3. Make commits
-        4. Submit a PR to `main`
+        4. Submit a PR to `develop`
     5. Be sure to submit the PR in `Draft` mode. Submit your PR early, even if it's incomplete as this indicates to the community you're working on something and allows them to provide comments early in the development process.
     6. When the code is complete it can be marked `Ready for Review`.
     7. Be sure to include a relevant change log entry in the `Unreleased` section of `CHANGELOG.md` (see file for log
