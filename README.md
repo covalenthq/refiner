@@ -59,7 +59,7 @@
 
 ## <span id="rudder_intro">Introduction</span>
 
-The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation. Among many of the Refiners outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with a few extra field captures like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and few others likes all `senders`. This full specification and its requirement is described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
+The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation. Among many of the Refiners outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with a few extra field captures like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and few others like all `senders`. This full specification and its requirement is described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
 
 Generally, the Refiner has the capability to perform arbitrary transformations over any binary block specimen file, concurrently with other transformations. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit.
 
@@ -114,7 +114,7 @@ Open Source specialized transformation process and framework for block specimens
 
 - Public reference to understand more about the functions of the various components can be found in the [Covalent Network Whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.1.pdf).
 
-- Pulic reference to understand more about the block specimen producer and its role in the Covalent Network can be found in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
+- Public reference to understand more about the block specimen producer and its role in the Covalent Network can be found in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
 
 ## <span id="rudder _requirements">Requirements</span>
 
@@ -200,7 +200,7 @@ http://ipfs-pinner:3000
 
 Run all services including `rudder` with [docker compose](https://docs.docker.com/compose/) with the following.
 
-**Note**: the `env` file is not necessary if env vars are alerady loaded.
+**Note**: the `env` file is not necessary if env vars are already loaded.
 
 For moonbase.
 
@@ -623,7 +623,7 @@ The happy path for `rudder` (the refiner) application in the Covalent Network is
 
 There are currently 7 main components to the refiner.
 
-  1. [Block Specimen Event Listner](#block-specimen-event-listener)
+  1. [Block Specimen Event Listener](#block-specimen-event-listener)
   2. [Block Specimen Decoder/Encoder](#block-specimen-encoder-decoder)
   3. [Block Specimen Processor](#block-specimen-processor)
   4. [Proof Chain Interactor](#proof-chain-interactor)
@@ -730,7 +730,7 @@ iex(2)> [replica_fp] |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_file
 
 ```
 
-The block processor takes the block specimen, runs it through the stateless evm tool (server) and gives the block result. Another way by which we can achieve the transformation is by calling `push_bsps_to_process` from the event listner.
+The block processor takes the block specimen, runs it through the stateless evm tool (server) and gives the block result. Another way by which we can achieve the transformation is by calling `push_bsps_to_process` from the event listener.
 
 ```elixir
 iex(1)> Rudder.ProofChain.BlockSpecimenEventListener.push_bsps_to_process(["1_16582405_7f85dc42062468a6bbe420ae4fe4455b9c2423b798a6031f8ea7826997046907_402705672e34a250dcc798bb9ae3a14593e7cdc49750d57ef6018100503f3024"])
