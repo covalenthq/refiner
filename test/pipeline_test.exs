@@ -2,10 +2,10 @@ defmodule Rudder.PipelineTest do
   use ExUnit.Case, async: true
 
   test "returns the cid and hash of the processed block hash", %{} do
-    # encoded specimen file: test-data/encoded/1-16791900-replica-0xcd89a7529f3bd7896ef11681bbf5f58b498d4311ec18479d7b1794101f48a767 (codec-0.32)
-    test_urls = ["ipfs://bafybeidgtghegdqbrvvd7se33rfu36usbkwxpuuxd2izb4m2nnqsli5ig4"]
-    expected_block_result_cid = "bafybeig7evprbyrlrah3lrv5curxny7d3k3lg2r5qgjewn3ztnfhxjcnve"
-    test_block_specimen_hash = "5c25c077a028006855cfb07c998ee95ca95aedd8d9ddea2acf8b199701a8b046"
+    # encoded specimen file: test-data/codec-0.35/encoded/1-17090940-replica-0x7b8e1d463a0fbc6fce05b31c5c30e605aa13efaca14a1f3ba991d33ea979b12b (codec-0.35)
+    test_urls = ["ipfs://bafybeig46j3nmrbpmrgkdwhi4h3ajmudnehhrh6uwzbrdpk72hjjtj6uou"]
+    expected_block_result_cid = "bafybeieexakgvuk5mg7zxyat7skwc27siabcfgksofp6ovhzu7j5inkq5y"
+    test_block_specimen_hash = "54245042c6cc9a9d80888db816525d097984c3c2ba4f11d64e9cdf6aaefe5e8d"
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
 
     expected_block_result_hash =
@@ -20,13 +20,13 @@ defmodule Rudder.PipelineTest do
   end
 
   test "pipeline spawner starts pipeline processes", %{} do
-    # encoded specimen file: test-data/encoded/1-16792500-replica-0x76d3caac45688900ed03d068188d29cb22d9acc44a3a824dc9c8de6d12c663bc (codec-0.32)
-    test_urls = ["ipfs://bafybeibj4sd4emo6jqi2ugww7l5p2p4mswhn2vgi7y3uk2ba7zdtmq273a"]
-    test_block_specimen_hash = "cd218d31ed5b606dae5076d01b649d849746a84735cf0f8481ad34553ee2b4b4"
+    # encoded specimen file: test-data/codec-0.35/encoded/1-17090960-replica-0xc95d44182ee006e79f1352ef32664210f383baa016988d5ab2fd950b52bf22ff (codec-0.35)
+    test_urls = ["ipfs://bafybeihfjhxfr3r2ti7phs7gzwbx5oimzf6ainhccrk2hlzoozcmcsu36q"]
+    test_block_specimen_hash = "6a1a24cfbee3d64c7f6c7fd478ec0e1112176d1340f18d0ba933352c6ce2026a"
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
     {:ok, agent} = Rudder.Pipeline.Spawner.push_hash(test_bsp_key, test_urls)
 
-    expected_block_result_cid = "bafybeiftqlq4l5pgnm7wklmk7knluc4nmubylwvv5c54a5m3nbapo6piky"
+    expected_block_result_cid = "bafybeifkk56vhaiqwfijernkd3blthcavol6dmwgcfm2g3op6wmw3obiy4"
 
     expected_block_result_hash =
       <<121, 2, 45, 96, 220, 174, 114, 170, 146, 169, 189, 44, 59, 210, 200, 130, 121, 170, 206,
