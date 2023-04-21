@@ -58,8 +58,6 @@ Generally, the Refiner has the capability to perform arbitrary transformations o
 
 Among many of the Refiners outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with the artifacts of block and tx execution like transaction `receipts`. The source of the block result, the block specimen meanwhile captures a few extra fields like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and `senders` etc. This full specification and its requirement is described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
 
-
-
 ### <span id="rudder_raison">Raison d'être</span>
 
 ![Rudder Arch](./docs/arch.png)
@@ -78,7 +76,7 @@ At a very high level, the Refiner locates a source to apply a transformational r
 
 ## <span id="rudder_arch">Architecture</span>
 
-![Rudder Supervisor](./docs/supervisor.png)
+![Rudder Pipeline](./docs/pipeline.png)
 
 The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [full architecture document](./docs/ARCH.md).
 
