@@ -59,9 +59,10 @@
 
 ## <span id="rudder_intro">Introduction</span>
 
-The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation. Among many of the Refiners outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with a few extra field captures like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and few others like all `senders`. This full specification and its requirement is described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
+The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation. Among many of the Refiners outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with the artifacts of block and tx execution like transaction `receipts`. The source of the block result, the block specimen meanwhile captures a few extra fields like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and `senders` etc. This full specification and its requirement is described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
 
-Generally, the Refiner has the capability to perform arbitrary transformations over any binary block specimen file, concurrently with other transformations. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit.
+Generally, the Refiner has the capability to perform arbitrary transformations over any binary block specimen file, concurrently with other transformations. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit. Such concurrent execution of ethereum blocks (via block specimens), makes it possible to trace, enrich or analyze blockchain data at an unprecedented rate with no sequential bottlenecks (provided each block specimen is its own independent entity and available at a decentralized content address!).
+
 
 ### <span id="rudder_raison">Raison d'être</span>
 
