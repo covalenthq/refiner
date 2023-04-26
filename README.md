@@ -60,7 +60,7 @@ Among many of the Refiners outputs feasible, the Block Result is one. The block 
 
 ### <span id="rudder_raison">Raison d'être</span>
 
-![Rudder Arch](./docs/arch.png)
+![Rudder Arch](./docs/arch-light.jpg)
 
 As it stands, the Block Specimen captures a state snapshot. That is, all of the state read and transaction information. However, it doesn't capture the side effects of executing the block, the information you would get from a trace, transaction re-execution artifacts like `receipts`, what contracts were interacted with during a transaction etc.
 
