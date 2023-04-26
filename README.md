@@ -49,10 +49,9 @@
   - [Bugs Reporting & Contributions](#bugs-reporting-contributions)
 - [Scripts](#scripts)
 
-
 ## <span id="rudder_intro">Introduction</span>
 
-The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation. 
+The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation.
 
 Generally, the Refiner has the capability to perform arbitrary transformations over any binary block specimen file, concurrently with other transformations. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit. Such concurrent execution of ethereum blocks (via block specimens), makes it possible to trace, enrich or analyze blockchain data at an unprecedented rate with no sequential bottlenecks (provided each block specimen is its own independent entity and available at a decentralized content address!).
 
