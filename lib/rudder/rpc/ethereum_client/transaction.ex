@@ -15,57 +15,6 @@ defmodule Rudder.RPC.EthereumClient.Transaction do
     from: nil
   ]
 
-  def parse("0x" <> tx_rlp_hex) do
-    parse(Base.decode16!(tx_rlp_hex, case: :mixed))
-  end
-
-  def parse(tx_rlp_raw) when is_binary(tx_rlp_raw) do
-    [nonce, gas_price, gas_limit, to, value, data, v, r, s] = ExRLP.decode(tx_rlp_raw)
-
-    v_num = :binary.decode_unsigned(v)
-
-    %__MODULE__{
-      nonce: :binary.decode_unsigned(nonce),
-      gas_price: :binary.decode_unsigned(gas_price),
-      gas_limit: :binary.decode_unsigned(gas_limit),
-      to: Rudder.PublicKeyHash.parse_raw!(to),
-      value: :binary.decode_unsigned(value),
-      data: data,
-      v: v_num,
-      r: r,
-      s: s,
-      chain_id: compute_chain_id(v_num)
-    }
-  end
-
-  def parse([nonce, gas_price, gas_limit, to, value, data]) do
-    %__MODULE__{
-      nonce: normalize_qty(nonce),
-      gas_price: normalize_qty(gas_price),
-      gas_limit: normalize_qty(gas_limit),
-      to: normalize_address(to),
-      value: normalize_qty(value),
-      data: normalize_bin(data)
-    }
-  end
-
-  def parse([nonce, gas_price, gas_limit, to, value, data, v, r, s]) do
-    v_norm = normalize_qty(v)
-
-    %__MODULE__{
-      nonce: normalize_qty(nonce),
-      gas_price: normalize_qty(gas_price),
-      gas_limit: normalize_qty(gas_limit),
-      to: normalize_address(to),
-      value: normalize_qty(value),
-      data: normalize_bin(data),
-      v: v_norm,
-      r: normalize_qty(r),
-      s: normalize_qty(s),
-      chain_id: compute_chain_id(v_norm)
-    }
-  end
-
   def to_rlpable(%__MODULE__{
         nonce: nonce,
         gas_price: gas_price,

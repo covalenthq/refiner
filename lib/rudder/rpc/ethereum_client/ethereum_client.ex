@@ -5,6 +5,7 @@ defmodule Rudder.RPC.EthereumClient do
       use Confex, used_with_opts
       alias Rudder.RPC.EthereumClient.Codec
       alias Rudder.RPC.EthereumClient.Transaction
+      alias Rudder.RPC.EthereumClient.TransactionEIP1559
 
       @default_client_module Rudder.RPC.JSONRPC.HTTPClient
       @default_client_opts "http://localhost:8545"
@@ -158,6 +159,14 @@ defmodule Rudder.RPC.EthereumClient do
         )
       end
 
+      def eth_maxPriorityFeePerGas(opts \\ []) do
+        call(
+          :eth_maxPriorityFeePerGas,
+          opts,
+          nil
+        )
+      end
+
       def eth_getTransactionByHash(hash, opts \\ []),
         do:
           call(
@@ -229,7 +238,13 @@ defmodule Rudder.RPC.EthereumClient do
           case call_tx do
             %Transaction{} = tx ->
               call(
-                # :eth_sendTransaction,
+                :eth_sendRawTransaction,
+                [Codec.encode_transaction(tx)],
+                & &1
+              )
+
+            %TransactionEIP1559{} = tx ->
+              call(
                 :eth_sendRawTransaction,
                 [Codec.encode_transaction(tx)],
                 & &1
@@ -335,6 +350,7 @@ defmodule Rudder.RPC.EthereumClient do
 
       def eth_getBlockByHash!(hash, opts \\ []), do: unwrap!(eth_getBlockByHash(hash, opts))
       def eth_getLogs!(opts \\ []), do: unwrap!(eth_getLogs(opts))
+      def eth_maxPriorityFeePerGas!(opts \\ []), do: unwrap!(eth_maxPriorityFeePerGas(opts))
       def eth_getTransactionByHash!(hash), do: unwrap!(eth_getTransactionByHash(hash))
       def eth_gasPrice!, do: unwrap!(eth_gasPrice())
 

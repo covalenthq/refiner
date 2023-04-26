@@ -1,5 +1,6 @@
 defmodule Rudder.RPC.EthereumClient.Codec do
   alias Rudder.RPC.EthereumClient.Transaction
+  alias Rudder.RPC.EthereumClient.TransactionEIP1559
 
   def encode_sha256(nil), do: nil
   def encode_sha256(%Rudder.SHA256{bytes: bytes}), do: encode_sha256(bytes)
@@ -26,32 +27,6 @@ defmodule Rudder.RPC.EthereumClient.Codec do
         bin
       end
     end
-  end
-
-  @spec encode_slot_key_path(any) :: <<_::16, _::_*8>>
-  def encode_slot_key_path(parts) do
-    slug =
-      Enum.map(parts, fn
-        %Rudder.SHA256{bytes: bytes} -> bytes
-        %Rudder.PublicKeyHash{bytes: bytes} -> bytes
-        bin when is_binary(bin) -> bin
-        n when is_integer(n) -> :binary.encode_unsigned(n)
-      end)
-      |> Enum.map_join("", &String.pad_leading(&1, 32, <<0>>))
-
-    # |> Enum.map(&String.pad_leading(&1, 32, <<0>>))
-    # |> Enum.join("")
-
-    mem_hash =
-      case byte_size(slug) do
-        0 -> <<0::256>>
-        32 -> slug
-        n when n > 32 -> ExKeccak.hash_256(slug)
-      end
-
-    mem_hash
-    |> String.trim_leading(<<0>>)
-    |> encode_bin()
   end
 
   @spec decode_address(nil | bitstring) ::
@@ -87,6 +62,15 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   def encode_transaction(%Transaction{} = tx) do
     Transaction.to_rlp(tx)
     |> encode_bin()
+  end
+
+  def encode_transaction(%TransactionEIP1559{} = tx) do
+    hex_paylod =
+      TransactionEIP1559.to_rlp(tx)
+      |> Base.encode16(case: :lower)
+
+    tx_type = "0x02"
+    tx_type <> hex_paylod
   end
 
   @spec encode_call_transaction(keyword) :: any
@@ -248,12 +232,9 @@ defmodule Rudder.RPC.EthereumClient.Codec do
         txs -> {nil, txs}
       end
 
-    mining_cost =
-      if discovered_on_network.ingest_mining_costs(),
-        do: decode_qty(block["difficulty"])
-
     block = [
       discovered_on_network: discovered_on_network,
+      base_fee_per_gas: decode_qty(block["baseFeePerGas"]),
       hash: decode_sha256(block["hash"]),
       signed_at: decode_timestamp(block["timestamp"]),
       namespace: 0,
@@ -262,7 +243,6 @@ defmodule Rudder.RPC.EthereumClient.Codec do
       uncles: decode_uncles(block["uncles"]),
       extra_data: decode_bin(block["extraData"]),
       miner: decode_address(block["miner"]),
-      mining_cost: mining_cost,
       gas_limit: decode_qty(block["gasLimit"]),
       gas_used: decode_qty(block["gasUsed"]),
       transaction_ids: transaction_ids,
