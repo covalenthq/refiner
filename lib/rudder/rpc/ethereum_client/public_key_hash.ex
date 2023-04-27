@@ -57,7 +57,12 @@ defmodule Rudder.RPC.PublicKeyHash do
 
   @spec parse_raw!(any) ::
           nil
-          | %Rudder.RPC.PublicKeyHash{bytes: bitstring, chain_id: nil, format: :ethpub, namespace: 0}
+          | %Rudder.RPC.PublicKeyHash{
+              bytes: bitstring,
+              chain_id: nil,
+              format: :ethpub,
+              namespace: 0
+            }
   def parse_raw!(v) do
     {:ok, pkh} = parse_raw(v)
     pkh

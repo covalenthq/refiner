@@ -31,7 +31,12 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
   @spec decode_address(nil | bitstring) ::
           nil
-          | %Rudder.RPC.PublicKeyHash{bytes: bitstring, chain_id: nil, format: :ethpub, namespace: 0}
+          | %Rudder.RPC.PublicKeyHash{
+              bytes: bitstring,
+              chain_id: nil,
+              format: :ethpub,
+              namespace: 0
+            }
   def decode_address(nil), do: nil
 
   def decode_address("") do
