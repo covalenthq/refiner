@@ -22,7 +22,7 @@ defmodule Rudder.ProofChain.Interactor do
 
   defp get_proofchain() do
     proofchain_address = Application.get_env(:rudder, :proofchain_address)
-    Rudder.PublicKeyHash.parse(proofchain_address)
+    Rudder.RPC.PublicKeyHash.parse(proofchain_address)
   end
 
   defp make_call(data) do

@@ -13,7 +13,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   end
 
   def encode_address(
-        %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes},
+        %Rudder.RPC.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes},
         opts \\ []
       ) do
     if Keyword.get(opts, :raw, false) do
@@ -31,15 +31,15 @@ defmodule Rudder.RPC.EthereumClient.Codec do
 
   @spec decode_address(nil | bitstring) ::
           nil
-          | %Rudder.PublicKeyHash{bytes: bitstring, chain_id: nil, format: :ethpub, namespace: 0}
+          | %Rudder.RPC.PublicKeyHash{bytes: bitstring, chain_id: nil, format: :ethpub, namespace: 0}
   def decode_address(nil), do: nil
 
   def decode_address("") do
-    %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: <<0::160>>}
+    %Rudder.RPC.PublicKeyHash{format: :ethpub, namespace: 0, bytes: <<0::160>>}
   end
 
   def decode_address(bytes) when byte_size(bytes) == 20 do
-    %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes}
+    %Rudder.RPC.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes}
   end
 
   def decode_address(<<"0x", _::binary>> = bin) do
@@ -123,7 +123,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   end
 
   defp normalize_hl_call_payload_part(%Rudder.SHA256{bytes: bytes}), do: bytes
-  defp normalize_hl_call_payload_part(%Rudder.PublicKeyHash{bytes: bytes}), do: bytes
+  defp normalize_hl_call_payload_part(%Rudder.RPC.PublicKeyHash{bytes: bytes}), do: bytes
   defp normalize_hl_call_payload_part(other), do: other
 
   @spec encode_call_payload(binary | {binary | ABI.FunctionSelector.t(), any}) ::
@@ -349,7 +349,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   end
 
   def extract_address_from_log_topic(%Rudder.SHA256{bytes: <<0::96, addr::binary-size(20)>>}),
-    do: %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: addr}
+    do: %Rudder.RPC.PublicKeyHash{format: :ethpub, namespace: 0, bytes: addr}
 
   def linearize_log_offsets(logs) do
     Enum.sort_by(logs, fn log ->

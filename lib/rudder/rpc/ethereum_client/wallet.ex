@@ -28,6 +28,6 @@ defmodule Rudder.Wallet do
 
   defp pubkey_to_address(<<4::size(8), key::binary-size(64)>>) do
     <<_::binary-size(12), raw_address::binary-size(20)>> = ExKeccak.hash_256(key)
-    Rudder.PublicKeyHash.parse_raw!(raw_address)
+    Rudder.RPC.PublicKeyHash.parse_raw!(raw_address)
   end
 end

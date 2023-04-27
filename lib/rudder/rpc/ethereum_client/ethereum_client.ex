@@ -50,7 +50,7 @@ defmodule Rudder.RPC.EthereumClient do
       def sealer do
         case Keyword.fetch(config(), :sealer) do
           {:ok, sealer_addr_str} ->
-            Rudder.PublicKeyHash.parse!(sealer_addr_str)
+            Rudder.RPC.PublicKeyHash.parse!(sealer_addr_str)
 
           :error ->
             nil
@@ -327,7 +327,7 @@ defmodule Rudder.RPC.EthereumClient do
 
       def next_nonce(nil), do: 0
 
-      def next_nonce(%Rudder.PublicKeyHash{} = pkh) do
+      def next_nonce(%Rudder.RPC.PublicKeyHash{} = pkh) do
         eth_getTransactionCount!(pkh, :pending)
       end
 

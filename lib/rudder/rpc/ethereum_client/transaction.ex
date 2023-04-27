@@ -95,12 +95,12 @@ defmodule Rudder.RPC.EthereumClient.Transaction do
   defp normalize_bin("0x" <> hex), do: Base.decode16!(hex, case: :mixed)
   defp normalize_bin(bin) when is_binary(bin), do: bin
 
-  def normalize_address(%Wallet{address: %Rudder.PublicKeyHash{} = pkh}), do: pkh
-  def normalize_address(other), do: Rudder.PublicKeyHash.parse_raw!(normalize_bin(other))
+  def normalize_address(%Wallet{address: %Rudder.RPC.PublicKeyHash{} = pkh}), do: pkh
+  def normalize_address(other), do: Rudder.RPC.PublicKeyHash.parse_raw!(normalize_bin(other))
 
   defp term_to_rlpable(nil), do: ""
   defp term_to_rlpable(0), do: ""
-  defp term_to_rlpable(%Rudder.PublicKeyHash{bytes: bin}), do: bin
+  defp term_to_rlpable(%Rudder.RPC.PublicKeyHash{bytes: bin}), do: bin
   defp term_to_rlpable(data) when is_integer(data), do: :binary.encode_unsigned(data)
   defp term_to_rlpable(data) when is_binary(data), do: data
 
