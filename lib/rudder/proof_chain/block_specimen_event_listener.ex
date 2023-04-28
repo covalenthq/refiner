@@ -105,8 +105,8 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
           address: proofchain_address,
-          fromBlock: block_height,
-          toBlock: block_height,
+          fromBlock: "0x" <> Integer.to_string(block_height, 16),
+          toBlock: "0x" <> Integer.to_string(block_height, 16),
           topics: [@bsp_awarded_event_hash]
         }
       ])

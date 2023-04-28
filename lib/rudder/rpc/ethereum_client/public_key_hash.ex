@@ -1,4 +1,4 @@
-defmodule Rudder.PublicKeyHash do
+defmodule Rudder.RPC.PublicKeyHash do
   defstruct format: :p2pkh,
             namespace: 0,
             chain_id: nil,
@@ -12,7 +12,7 @@ defmodule Rudder.PublicKeyHash do
 
   @zero_address EthereumCodec.decode_address("0x0000000000000000000000000000000000000000")
 
-  @spec zero_address :: %Rudder.PublicKeyHash{
+  @spec zero_address :: %Rudder.RPC.PublicKeyHash{
           bytes: <<_::160>>,
           chain_id: nil,
           format: :ethpub,
@@ -43,7 +43,7 @@ defmodule Rudder.PublicKeyHash do
           :error
           | {:ok,
              nil
-             | %Rudder.PublicKeyHash{
+             | %Rudder.RPC.PublicKeyHash{
                  bytes: bitstring,
                  chain_id: nil,
                  format: :ethpub,
@@ -57,13 +57,18 @@ defmodule Rudder.PublicKeyHash do
 
   @spec parse_raw!(any) ::
           nil
-          | %Rudder.PublicKeyHash{bytes: bitstring, chain_id: nil, format: :ethpub, namespace: 0}
+          | %Rudder.RPC.PublicKeyHash{
+              bytes: bitstring,
+              chain_id: nil,
+              format: :ethpub,
+              namespace: 0
+            }
   def parse_raw!(v) do
     {:ok, pkh} = parse_raw(v)
     pkh
   end
 
-  @spec new(any, any, any, any) :: %Rudder.PublicKeyHash{
+  @spec new(any, any, any, any) :: %Rudder.RPC.PublicKeyHash{
           bytes: any,
           chain_id: any,
           format: any,
@@ -106,7 +111,7 @@ defmodule Rudder.PublicKeyHash do
           :error
           | {:ok,
              nil
-             | %Rudder.PublicKeyHash{
+             | %Rudder.RPC.PublicKeyHash{
                  bytes: bitstring,
                  chain_id: nil,
                  format: :ethpub,
@@ -125,26 +130,26 @@ defmodule Rudder.PublicKeyHash do
   def equal?(a, b), do: a == b
 end
 
-defimpl Jason.Encoder, for: Rudder.PublicKeyHash do
-  @spec encode(%Rudder.PublicKeyHash{}, Jason.Encode.opts()) :: [
+defimpl Jason.Encoder, for: Rudder.RPC.PublicKeyHash do
+  @spec encode(%Rudder.RPC.PublicKeyHash{}, Jason.Encode.opts()) :: [
           binary | maybe_improper_list(any, binary | []) | byte,
           ...
         ]
-  def encode(%Rudder.PublicKeyHash{} = pkh, opts) do
-    Rudder.PublicKeyHash.as_string!(pkh)
+  def encode(%Rudder.RPC.PublicKeyHash{} = pkh, opts) do
+    Rudder.RPC.PublicKeyHash.as_string!(pkh)
     |> Jason.Encode.string(opts)
   end
 end
 
-defimpl String.Chars, for: Rudder.PublicKeyHash do
-  @spec to_string(%Rudder.PublicKeyHash{}) :: any
-  def to_string(pkh), do: Rudder.PublicKeyHash.as_string!(pkh)
+defimpl String.Chars, for: Rudder.RPC.PublicKeyHash do
+  @spec to_string(%Rudder.RPC.PublicKeyHash{}) :: any
+  def to_string(pkh), do: Rudder.RPC.PublicKeyHash.as_string!(pkh)
 end
 
-defimpl Inspect, for: Rudder.PublicKeyHash do
+defimpl Inspect, for: Rudder.RPC.PublicKeyHash do
   import Inspect.Algebra
 
-  @spec inspect(%Rudder.PublicKeyHash{}, Inspect.Opts.t()) ::
+  @spec inspect(%Rudder.RPC.PublicKeyHash{}, Inspect.Opts.t()) ::
           :doc_line
           | :doc_nil
           | binary
@@ -153,10 +158,10 @@ defimpl Inspect, for: Rudder.PublicKeyHash do
           | {:doc_break | :doc_color | :doc_cons | :doc_fits | :doc_group | :doc_string, any, any}
           | {:doc_nest, any, :cursor | :reset | non_neg_integer, :always | :break}
   def inspect(
-        %Rudder.PublicKeyHash{format: format, namespace: namespace, chain_id: chain_id} = pkh,
+        %Rudder.RPC.PublicKeyHash{format: format, namespace: namespace, chain_id: chain_id} = pkh,
         opts
       ) do
-    {:ok, str_repr} = Rudder.PublicKeyHash.as_string(pkh, hide_prefix: true)
+    {:ok, str_repr} = Rudder.RPC.PublicKeyHash.as_string(pkh, hide_prefix: true)
 
     str_repr_doc = str_repr_doc(str_repr, opts)
 

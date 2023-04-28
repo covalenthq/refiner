@@ -15,57 +15,6 @@ defmodule Rudder.RPC.EthereumClient.Transaction do
     from: nil
   ]
 
-  def parse("0x" <> tx_rlp_hex) do
-    parse(Base.decode16!(tx_rlp_hex, case: :mixed))
-  end
-
-  def parse(tx_rlp_raw) when is_binary(tx_rlp_raw) do
-    [nonce, gas_price, gas_limit, to, value, data, v, r, s] = ExRLP.decode(tx_rlp_raw)
-
-    v_num = :binary.decode_unsigned(v)
-
-    %__MODULE__{
-      nonce: :binary.decode_unsigned(nonce),
-      gas_price: :binary.decode_unsigned(gas_price),
-      gas_limit: :binary.decode_unsigned(gas_limit),
-      to: Rudder.PublicKeyHash.parse_raw!(to),
-      value: :binary.decode_unsigned(value),
-      data: data,
-      v: v_num,
-      r: r,
-      s: s,
-      chain_id: compute_chain_id(v_num)
-    }
-  end
-
-  def parse([nonce, gas_price, gas_limit, to, value, data]) do
-    %__MODULE__{
-      nonce: normalize_qty(nonce),
-      gas_price: normalize_qty(gas_price),
-      gas_limit: normalize_qty(gas_limit),
-      to: normalize_address(to),
-      value: normalize_qty(value),
-      data: normalize_bin(data)
-    }
-  end
-
-  def parse([nonce, gas_price, gas_limit, to, value, data, v, r, s]) do
-    v_norm = normalize_qty(v)
-
-    %__MODULE__{
-      nonce: normalize_qty(nonce),
-      gas_price: normalize_qty(gas_price),
-      gas_limit: normalize_qty(gas_limit),
-      to: normalize_address(to),
-      value: normalize_qty(value),
-      data: normalize_bin(data),
-      v: v_norm,
-      r: normalize_qty(r),
-      s: normalize_qty(s),
-      chain_id: compute_chain_id(v_norm)
-    }
-  end
-
   def to_rlpable(%__MODULE__{
         nonce: nonce,
         gas_price: gas_price,
@@ -146,12 +95,12 @@ defmodule Rudder.RPC.EthereumClient.Transaction do
   defp normalize_bin("0x" <> hex), do: Base.decode16!(hex, case: :mixed)
   defp normalize_bin(bin) when is_binary(bin), do: bin
 
-  def normalize_address(%Wallet{address: %Rudder.PublicKeyHash{} = pkh}), do: pkh
-  def normalize_address(other), do: Rudder.PublicKeyHash.parse_raw!(normalize_bin(other))
+  def normalize_address(%Wallet{address: %Rudder.RPC.PublicKeyHash{} = pkh}), do: pkh
+  def normalize_address(other), do: Rudder.RPC.PublicKeyHash.parse_raw!(normalize_bin(other))
 
   defp term_to_rlpable(nil), do: ""
   defp term_to_rlpable(0), do: ""
-  defp term_to_rlpable(%Rudder.PublicKeyHash{bytes: bin}), do: bin
+  defp term_to_rlpable(%Rudder.RPC.PublicKeyHash{bytes: bin}), do: bin
   defp term_to_rlpable(data) when is_integer(data), do: :binary.encode_unsigned(data)
   defp term_to_rlpable(data) when is_binary(data), do: data
 
