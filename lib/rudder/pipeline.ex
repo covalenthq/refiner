@@ -45,7 +45,7 @@ defmodule Rudder.Pipeline do
     start_pipeline_ms = System.monotonic_time(:millisecond)
 
     try do
-      with [_chain_id, block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
+      with [_chain_id, _block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
            {:ok, specimen} <- Rudder.IPFSInteractor.discover_block_specimen(urls),
            {:ok, decoded_specimen} <- Rudder.Avro.BlockSpecimen.decode(specimen),
            {:ok, block_specimen} <- extract_block_specimen(decoded_specimen),
