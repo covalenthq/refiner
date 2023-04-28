@@ -140,21 +140,7 @@ defmodule Rudder.ProofChain.Interactor do
       proofchain_chain_id = Application.get_env(:rudder, :proofchain_chain_id)
 
       signed_tx =
-        try do
-          get_eip1559_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id)
-        rescue
-          e ->
-            Logger.info("IEP-1559 tx failed for #{block_height}: #{inspect(e)}")
-
-            get_legacy_signed_tx(
-              sender,
-              nonce,
-              to,
-              estimated_gas_limit,
-              data,
-              proofchain_chain_id
-            )
-        end
+        get_eip1559_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id)
 
       with {:ok, txid} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
         :ok = Events.brp_proof(System.monotonic_time(:millisecond) - start_proof_ms)
