@@ -29,7 +29,6 @@ defmodule Rudder.ProofChain.Interactor do
     {:ok, to} = get_proofchain()
 
     tx = [
-      type: 2,
       from: nil,
       to: to,
       value: 0,
@@ -144,7 +143,9 @@ defmodule Rudder.ProofChain.Interactor do
         try do
           get_eip1559_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id)
         rescue
-          _ ->
+          e ->
+            Logger.info("IEP-1559 tx failed for #{block_height}: #{inspect(e)}")
+
             get_legacy_signed_tx(
               sender,
               nonce,
