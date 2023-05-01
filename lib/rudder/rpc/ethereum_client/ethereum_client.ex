@@ -167,6 +167,18 @@ defmodule Rudder.RPC.EthereumClient do
         )
       end
 
+      def eth_feeHistory(opts \\ []) do
+        call(
+          :eth_feeHistory,
+          [
+            Codec.encode_qty(5),
+            :latest,
+            []
+          ],
+          nil
+        )
+      end
+
       def eth_getTransactionByHash(hash, opts \\ []),
         do:
           call(
