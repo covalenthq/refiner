@@ -94,6 +94,7 @@ defmodule Rudder.ProofChain.Interactor do
 
   defp get_eip1559_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id) do
     case proofchain_chain_id do
+      # case for testing via hardhat node in absence of maxPriorityFeePerGas support
       31_337 ->
         {:ok, fee_history} = Rudder.Network.EthereumMainnet.eth_feeHistory()
         fee_history_list = Map.to_list(fee_history)
