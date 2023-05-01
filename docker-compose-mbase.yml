@@ -35,15 +35,16 @@ services:
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
+      - "evm-server:evm-server"
     # build:
     #   context: .
     #   dockerfile: Dockerfile
     restart: always
     depends_on:
       ipfs-pinner:
-        condition: service_started
+        condition: service_healthy
       evm-server:
-        condition: service_started
+        condition: service_healthy
     entrypoint: >
       /bin/bash -l -c "
         echo "moonbase-node:" $NODE_ETHEREUM_MAINNET;
