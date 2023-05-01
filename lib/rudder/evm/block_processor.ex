@@ -45,7 +45,11 @@ defmodule Rudder.BlockProcessor do
             {:reply, {:error, errormsg}, state}
         end
 
+      {:error, %Mint.TransportError{reason: :econnrefused}} ->
+        raise "connection refused: is evm-server started?"
+
       {:error, errormsg} ->
+        Logger.error("error in blockprocessor: #{inspect(errormsg)}")
         {:reply, {:error, errormsg}, state}
     end
   end
@@ -74,6 +78,6 @@ defmodule Rudder.BlockProcessor do
 
   @impl true
   def terminate(reason, _state) do
-    Logger.info("terminating blockprocessor: #{reason}")
+    Logger.info("terminating blockprocessor: #{inspect(reason)}")
   end
 end
