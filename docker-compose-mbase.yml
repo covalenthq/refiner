@@ -7,7 +7,7 @@ services:
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
-    restart: on-failure
+    restart: always
     expose:
       - "4001:4001"
       - "3000:3000"
@@ -22,7 +22,7 @@ services:
   evm-server:
     image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
     container_name: evm-server
-    restart: on-failure
+    restart: always
     expose:
       - "3002:3002"
     networks:
@@ -38,7 +38,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: Dockerfile
-    restart: on-failure
+    restart: always
     depends_on:
       ipfs-pinner:
         condition: service_started
