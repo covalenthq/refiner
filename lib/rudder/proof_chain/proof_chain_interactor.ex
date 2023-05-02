@@ -62,10 +62,15 @@ defmodule Rudder.ProofChain.Interactor do
     Rudder.Wallet.load(Base.decode16!(operator_private_key, case: :lower))
   end
 
-  defp get_eip1559_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id) do
-    {:ok, max_priority_fee_per_gas_hex} =
-      Rudder.Network.EthereumMainnet.eth_maxPriorityFeePerGas()
-
+  defp send_eip1559_signed_tx(
+         sender,
+         nonce,
+         to,
+         estimated_gas_limit,
+         data,
+         proofchain_chain_id,
+         max_priority_fee_per_gas_hex
+       ) do
     {:ok, block} = Rudder.Network.EthereumMainnet.eth_getBlockByNumber(:latest)
     base_fee = block.base_fee_per_gas
     "0x" <> max_priority_fee_per_gas_hex = max_priority_fee_per_gas_hex
@@ -85,6 +90,42 @@ defmodule Rudder.ProofChain.Interactor do
     }
 
     Rudder.RPC.EthereumClient.TransactionEIP1559.signed_by(tx, sender)
+  end
+
+  defp get_eip1559_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id) do
+    case proofchain_chain_id do
+      # case for testing via hardhat node in absence of maxPriorityFeePerGas support
+      31_337 ->
+        {:ok, fee_history} = Rudder.Network.EthereumMainnet.eth_feeHistory()
+        fee_history_list = Map.to_list(fee_history)
+
+        max_priority_fee_per_gas_hex =
+          List.last(List.last(Tuple.to_list(List.first(fee_history_list))))
+
+        send_eip1559_signed_tx(
+          sender,
+          nonce,
+          to,
+          estimated_gas_limit,
+          data,
+          proofchain_chain_id,
+          max_priority_fee_per_gas_hex
+        )
+
+      _ ->
+        {:ok, max_priority_fee_per_gas_hex} =
+          Rudder.Network.EthereumMainnet.eth_maxPriorityFeePerGas()
+
+        send_eip1559_signed_tx(
+          sender,
+          nonce,
+          to,
+          estimated_gas_limit,
+          data,
+          proofchain_chain_id,
+          max_priority_fee_per_gas_hex
+        )
+    end
   end
 
   defp get_legacy_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id) do
