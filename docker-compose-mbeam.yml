@@ -7,7 +7,9 @@ services:
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
-    restart: on-failure
+    restart: always
+    labels:
+      "autoheal": "true"
     expose:
       - "4001:4001"
       - "3000:3000"
@@ -22,7 +24,9 @@ services:
   evm-server:
     image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
     container_name: evm-server
-    restart: on-failure
+    restart: always
+    labels:
+      "autoheal": "true"
     expose:
       - "3002:3002"
     networks:
@@ -35,15 +39,16 @@ services:
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
+      - "evm-server:evm-server"
     # build:
     #   context: .
     #   dockerfile: Dockerfile
-    restart: on-failure
+    restart: always
     depends_on:
       ipfs-pinner:
-        condition: service_started
+        condition: service_healthy
       evm-server:
-        condition: service_started
+        condition: service_healthy
     entrypoint: >
       /bin/bash -l -c "
         echo "moonbase-node:" $NODE_ETHEREUM_MAINNET;
@@ -60,6 +65,15 @@ services:
       - IPFS_PINNER_URL=${IPFS_PINNER_URL}
     networks:
       - cqt-net
+
+  autoheal:
+    image: willfarrell/autoheal
+    container_name: autoheal
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    environment:
+      - AUTOHEAL_INTERVAL=10
+      - CURL_TIMEOUT=30
 
 networks:
   cqt-net:

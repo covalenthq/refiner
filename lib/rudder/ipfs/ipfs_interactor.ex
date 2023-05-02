@@ -35,18 +35,27 @@ defmodule Rudder.IPFSInteractor do
     content_type = Multipart.content_type(multipart, "multipart/form-data")
     headers = [{"Content-Type", content_type}, {"Content-Length", to_string(content_length)}]
 
-    {:ok, %Finch.Response{body: body, headers: _, status: _}} =
+    resp =
       Finch.build("POST", url, headers, {:stream, body_stream})
       |> Finch.request(Rudder.Finch)
 
-    body_map = body |> Poison.decode!()
+    case resp do
+      {:ok, %Finch.Response{body: body, headers: _, status: _}} ->
+        body_map = body |> Poison.decode!()
 
-    end_pin_ms = System.monotonic_time(:millisecond)
-    Events.ipfs_pin(end_pin_ms - start_pin_ms)
+        end_pin_ms = System.monotonic_time(:millisecond)
+        Events.ipfs_pin(end_pin_ms - start_pin_ms)
 
-    case body_map do
-      %{"error" => error} -> {:reply, {:error, error}, state}
-      %{"cid" => cid} -> {:reply, {:ok, cid}, state}
+        case body_map do
+          %{"error" => error} -> {:reply, {:error, error}, state}
+          %{"cid" => cid} -> {:reply, {:ok, cid}, state}
+        end
+
+      {:error, %Mint.TransportError{reason: :econnrefused}} ->
+        raise "connection refused: is ipfs-pinner started?"
+
+      {:error, err} ->
+        {:reply, {:error, err}, state}
     end
   end
 
@@ -56,22 +65,31 @@ defmodule Rudder.IPFSInteractor do
 
     ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
 
-    {:ok, %Finch.Response{body: body, headers: _, status: _}} =
+    resp =
       Finch.build(:get, "#{ipfs_url}/get?cid=#{cid}")
       |> Finch.request(Rudder.Finch, receive_timeout: 150_000_000, pool_timeout: 150_000_000)
 
-    end_fetch_ms = System.monotonic_time(:millisecond)
-    Events.ipfs_fetch(end_fetch_ms - start_fetch_ms)
+    case resp do
+      {:ok, %Finch.Response{body: body, headers: _, status: _}} ->
+        end_fetch_ms = System.monotonic_time(:millisecond)
+        Events.ipfs_fetch(end_fetch_ms - start_fetch_ms)
 
-    try do
-      body_map = body |> Poison.decode!()
+        try do
+          body_map = body |> Poison.decode!()
 
-      case body_map do
-        %{"error" => error} -> {:reply, {:error, error}, state}
-        _ -> {:reply, {:ok, body}, state}
-      end
-    rescue
-      _ -> {:reply, {:ok, body}, state}
+          case body_map do
+            %{"error" => error} -> {:reply, {:error, error}, state}
+            _ -> {:reply, {:ok, body}, state}
+          end
+        rescue
+          _ -> {:reply, {:ok, body}, state}
+        end
+
+      {:error, %Mint.TransportError{reason: reason}} when reason in [:econnrefused, :nxdomain] ->
+        raise "#{inspect(reason)}: is ipfs-pinner up?"
+
+      {:error, err} ->
+        {:reply, {:error, err}, state}
     end
   end
 

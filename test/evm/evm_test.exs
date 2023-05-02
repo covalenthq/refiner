@@ -31,12 +31,23 @@ defmodule SupervisionTreeTest do
       })
   end
 
-  test "query-ing server at wrong port" do
+  # test "query-ing server at wrong port" do
+  #   block_id = "1234_f_"
+
+  #   specimen = get_sample_specimen!()
+  #   {:ok, bpid} = Rudder.BlockProcessor.start_link(["http://127.0.0.1:3100"])
+  #   {:error, errormsg} = GenServer.call(bpid, {:process, "dfjkejkjfd"}, 60_000)
+  # end
+
+  test "handles block processor server error" do
     block_id = "1234_f_"
 
     specimen = get_sample_specimen!()
-    {:ok, bpid} = Rudder.BlockProcessor.start_link(["http://127.0.0.1:3100"])
-    {:error, errormsg} = GenServer.call(bpid, {:process, "dfjkejkjfd"}, 60_000)
+    {:ok, bpid} = Rudder.BlockProcessor.start_link(["http://evm-server:3002"])
+    {:error, error_msg} = GenServer.call(bpid, {:process, "invalid content"}, 60_000)
+
+    assert error_msg ==
+             "ERROR(10): error unmarshalling replica file: invalid character 'i' looking for beginning of value"
   end
 
   def get_sample_specimen!() do
