@@ -85,8 +85,8 @@ defmodule Rudder.IPFSInteractor do
           _ -> {:reply, {:ok, body}, state}
         end
 
-      {:error, %Mint.TransportError{reason: :econnrefused}} ->
-        raise "connection refused: is ipfs-pinner started?"
+        {:error, %Mint.TransportError{reason: reason}} when reason in [:econnrefused, :nxdomain] ->
+          raise "#{inspect(reason)}: is ipfs-pinner up?"
 
       {:error, err} ->
         {:reply, {:error, err}, state}

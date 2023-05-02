@@ -45,8 +45,8 @@ defmodule Rudder.BlockProcessor do
             {:reply, {:error, errormsg}, state}
         end
 
-      {:error, %Mint.TransportError{reason: :econnrefused}} ->
-        raise "connection refused: is evm-server started?"
+      {:error, %Mint.TransportError{reason: reason}} when reason in [:econnrefused, :nxdomain] ->
+        raise "#{inspect(reason)}: is evm-server up?"
 
       {:error, errormsg} ->
         Logger.error("error in blockprocessor: #{inspect(errormsg)}")
