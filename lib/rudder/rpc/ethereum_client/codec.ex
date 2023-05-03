@@ -1,5 +1,6 @@
 defmodule Rudder.RPC.EthereumClient.Codec do
   alias Rudder.RPC.EthereumClient.Transaction
+  alias Rudder.RPC.EthereumClient.TransactionEIP1559
 
   def encode_sha256(nil), do: nil
   def encode_sha256(%Rudder.SHA256{bytes: bytes}), do: encode_sha256(bytes)
@@ -12,7 +13,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   end
 
   def encode_address(
-        %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes},
+        %Rudder.RPC.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes},
         opts \\ []
       ) do
     if Keyword.get(opts, :raw, false) do
@@ -28,43 +29,22 @@ defmodule Rudder.RPC.EthereumClient.Codec do
     end
   end
 
-  @spec encode_slot_key_path(any) :: <<_::16, _::_*8>>
-  def encode_slot_key_path(parts) do
-    slug =
-      Enum.map(parts, fn
-        %Rudder.SHA256{bytes: bytes} -> bytes
-        %Rudder.PublicKeyHash{bytes: bytes} -> bytes
-        bin when is_binary(bin) -> bin
-        n when is_integer(n) -> :binary.encode_unsigned(n)
-      end)
-      |> Enum.map_join("", &String.pad_leading(&1, 32, <<0>>))
-
-    # |> Enum.map(&String.pad_leading(&1, 32, <<0>>))
-    # |> Enum.join("")
-
-    mem_hash =
-      case byte_size(slug) do
-        0 -> <<0::256>>
-        32 -> slug
-        n when n > 32 -> ExKeccak.hash_256(slug)
-      end
-
-    mem_hash
-    |> String.trim_leading(<<0>>)
-    |> encode_bin()
-  end
-
   @spec decode_address(nil | bitstring) ::
           nil
-          | %Rudder.PublicKeyHash{bytes: bitstring, chain_id: nil, format: :ethpub, namespace: 0}
+          | %Rudder.RPC.PublicKeyHash{
+              bytes: bitstring,
+              chain_id: nil,
+              format: :ethpub,
+              namespace: 0
+            }
   def decode_address(nil), do: nil
 
   def decode_address("") do
-    %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: <<0::160>>}
+    %Rudder.RPC.PublicKeyHash{format: :ethpub, namespace: 0, bytes: <<0::160>>}
   end
 
   def decode_address(bytes) when byte_size(bytes) == 20 do
-    %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes}
+    %Rudder.RPC.PublicKeyHash{format: :ethpub, namespace: 0, bytes: bytes}
   end
 
   def decode_address(<<"0x", _::binary>> = bin) do
@@ -87,6 +67,15 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   def encode_transaction(%Transaction{} = tx) do
     Transaction.to_rlp(tx)
     |> encode_bin()
+  end
+
+  def encode_transaction(%TransactionEIP1559{} = tx) do
+    hex_paylod =
+      TransactionEIP1559.to_rlp(tx)
+      |> Base.encode16(case: :lower)
+
+    tx_type = "0x02"
+    tx_type <> hex_paylod
   end
 
   @spec encode_call_transaction(keyword) :: any
@@ -139,7 +128,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   end
 
   defp normalize_hl_call_payload_part(%Rudder.SHA256{bytes: bytes}), do: bytes
-  defp normalize_hl_call_payload_part(%Rudder.PublicKeyHash{bytes: bytes}), do: bytes
+  defp normalize_hl_call_payload_part(%Rudder.RPC.PublicKeyHash{bytes: bytes}), do: bytes
   defp normalize_hl_call_payload_part(other), do: other
 
   @spec encode_call_payload(binary | {binary | ABI.FunctionSelector.t(), any}) ::
@@ -248,12 +237,9 @@ defmodule Rudder.RPC.EthereumClient.Codec do
         txs -> {nil, txs}
       end
 
-    mining_cost =
-      if discovered_on_network.ingest_mining_costs(),
-        do: decode_qty(block["difficulty"])
-
     block = [
       discovered_on_network: discovered_on_network,
+      base_fee_per_gas: decode_qty(block["baseFeePerGas"]),
       hash: decode_sha256(block["hash"]),
       signed_at: decode_timestamp(block["timestamp"]),
       namespace: 0,
@@ -262,7 +248,6 @@ defmodule Rudder.RPC.EthereumClient.Codec do
       uncles: decode_uncles(block["uncles"]),
       extra_data: decode_bin(block["extraData"]),
       miner: decode_address(block["miner"]),
-      mining_cost: mining_cost,
       gas_limit: decode_qty(block["gasLimit"]),
       gas_used: decode_qty(block["gasUsed"]),
       transaction_ids: transaction_ids,
@@ -369,7 +354,7 @@ defmodule Rudder.RPC.EthereumClient.Codec do
   end
 
   def extract_address_from_log_topic(%Rudder.SHA256{bytes: <<0::96, addr::binary-size(20)>>}),
-    do: %Rudder.PublicKeyHash{format: :ethpub, namespace: 0, bytes: addr}
+    do: %Rudder.RPC.PublicKeyHash{format: :ethpub, namespace: 0, bytes: addr}
 
   def linearize_log_offsets(logs) do
     Enum.sort_by(logs, fn log ->

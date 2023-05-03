@@ -49,10 +49,9 @@
   - [Bugs Reporting & Contributions](#bugs-reporting-contributions)
 - [Scripts](#scripts)
 
-
 ## <span id="rudder_intro">Introduction</span>
 
-The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation. 
+The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation.
 
 Generally, the Refiner has the capability to perform arbitrary transformations over any binary block specimen file, concurrently with other transformations. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit. Such concurrent execution of ethereum blocks (via block specimens), makes it possible to trace, enrich or analyze blockchain data at an unprecedented rate with no sequential bottlenecks (provided each block specimen is its own independent entity and available at a decentralized content address!).
 
@@ -76,7 +75,7 @@ At a very high level, the Refiner locates a source to apply a transformational r
 
 ## <span id="rudder_arch">Architecture</span>
 
-![Rudder Pipeline](./docs/pipeline.png)
+![Rudder Pipeline](./docs/pipeline.jpg)
 
 The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [full architecture document](./docs/ARCH.md).
 

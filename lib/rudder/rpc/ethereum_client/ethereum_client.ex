@@ -5,6 +5,7 @@ defmodule Rudder.RPC.EthereumClient do
       use Confex, used_with_opts
       alias Rudder.RPC.EthereumClient.Codec
       alias Rudder.RPC.EthereumClient.Transaction
+      alias Rudder.RPC.EthereumClient.TransactionEIP1559
 
       @default_client_module Rudder.RPC.JSONRPC.HTTPClient
       @default_client_opts "http://localhost:8545"
@@ -49,7 +50,7 @@ defmodule Rudder.RPC.EthereumClient do
       def sealer do
         case Keyword.fetch(config(), :sealer) do
           {:ok, sealer_addr_str} ->
-            Rudder.PublicKeyHash.parse!(sealer_addr_str)
+            Rudder.RPC.PublicKeyHash.parse!(sealer_addr_str)
 
           :error ->
             nil
@@ -158,6 +159,26 @@ defmodule Rudder.RPC.EthereumClient do
         )
       end
 
+      def eth_maxPriorityFeePerGas(opts \\ []) do
+        call(
+          :eth_maxPriorityFeePerGas,
+          opts,
+          nil
+        )
+      end
+
+      def eth_feeHistory(opts \\ []) do
+        call(
+          :eth_feeHistory,
+          [
+            Codec.encode_qty(5),
+            :latest,
+            []
+          ],
+          nil
+        )
+      end
+
       def eth_getTransactionByHash(hash, opts \\ []),
         do:
           call(
@@ -229,7 +250,13 @@ defmodule Rudder.RPC.EthereumClient do
           case call_tx do
             %Transaction{} = tx ->
               call(
-                # :eth_sendTransaction,
+                :eth_sendRawTransaction,
+                [Codec.encode_transaction(tx)],
+                & &1
+              )
+
+            %TransactionEIP1559{} = tx ->
+              call(
                 :eth_sendRawTransaction,
                 [Codec.encode_transaction(tx)],
                 & &1
@@ -312,7 +339,7 @@ defmodule Rudder.RPC.EthereumClient do
 
       def next_nonce(nil), do: 0
 
-      def next_nonce(%Rudder.PublicKeyHash{} = pkh) do
+      def next_nonce(%Rudder.RPC.PublicKeyHash{} = pkh) do
         eth_getTransactionCount!(pkh, :pending)
       end
 
@@ -335,6 +362,7 @@ defmodule Rudder.RPC.EthereumClient do
 
       def eth_getBlockByHash!(hash, opts \\ []), do: unwrap!(eth_getBlockByHash(hash, opts))
       def eth_getLogs!(opts \\ []), do: unwrap!(eth_getLogs(opts))
+      def eth_maxPriorityFeePerGas!(opts \\ []), do: unwrap!(eth_maxPriorityFeePerGas(opts))
       def eth_getTransactionByHash!(hash), do: unwrap!(eth_getTransactionByHash(hash))
       def eth_gasPrice!, do: unwrap!(eth_gasPrice())
 

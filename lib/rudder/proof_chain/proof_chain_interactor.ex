@@ -20,18 +20,13 @@ defmodule Rudder.ProofChain.Interactor do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  # "Block height is out of bounds for live sync"
-  # "Sender is not BLOCK_RESULT_PRODUCER_ROLE"
-  # "Invalid chain ID"
-  # "Invalid block height"
-  # "Session submissions have closed"
-  # "Max submissions limit exceeded"
-  # "Operator already submitted for the provided block hash"
-  # "Insufficiently staked to submit"
+  defp get_proofchain() do
+    proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    Rudder.RPC.PublicKeyHash.parse(proofchain_address)
+  end
 
   defp make_call(data) do
-    proofchain_address = Application.get_env(:rudder, :proofchain_address)
-    {:ok, to} = Rudder.PublicKeyHash.parse(proofchain_address)
+    {:ok, to} = get_proofchain()
 
     tx = [
       from: nil,
@@ -67,6 +62,88 @@ defmodule Rudder.ProofChain.Interactor do
     Rudder.Wallet.load(Base.decode16!(operator_private_key, case: :lower))
   end
 
+  defp send_eip1559_signed_tx(
+         sender,
+         nonce,
+         to,
+         estimated_gas_limit,
+         data,
+         proofchain_chain_id,
+         max_priority_fee_per_gas_hex
+       ) do
+    {:ok, block} = Rudder.Network.EthereumMainnet.eth_getBlockByNumber(:latest)
+    base_fee = block.base_fee_per_gas
+    "0x" <> max_priority_fee_per_gas_hex = max_priority_fee_per_gas_hex
+    {max_priority_fee_per_gas, _} = Integer.parse(max_priority_fee_per_gas_hex, 16)
+    max_fee_per_gas = 2 * base_fee + max_priority_fee_per_gas
+
+    tx = %Rudder.RPC.EthereumClient.TransactionEIP1559{
+      type: 2,
+      nonce: nonce,
+      to: to,
+      gas_limit: estimated_gas_limit,
+      max_fee_per_gas: max_fee_per_gas,
+      max_priority_fee_per_gas: max_priority_fee_per_gas,
+      value: 0,
+      data: data,
+      chain_id: proofchain_chain_id
+    }
+
+    Rudder.RPC.EthereumClient.TransactionEIP1559.signed_by(tx, sender)
+  end
+
+  defp get_eip1559_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id) do
+    case proofchain_chain_id do
+      # case for testing via hardhat node in absence of maxPriorityFeePerGas support
+      31_337 ->
+        {:ok, fee_history} = Rudder.Network.EthereumMainnet.eth_feeHistory()
+        fee_history_list = Map.to_list(fee_history)
+
+        max_priority_fee_per_gas_hex =
+          List.last(List.last(Tuple.to_list(List.first(fee_history_list))))
+
+        send_eip1559_signed_tx(
+          sender,
+          nonce,
+          to,
+          estimated_gas_limit,
+          data,
+          proofchain_chain_id,
+          max_priority_fee_per_gas_hex
+        )
+
+      _ ->
+        {:ok, max_priority_fee_per_gas_hex} =
+          Rudder.Network.EthereumMainnet.eth_maxPriorityFeePerGas()
+
+        send_eip1559_signed_tx(
+          sender,
+          nonce,
+          to,
+          estimated_gas_limit,
+          data,
+          proofchain_chain_id,
+          max_priority_fee_per_gas_hex
+        )
+    end
+  end
+
+  defp get_legacy_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id) do
+    gas_price = Rudder.Network.EthereumMainnet.eth_gasPrice!()
+
+    tx = %Rudder.RPC.EthereumClient.Transaction{
+      nonce: nonce,
+      gas_price: gas_price,
+      gas_limit: estimated_gas_limit,
+      to: to,
+      value: 0,
+      data: data,
+      chain_id: proofchain_chain_id
+    }
+
+    Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
+  end
+
   @spec submit_block_result_proof(any, any, any, any, any) :: any
   def submit_block_result_proof(
         chain_id,
@@ -87,8 +164,7 @@ defmodule Rudder.ProofChain.Interactor do
       ])
 
     sender = get_operator_wallet()
-    proofchain_address = Application.get_env(:rudder, :proofchain_address)
-    {:ok, to} = Rudder.PublicKeyHash.parse(proofchain_address)
+    {:ok, to} = get_proofchain()
 
     {:ok, recent_gas_limit} = Rudder.Network.EthereumMainnet.gas_limit(:latest)
 
@@ -102,21 +178,10 @@ defmodule Rudder.ProofChain.Interactor do
         )
 
       nonce = Rudder.Network.EthereumMainnet.next_nonce(sender.address)
-      gas_price = Rudder.Network.EthereumMainnet.eth_gasPrice!()
+      proofchain_chain_id = Application.get_env(:rudder, :proofchain_chain_id)
 
-      chain_id = Application.get_env(:rudder, :proofchain_chain_id)
-
-      tx = %Rudder.RPC.EthereumClient.Transaction{
-        nonce: nonce,
-        gas_price: gas_price,
-        gas_limit: estimated_gas_limit,
-        to: to,
-        value: 0,
-        data: data,
-        chain_id: chain_id
-      }
-
-      signed_tx = Rudder.RPC.EthereumClient.Transaction.signed_by(tx, sender)
+      signed_tx =
+        get_eip1559_signed_tx(sender, nonce, to, estimated_gas_limit, data, proofchain_chain_id)
 
       with {:ok, txid} <- Rudder.Network.EthereumMainnet.eth_sendTransaction(signed_tx) do
         :ok = Events.brp_proof(System.monotonic_time(:millisecond) - start_proof_ms)

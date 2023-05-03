@@ -105,8 +105,8 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       Rudder.Network.EthereumMainnet.eth_getLogs([
         %{
           address: proofchain_address,
-          fromBlock: block_height,
-          toBlock: block_height,
+          fromBlock: "0x" <> Integer.to_string(block_height, 16),
+          toBlock: "0x" <> Integer.to_string(block_height, 16),
           topics: [@bsp_awarded_event_hash]
         }
       ])
@@ -123,12 +123,14 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   defp loop(curr_block_height) do
     {:ok, latest_block_number} = Rudder.Network.EthereumMainnet.eth_blockNumber()
-    Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
 
     if curr_block_height > latest_block_number do
+      Logger.info("synced to latest; waiting for #{curr_block_height} to be mined")
       # ~12 seconds is mining time of one moonbeam block
       :timer.sleep(12_000)
       loop(curr_block_height)
+    else
+      Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
     end
   end
 end

@@ -10,7 +10,7 @@
   - [Pipeline Journal](#pipeline-journal)
   - [Pipeline Telemetry](#pipeline-telemetry)
 
-![Rudder Pipeline](./pipeline.png)
+![Rudder Pipeline](./pipeline.jpg)
 
 The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't.
 
