@@ -84,7 +84,6 @@ defmodule Rudder.Telemetry.CustomReporter do
 
   def handle_metric(%LastValue{} = metric, measurements, metadata) do
     duration = extract_measurement(metric, measurements)
-    IO.inspect(duration)
     table_name = String.to_atom(metadata.table)
     event_name = String.to_atom(metadata.operation)
     last_exec_time_key = :"#{event_name}#{:_last_exec_time}"
