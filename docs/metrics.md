@@ -4,15 +4,23 @@
 
 ## Config
 
+Install Prometheus https://prometheus.io/download/ 
+
 * Edit `/opt/homebrew/etc/prometheus.yml` for mac/m1.
 or
 * Edit `/usr/local/etc/prometheus.yml` for linux/x86.
 
 Add the config for prometheus to pick up exported [rudder telemetry metrics](../lib/rudder/metrics/prometheus.yml).
 
+Restart your prometheus server
+
+```bash
+brew services restart prometheus
+```
+
 Monitoring can be setup (for example) by plugging the endpoint serving in prometheus-format into influxdb, which is plugged into grafana.
 
-## Collected metrics
+## Metrics
 
 The following metrics captured from rudder are exported with `/metrics` endpoint via prometheus.
 
@@ -55,15 +63,15 @@ rudder_events_ipfs_pin_duration{operation="pin",table="ipfs_metrics"} 0.00174
 rudder_events_ipfs_pin_count{operation="pin",table="ipfs_metrics"} 4
 ```
 
-## View
+## API
 
-View live exported gauges and counters at the Rudder endpoint -  http://localhost:9568/metrics. Docker containers automatically export to this endpoint as well via port expose and forwarding.
+View exported gauges and counters at the Rudder endpoint -  http://localhost:9568/metrics. Docker containers automatically export to this endpoint as well via port expose and forwarding.
 
 ## Observe
 
 Observe live the gauge time series graphs with plots for example with metrics for `pipeline_success` and `ipfs_fetch` - http://localhost:9090/graph?g0.expr=rudder_events_rudder_pipeline_success_duration&g0.tab=0&g0.stacked=1&g0.show_exemplars=0&g0.range_input=15m&g0.step_input=1&g1.expr=rudder_events_ipfs_fetch_duration&g1.tab=0&g1.stacked=1&g1.show_exemplars=1&g1.range_input=15m&g1.step_input=1
 
-[Observe](./observe.png)
+![Observe](./observe.png)
 
 ## Monitor
 
