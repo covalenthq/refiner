@@ -75,6 +75,8 @@ defmodule Rudder.MixProject do
       # tracing metrics
       {:telemetry, "~> 1.2.1", override: true},
       {:telemetry_metrics, "~> 0.3.0"},
+      {:telemetry_metrics_prometheus, "~> 0.3.1"},
+      {:telemetry_metrics_prometheus_core, "~>0.2.2"},
 
       # utils
       {:briefly, "~> 0.4.1"}
