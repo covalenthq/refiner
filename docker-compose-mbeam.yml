@@ -65,6 +65,8 @@ services:
       - IPFS_PINNER_URL=${IPFS_PINNER_URL}
     networks:
       - cqt-net
+    ports:
+      - "9568:9568"
 
   autoheal:
     image: willfarrell/autoheal
