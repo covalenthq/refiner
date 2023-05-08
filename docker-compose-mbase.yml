@@ -1,3 +1,7 @@
+version: '3'
+# runs the entire rudder pipeline with all supporting services (including rudder) in docker
+# set .env such that all services in docker are talking to each other only
+
 services:
   ipfs-pinner:
     image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
@@ -9,14 +13,14 @@ services:
       "autoheal": "true"
     expose:
       - "4001:4001"
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - WEB3_JWT=${WEB3_JWT}
     networks:
       - cqt-net
     ports:
       - "4001:4001"
-      - "3000:3000"
+      - "3001:3001"
 
   evm-server:
     image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"

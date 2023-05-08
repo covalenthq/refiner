@@ -1,6 +1,6 @@
-# Metrics collection and reporting
+# Metrics Collection and Reporting
 
-`rudder` is enabled with metrics collection via prometheus.
+`rudder` is proactively enabled with metrics collection via prometheus.
 
 ## Config
 
@@ -18,7 +18,7 @@ Restart your prometheus server
 brew services restart prometheus
 ```
 
-Monitoring can be setup (for example) by plugging the endpoint serving in prometheus-format into influxdb, which is plugged into grafana.
+Monitoring can be setup (for example) by plugging the endpoint serving in prometheus-format into a grafana plugin, which can be viewed in grafana - sliced and diced further as per need per metric.
 
 ## Metrics
 
@@ -65,14 +65,46 @@ rudder_events_ipfs_pin_count{operation="pin",table="ipfs_metrics"} 4
 
 ## API
 
-View exported gauges and counters at the Rudder endpoint -  http://localhost:9568/metrics. Docker containers automatically export to this endpoint as well via port expose and forwarding.
+View exported gauges and counters using prometheus at the endpoint ->  http://localhost:9568/metrics.
 
-## Observe
+Create graphs using prometheus at the endpoint -> http://localhost:9090/graph.
 
-Observe live the gauge time series graphs with plots for example with metrics for `pipeline_success` and `ipfs_fetch` - http://localhost:9090/graph?g0.expr=rudder_events_rudder_pipeline_success_duration&g0.tab=0&g0.stacked=1&g0.show_exemplars=0&g0.range_input=15m&g0.step_input=1&g1.expr=rudder_events_ipfs_fetch_duration&g1.tab=0&g1.stacked=1&g1.show_exemplars=1&g1.range_input=15m&g1.step_input=1
+View timeseries and add alerting with grafana at the endpoint -> http://localhost:3000/explore.
 
-![Observe](./observe.png)
+Docker containers automatically export to this endpoint as well via exposed ports and port forwarding.
+## Graph
 
-## Monitor
+Observe live the gauge time series graphs with plots for example with metrics for `pipeline_success` and `ipfs_fetch` -> http://localhost:9090/graph?g0.expr=rudder_events_rudder_pipeline_success_duration&g0.tab=0&g0.stacked=1&g0.show_exemplars=0&g0.range_input=15m&g0.step_input=1&g1.expr=rudder_events_ipfs_fetch_duration&g1.tab=0&g1.stacked=1&g1.show_exemplars=1&g1.range_input=15m&g1.step_input=1
 
-Watch this space .. #ComingSoon
+![Observe](./prometheus.png)
+
+## Monitor & Alert
+
+For monitoring and alerting we advice using [Grafana (in conjunction with the aggregated prometheus metrics)](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/).
+
+Install and start Grafana
+
+```bash
+brew install grafana
+brew services start grafana
+```
+
+Ensure Grafana (default port 3000) and Prometheus (default port 9090) have started.
+
+```bash
+$ brew services list
+Name          Status  User   File
+grafana       started user ~/Library/LaunchAgents/homebrew.mxcl.grafana.plist
+prometheus    started user ~/Library/LaunchAgents/homebrew.mxcl.prometheus.plist
+```
+
+Login to your Grafana dashboard -> http://localhost:3000/.
+
+Make sure prometheus is added as a data source -> http://localhost:3000/datasources with the default values for prometheus. Click on [Explore](http://localhost:3000/explore?left=%7B%22datasource%22:%22lVZwdz8Vz%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22lVZwdz8Vz%22%7D%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D&orgId=1).
+
+Select the metrics and time-series data to view from the dropdown with "Select Metric".
+Below is an example of three selections `rudder_events_brp_upload_success_duration`, `rudder_events_rudder_pipeline_success_duration`, `rudder_events_ipfs_fetch_duration`.
+
+This can directly be viewed [here](http://localhost:3000/explore?left=%7B%22datasource%22:%22lVZwdz8Vz%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22lVZwdz8Vz%22%7D,%22editorMode%22:%22builder%22,%22expr%22:%22rudder_events_brp_upload_success_duration%22,%22legendFormat%22:%22__auto%22,%22range%22:true,%22instant%22:true%7D,%7B%22refId%22:%22B%22,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22lVZwdz8Vz%22%7D,%22editorMode%22:%22builder%22,%22expr%22:%22rudder_events_rudder_pipeline_success_duration%22,%22legendFormat%22:%22__auto%22,%22range%22:true,%22instant%22:true%7D,%7B%22refId%22:%22C%22,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22lVZwdz8Vz%22%7D,%22editorMode%22:%22builder%22,%22expr%22:%22rudder_events_ipfs_fetch_duration%22,%22legendFormat%22:%22__auto%22,%22range%22:true,%22instant%22:true%7D%5D,%22range%22:%7B%22from%22:%22now-15m%22,%22to%22:%22now%22%7D%7D&orgId=1). You can also add operations on the exported data with aggregations like `sum` and range functions like `delta` etc as seen below.
+
+![grafana](./grafana.png)
