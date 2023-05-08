@@ -23,6 +23,7 @@ defmodule Rudder.Application do
        [Application.get_env(:rudder, :evm_server_url), name: Rudder.BlockProcessor]},
       {Rudder.Pipeline.Spawner, name: Rudder.Pipeline.Spawner},
       {Rudder.Telemetry, name: Rudder.Telemetry}
+      # {Rudder.Telemetry.Dashboards, name: Rudder.Telemetry.Dashboards}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

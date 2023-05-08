@@ -1,6 +1,6 @@
 # Metrics collection and reporting
 
-`rudder` is enabled with metrics collection via prometheus.
+`Rudder` is enabled with metrics collection via prometheus.
 
 ## Config
 

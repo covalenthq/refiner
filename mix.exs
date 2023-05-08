@@ -31,7 +31,7 @@ defmodule Rudder.MixProject do
       # frameworks
       {:broadway, "~> 1.0", override: true},
       {:off_broadway_redis, "~> 0.4.3"},
-      {:phoenix, "~> 1.4.9"},
+      {:phoenix, "~> 1.4.9", override: true},
       {:phoenix_pubsub, "~> 1.1"},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
@@ -74,9 +74,10 @@ defmodule Rudder.MixProject do
 
       # tracing metrics
       {:telemetry, "~> 1.2.1", override: true},
-      {:telemetry_metrics, "~> 0.3.0"},
+      {:telemetry_metrics, "~> 0.3.0", override: true},
       {:telemetry_metrics_prometheus, "~> 0.3.1"},
-      {:telemetry_metrics_prometheus_core, "~>0.2.2"},
+      {:telemetry_metrics_prometheus_core, "~>0.2.2", override: true},
+      {:prom_ex, "~> 1.8.0"},
 
       # utils
       {:briefly, "~> 0.4.1"}
