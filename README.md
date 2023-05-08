@@ -41,6 +41,7 @@
   - [Environment](#environment)
   - [Pull](#pull)
   - [Run](#docker-run)
+  - [Monitor](#monitor)
 - [Build & Run From Source](#build-from-source)
   - [Linux x86_64](#linux-x86_64-ubuntu-2204-lts-install-dependencies)
   - [Environment](#env-vars)
@@ -358,6 +359,11 @@ Once the binary is compiled. Rudder can start to process block specimens into bl
  rudder       | [info] Summary for rudder_metrics  - {0.0035489999999999996, 0.0035489999999999996}
  rudder       | [info] curr_block: 4180658 and latest_block_num:4180657
 ```
+### <span id="rudder_monitor">Monitor</span>
+
+`rudder`already captures the most relevant performance metrics and execution times for various processes in the pipeline and exports all of it using Prometheus.
+
+See the full document on how to setup Prometheus and Grafana for [rudder metrics collection, monitoring, reporting and alerting](./docs/metrics.md)
 
 ## <span id="rudder_source">Build From Source</span>
 
