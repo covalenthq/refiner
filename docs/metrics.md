@@ -4,7 +4,7 @@
 
 ## Config
 
-Install Prometheus https://prometheus.io/download/ 
+Install Prometheus <https://prometheus.io/download/>
 
 * Edit `/opt/homebrew/etc/prometheus.yml` for mac/m1.
 or
@@ -65,16 +65,17 @@ rudder_events_ipfs_pin_count{operation="pin",table="ipfs_metrics"} 4
 
 ## API
 
-View exported gauges and counters using prometheus at the endpoint ->  http://localhost:9568/metrics.
+View exported gauges and counters using prometheus at the endpoint ->  <http://localhost:9568/metrics>.
 
-Create graphs using prometheus at the endpoint -> http://localhost:9090/graph.
+Create graphs using prometheus at the endpoint -> <http://localhost:9090/graph>.
 
-View timeseries and add alerting with grafana at the endpoint -> http://localhost:3000/explore.
+View timeseries and add alerting with grafana at the endpoint -> <http://localhost:3000/explore>.
 
 Docker containers automatically export to this endpoint as well via exposed ports and port forwarding.
+
 ## Graph
 
-Observe live the gauge time series graphs with plots for example with metrics for `pipeline_success` and `ipfs_fetch` -> http://localhost:9090/graph?g0.expr=rudder_events_rudder_pipeline_success_duration&g0.tab=0&g0.stacked=1&g0.show_exemplars=0&g0.range_input=15m&g0.step_input=1&g1.expr=rudder_events_ipfs_fetch_duration&g1.tab=0&g1.stacked=1&g1.show_exemplars=1&g1.range_input=15m&g1.step_input=1
+Observe live the gauge time series graphs with plots for example with metrics for `pipeline_success` and `ipfs_fetch` -> <http://localhost:9090/graph?g0.expr=rudder_events_rudder_pipeline_success_duration&g0.tab=0&g0.stacked=1&g0.show_exemplars=0&g0.range_input=15m&g0.step_input=1&g1.expr=rudder_events_ipfs_fetch_duration&g1.tab=0&g1.stacked=1&g1.show_exemplars=1&g1.range_input=15m&g1.step_input=1>
 
 ![Observe](./prometheus.png)
 
