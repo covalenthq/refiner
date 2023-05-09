@@ -41,10 +41,12 @@
   - [Environment](#environment)
   - [Pull](#pull)
   - [Run](#docker-run)
+  - [Monitor](#monitor)
 - [Build & Run From Source](#build-from-source)
   - [Linux x86_64](#linux-x86_64-ubuntu-2204-lts-install-dependencies)
   - [Environment](#env-vars)
   - [Run](#source-run)
+  - [Monitor](#monitor)
 - [Troubleshooting](#troubleshooting)
   - [Bugs Reporting & Contributions](#bugs-reporting-contributions)
 - [Scripts](#scripts)
@@ -170,7 +172,7 @@ Create `envrc.local` file and add the following env vars.
 ```bash
 export BLOCK_RESULT_OPERATOR_PRIVATE_KEY=block-result-operator-private-key-without-0x-prefix
 export NODE_ETHEREUM_MAINNET="https://moonbeam-alphanet.web3.covalenthq.com/alphanet/direct-rpc"
-export IPFS_PINNER_URL="http://ipfs-pinner:3000"
+export IPFS_PINNER_URL="http://ipfs-pinner:3001"
 export EVM_SERVER_URL="http://evm-server:3002"
 export WEB3_JWT="****"
 ```
@@ -193,7 +195,7 @@ This shows that the shell is loaded correctly. You can check if they're what you
 
 ```bash
 echo $IPFS_PINNER_URL
-http://ipfs-pinner:3000
+http://ipfs-pinner:3001
 ```
 
 ### <span id="rudder_docker_pull">Pull</span>
@@ -271,7 +273,7 @@ Hence there is a single binary per "Environment". To understand more about this 
  rudder       | moonbase-node: https://moonbeam-alphanet.web3.covalenthq.com/alphanet/direct-rpc
  rudder       | brp-operator: ecf0b636233c6580f60f50ee1d809336c3a76640dbd77f7cdd054a82c6fc0a31
  rudder       | evm-server: http://evm-server:3002
- rudder       | ipfs-node: http://ipfs-pinner:3000
+ rudder       | ipfs-node: http://ipfs-pinner:3001
  ipfs-pinner  | 2023/04/19 16:53:31 Listening...
  rudder       | ==> nimble_options
  rudder       | Compiling 3 files (.ex)
@@ -358,6 +360,11 @@ Once the binary is compiled. Rudder can start to process block specimens into bl
  rudder       | [info] Summary for rudder_metrics  - {0.0035489999999999996, 0.0035489999999999996}
  rudder       | [info] curr_block: 4180658 and latest_block_num:4180657
 ```
+### <span id="rudder_monitor">Monitor</span>
+
+`rudder`already captures the most relevant performance metrics and execution times for various processes in the pipeline and exports all of it using Prometheus.
+
+See the full document on how to setup Prometheus and Grafana for [rudder metrics collection, monitoring, reporting and alerting](./docs/metrics.md)
 
 ## <span id="rudder_source">Build From Source</span>
 

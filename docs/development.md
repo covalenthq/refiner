@@ -39,7 +39,7 @@ Add the env vars to a .env file as below. Ask your node operator about these if 
 ```bash
 export BLOCK_RESULT_OPERATOR_PRIVATE_KEY=block-result-operator-private-key-without-0x-prefix
 export NODE_ETHEREUM_MAINNET="https://moonbeam-alphanet.web3.covalenthq.com/alphanet/direct-rpc"
-export IPFS_PINNER_URL="http://ipfs-pinner:3000"
+export IPFS_PINNER_URL="http://ipfs-pinner:3001"
 export EVM_SERVER_URL="http://evm-server:3002"
 export WEB3_JWT="****"
 ```

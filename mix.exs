@@ -4,7 +4,7 @@ defmodule Rudder.MixProject do
   def project do
     [
       app: :rudder,
-      version: "0.2.8",
+      version: "0.2.9",
       elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -75,6 +75,8 @@ defmodule Rudder.MixProject do
       # tracing metrics
       {:telemetry, "~> 1.2.1", override: true},
       {:telemetry_metrics, "~> 0.3.0"},
+      {:telemetry_metrics_prometheus, "~> 0.3.1"},
+      {:telemetry_metrics_prometheus_core, "~>0.2.2"},
 
       # utils
       {:briefly, "~> 0.4.1"}

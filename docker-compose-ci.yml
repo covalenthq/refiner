@@ -47,14 +47,14 @@ services:
     restart: on-failure
     expose:
       - "4001:4001"
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - WEB3_JWT=${WEB3_JWT}
     networks:
       - cqt-net
     ports:
       - "4001:4001"
-      - "3000:3000"
+      - "3001:3001"
 
   evm-server:
     image: "us-docker.pkg.dev/covalent-project/network/evm-server:latest"
@@ -94,8 +94,8 @@ services:
         done;
         echo Proof-chain contracts deployed!;
         echo Uploading test files to local .ipfs...;
-        curl -F "filedata=@/app/test-data/codec-0.35/encoded/1-17090940-replica-0x7b8e1d463a0fbc6fce05b31c5c30e605aa13efaca14a1f3ba991d33ea979b12b" http://ipfs-pinner:3000/upload;
-        curl -F "filedata=@/app/test-data/codec-0.35/encoded/1-17090960-replica-0xc95d44182ee006e79f1352ef32664210f383baa016988d5ab2fd950b52bf22ff" http://ipfs-pinner:3000/upload;
+        curl -F "filedata=@/app/test-data/codec-0.35/encoded/1-17090940-replica-0x7b8e1d463a0fbc6fce05b31c5c30e605aa13efaca14a1f3ba991d33ea979b12b" http://ipfs-pinner:3001/upload;
+        curl -F "filedata=@/app/test-data/codec-0.35/encoded/1-17090960-replica-0xc95d44182ee006e79f1352ef32664210f383baa016988d5ab2fd950b52bf22ff" http://ipfs-pinner:3001/upload;
         echo Test bsp files uploaded!;
         cd /app;
         MIX_ENV=docker mix test --trace --slowest 10;

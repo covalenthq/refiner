@@ -11,7 +11,7 @@ defmodule Rudder.Telemetry do
   def init(_arg) do
     metrics = [
       # event_emitting (all available metrics for any event)
-      counter("rudder.events.emit.duration",
+      counter("rudder.events.emit.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.emit.duration",
@@ -33,7 +33,7 @@ defmodule Rudder.Telemetry do
       ),
 
       # ipfs_pinning
-      counter("rudder.events.ipfs_pin.duration",
+      counter("rudder.events.ipfs_pin.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.ipfs_pin.duration",
@@ -50,7 +50,7 @@ defmodule Rudder.Telemetry do
       ),
 
       # ipfs_fetching
-      counter("rudder.events.ipfs_fetch.duration",
+      counter("rudder.events.ipfs_fetch.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.ipfs_fetch.duration",
@@ -67,7 +67,7 @@ defmodule Rudder.Telemetry do
       ),
 
       # bsp_decoding
-      counter("rudder.events.bsp_decode.duration",
+      counter("rudder.events.bsp_decode.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.bsp_decode.duration",
@@ -84,7 +84,7 @@ defmodule Rudder.Telemetry do
       ),
 
       # bsp_executing
-      counter("rudder.events.bsp_execute.duration",
+      counter("rudder.events.bsp_execute.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.bsp_execute.duration",
@@ -101,7 +101,7 @@ defmodule Rudder.Telemetry do
       ),
 
       # brp_uploading
-      counter("rudder.events.brp_upload_success.duration",
+      counter("rudder.events.brp_upload_success.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.brp_upload_success.duration",
@@ -116,7 +116,7 @@ defmodule Rudder.Telemetry do
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      counter("rudder.events.brp_upload_failure.duration",
+      counter("rudder.events.brp_upload_failure.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.brp_upload_failure.duration",
@@ -133,7 +133,7 @@ defmodule Rudder.Telemetry do
       ),
 
       # brp_proofing
-      counter("rudder.events.brp_proof.duration",
+      counter("rudder.events.brp_proof.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.brp_proof.duration",
@@ -150,7 +150,7 @@ defmodule Rudder.Telemetry do
       ),
 
       # journal_fetching
-      counter("rudder.events.journal_fetch_last.duration",
+      counter("rudder.events.journal_fetch_last.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.journal_fetch_last.duration",
@@ -165,7 +165,7 @@ defmodule Rudder.Telemetry do
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      counter("rudder.events.journal_fetch_items.duration",
+      counter("rudder.events.journal_fetch_items.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.journal_fetch_items.duration",
@@ -182,7 +182,7 @@ defmodule Rudder.Telemetry do
       ),
 
       # rudder_pipelining
-      counter("rudder.events.rudder_pipeline_success.duration",
+      counter("rudder.events.rudder_pipeline_success.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.rudder_pipeline_success.duration",
@@ -197,7 +197,7 @@ defmodule Rudder.Telemetry do
         unit: {:native, :millisecond},
         tags: [:table, :operation]
       ),
-      counter("rudder.events.rudder_pipeline_failure.duration",
+      counter("rudder.events.rudder_pipeline_failure.count",
         tags: [:table, :operation]
       ),
       last_value("rudder.events.rudder_pipeline_failure.duration",
@@ -215,7 +215,8 @@ defmodule Rudder.Telemetry do
     ]
 
     children = [
-      {Rudder.Telemetry.CustomReporter, metrics: metrics}
+      {Rudder.Telemetry.CustomReporter, metrics: metrics},
+      {TelemetryMetricsPrometheus, metrics: metrics}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

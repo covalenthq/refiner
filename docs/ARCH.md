@@ -147,7 +147,7 @@ That will lead to the corresponding logs:
 
 Once the block results have been produced they need to be proved and uploaded. This ideally happens atomically for rudder.
 
-Below is an example of how to interact with block result uploader that speaks to `ipfs-pinner` available with `export IPFS_PINNER_URL="http://127.0.0.1:3000"`. The file is directly uploaded to IPFS using the wrapped local IPFS node.
+Below is an example of how to interact with block result uploader that speaks to `ipfs-pinner` available with `export IPFS_PINNER_URL="http://127.0.0.1:3001"`. The file is directly uploaded to IPFS using the wrapped local IPFS node.
 
 ```elixir
   file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp2.txt")))
