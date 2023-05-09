@@ -51,3 +51,5 @@ COPY --from=builder-elixir /mix/test-data/ /app/test-data
 # CMD [ "mix", "test", "./test/block_specimen_decoder_test.exs", "./test/block_result_uploader_test.exs"]
 
 CMD ["/app/prod/bin/rudder", "start"]
+
+EXPOSE 9568

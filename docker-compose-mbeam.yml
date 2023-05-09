@@ -12,14 +12,14 @@ services:
       "autoheal": "true"
     expose:
       - "4001:4001"
-      - "3000:3000"
+      - "3001:3001"
     environment:
       - WEB3_JWT=${WEB3_JWT}
     networks:
       - cqt-net
     ports:
       - "4001:4001"
-      - "3000:3000"
+      - "3001:3001"
 
   evm-server:
     image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
@@ -65,6 +65,8 @@ services:
       - IPFS_PINNER_URL=${IPFS_PINNER_URL}
     networks:
       - cqt-net
+    ports:
+      - "9568:9568"
 
   autoheal:
     image: willfarrell/autoheal
