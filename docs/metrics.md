@@ -81,7 +81,9 @@ Observe live the gauge time series graphs with plots for example with metrics fo
 
 ## Monitor & Alert
 
-For monitoring and alerting we advice using [Grafana (in conjunction with the aggregated prometheus metrics)](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/). Import a prebuilt dasboard for Rudder into Grafana [here](./grafana_rudder_dashboard.json)
+For monitoring and alerting we advice using [Grafana (in conjunction with the aggregated prometheus metrics)](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/). Import the prebuilt dashboard for Rudder into Grafana [here](./grafana_rudder_dashboard.json)
+
+![Dashboard](./dashboard.png)
 
 Install and start Grafana
 
