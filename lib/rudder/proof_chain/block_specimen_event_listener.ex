@@ -82,8 +82,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   end
 
   defp push_bsps_to_process(bsp_keys) do
-    IO.inspect(bsp_keys)
-
     Enum.map(bsp_keys, fn bsp_key ->
       Rudder.Journal.discover(bsp_key)
       [_chain_id, block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
