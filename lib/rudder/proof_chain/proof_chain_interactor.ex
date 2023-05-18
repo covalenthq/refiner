@@ -11,7 +11,7 @@ defmodule Rudder.ProofChain.Interactor do
 
   @submit_brp_selector "submitBlockResultProof(uint64, uint64, bytes32, bytes32, string)"
   @is_session_open_selector ABI.FunctionSelector.decode(
-                              "isSessionOpen(uint64,uint64,bool,address) -> bool"
+                              "isSessionOpen(uint64,uint64,address) -> bool"
                             )
   @get_urls_selector ABI.FunctionSelector.decode("getURLS(bytes32) -> string[] memory")
 
@@ -21,7 +21,7 @@ defmodule Rudder.ProofChain.Interactor do
   end
 
   defp get_proofchain() do
-    proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    proofchain_address = Application.get_env(:rudder, :brp_proofchain_address)
     Rudder.RPC.PublicKeyHash.parse(proofchain_address)
   end
 
@@ -52,7 +52,7 @@ defmodule Rudder.ProofChain.Interactor do
     {block_height, _} = Integer.parse(block_height)
     operator = get_operator_wallet()
     chain_id = Application.get_env(:rudder, :block_specimen_chain_id)
-    rpc_params = [chain_id, block_height, false, operator.address.bytes]
+    rpc_params = [chain_id, block_height, operator.address.bytes]
     data = {@is_session_open_selector, rpc_params}
     make_call(data)
   end
