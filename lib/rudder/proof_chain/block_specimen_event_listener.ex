@@ -22,7 +22,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     reregister_process()
     Logger.info("starting event listener")
     Application.ensure_all_started(:rudder)
-    proofchain_address = Application.get_env(:rudder, :proofchain_address)
+    proofchain_address = Application.get_env(:rudder, :bsp_proofchain_address)
     push_bsps_to_process(Rudder.Journal.items_with_status(:discover))
     block_height = load_last_checked_block()
     listen_for_event(proofchain_address, block_height)
