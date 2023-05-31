@@ -171,7 +171,7 @@ defmodule Rudder.ProofChain.Interactor do
       ])
 
     sender = get_operator_wallet()
-    {:ok, to} = get_brp_proofchain()
+    to = get_brp_proofchain()
 
     {:ok, recent_gas_limit} = Rudder.Network.EthereumMainnet.gas_limit(:latest)
 
