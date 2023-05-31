@@ -20,17 +20,22 @@ defmodule Rudder.ProofChain.Interactor do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  defp get_proofchain() do
-    proofchain_address = Application.get_env(:rudder, :brp_proofchain_address)
-    Rudder.RPC.PublicKeyHash.parse(proofchain_address)
+  defp get_bsp_proofchain() do
+    proofchain_address = Application.get_env(:rudder, :bsp_proofchain_address)
+    {:ok, proofchain} = Rudder.RPC.PublicKeyHash.parse(proofchain_address)
+    proofchain
   end
 
-  defp make_call(data) do
-    {:ok, to} = get_proofchain()
+  defp get_brp_proofchain() do
+    proofchain_address = Application.get_env(:rudder, :brp_proofchain_address)
+    {:ok, proofchain} = Rudder.RPC.PublicKeyHash.parse(proofchain_address)
+    proofchain
+  end
 
+  defp make_call(data, proofchain) do
     tx = [
       from: nil,
-      to: to,
+      to: proofchain,
       value: 0,
       data: data
     ]
@@ -44,7 +49,8 @@ defmodule Rudder.ProofChain.Interactor do
   def get_urls(hash) do
     rpc_params = [hash]
     data = {@get_urls_selector, rpc_params}
-    make_call(data)
+    bsp_proofchain = get_bsp_proofchain()
+    make_call(data, bsp_proofchain)
   end
 
   @spec is_block_result_session_open(binary) :: any
@@ -54,7 +60,8 @@ defmodule Rudder.ProofChain.Interactor do
     chain_id = Application.get_env(:rudder, :block_specimen_chain_id)
     rpc_params = [chain_id, block_height, operator.address.bytes]
     data = {@is_session_open_selector, rpc_params}
-    make_call(data)
+    brp_proofchain = get_brp_proofchain()
+    make_call(data, brp_proofchain)
   end
 
   defp get_operator_wallet() do
@@ -164,7 +171,7 @@ defmodule Rudder.ProofChain.Interactor do
       ])
 
     sender = get_operator_wallet()
-    {:ok, to} = get_proofchain()
+    to = get_brp_proofchain()
 
     {:ok, recent_gas_limit} = Rudder.Network.EthereumMainnet.gas_limit(:latest)
 
