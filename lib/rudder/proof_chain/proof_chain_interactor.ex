@@ -22,12 +22,14 @@ defmodule Rudder.ProofChain.Interactor do
 
   defp get_bsp_proofchain() do
     proofchain_address = Application.get_env(:rudder, :bsp_proofchain_address)
-    Rudder.RPC.PublicKeyHash.parse(proofchain_address)
+    {:ok, proofchain} = Rudder.RPC.PublicKeyHash.parse(proofchain_address)
+    proofchain
   end
 
   defp get_brp_proofchain() do
     proofchain_address = Application.get_env(:rudder, :brp_proofchain_address)
-    Rudder.RPC.PublicKeyHash.parse(proofchain_address)
+    {:ok, proofchain} = Rudder.RPC.PublicKeyHash.parse(proofchain_address)
+    proofchain
   end
 
   defp make_call(data, proofchain) do
