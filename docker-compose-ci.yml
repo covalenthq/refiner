@@ -40,7 +40,7 @@ services:
       - "8008:8008"
 
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
@@ -57,7 +57,7 @@ services:
       - "3001:3001"
 
   evm-server:
-    image: "us-docker.pkg.dev/covalent-project/network/evm-server:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
     container_name: evm-server
     restart: on-failure
     expose:
@@ -78,9 +78,9 @@ services:
     restart: on-failure
     depends_on:
       ipfs-pinner:
-        condition: service_started
+        condition: service_healthy
       evm-server:
-        condition: service_started
+        condition: service_healthy
     entrypoint: >
       /bin/bash -l -c "
         echo "ipfs-node-address:" $IPFS_PINNER_URL;
