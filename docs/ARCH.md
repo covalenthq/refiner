@@ -10,7 +10,7 @@
   - [Pipeline Journal](#pipeline-journal)
   - [Pipeline Telemetry](#pipeline-telemetry)
 
-![Rudder Pipeline](./pipeline.jpg)
+![Rudder Pipeline](./pipeline-white.png)
 
 The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't.
 
@@ -28,8 +28,6 @@ There are currently 8 main components to the refiner.
   6. IPFS Interactor
   7. Pipeline Journal
   8. Pipeline Telemetry
-
-
 
 ## <span id="rudder_arch_listen">Block Specimen Event Listener</span>
 

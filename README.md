@@ -53,6 +53,8 @@
 
 ## <span id="rudder_intro">Introduction</span>
 
+![Layers](./docs/network-layers.png)
+
 The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation.
 
 Generally, the Refiner has the capability to perform arbitrary transformations over any binary block specimen file, concurrently with other transformations. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit. Such concurrent execution of ethereum blocks (via block specimens), makes it possible to trace, enrich or analyze blockchain data at an unprecedented rate with no sequential bottlenecks (provided each block specimen is its own independent entity and available at a decentralized content address!).
@@ -61,7 +63,7 @@ Among many of the Refiners outputs feasible, the Block Result is one. The block 
 
 ### <span id="rudder_raison">Raison d'être</span>
 
-![Rudder Arch](./docs/arch-light.jpg)
+![Phase2](./docs/phase-2.png)
 
 As it stands, the Block Specimen captures a state snapshot. That is, all of the state read and transaction information. However, it doesn't capture the side effects of executing the block, the information you would get from a trace, transaction re-execution artifacts like `receipts`, what contracts were interacted with during a transaction etc.
 
@@ -77,13 +79,15 @@ At a very high level, the Refiner locates a source to apply a transformational r
 
 ## <span id="rudder_arch">Architecture</span>
 
-![Rudder Pipeline](./docs/pipeline.jpg)
+![Rudder Pipeline](./docs/components.png)
 
-The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [full architecture document](./docs/ARCH.md).
+The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [FULL ARCHITECTURE document](./docs/ARCH.md).
 
 ## <span id="rudder _resources">Resources</span>
 
 Production of Block Results forms the core of the covalent network’s usable data objects specs. These result objects are created with the aid of six main pieces of open-source software published by Covalent for the Covalent Network’s decentralized blockchain data ETL stack.
+
+![Resources](./docs/arch-white.png)
 
 1. [Block Specimen Producer (Produce)](https://github.com/covalenthq/bsp-geth) - Operator run & deployed.
 Open source granular bulk blockchain data production and export of block specimens.
@@ -97,8 +101,8 @@ Open source CQT staking and proof aggregating smart contracts deployed on moonbe
 1. [IPFS Pinner (Store)](https://github.com/covalenthq/ipfs-pinner) - Operator run & deployed.
 Open source decentralized storage layer for covalent network block specimen and transformations (results).
 
-1. BSP Finalizer (Reward) - Covalent foundation operated & pre-deployed.
-Open source rewards distributer for covalent network operators.
+1. [BSP Finalizer (Reward)](https://github.com/covalenthq/bsp-finalizer) - Covalent foundation operated & pre-deployed.
+Open source (anyone can call the rewards function on BSP Staking contracts) rewards distributer for covalent network operators.
 
 1. [T8n Server (Transform)](https://github.com/covalenthq/erigon) - Operator run & deployed.
 Open source ethereum virtual machine binary (stateless transition tool - t8n) plugin/http server for rudder.
@@ -364,7 +368,7 @@ Once the binary is compiled. Rudder can start to process block specimens into bl
 
 `rudder`already captures the most relevant performance metrics and execution times for various processes in the pipeline and exports all of it using Prometheus.
 
-See the full document on how to setup Prometheus and Grafana for [rudder metrics collection, monitoring, reporting and alerting](./docs/metrics.md)
+See the full document on how to setup Prometheus and Grafana for [rudder metrics collection, monitoring, reporting and alerting](./docs/METRICS.md)
 
 ## <span id="rudder_source">Build From Source</span>
 
