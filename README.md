@@ -366,7 +366,7 @@ Once the binary is compiled. Rudder can start to process block specimens into bl
 ```
 ### <span id="rudder_monitor">Monitor</span>
 
-`rudder already captures the most relevant performance metrics and execution times for various processes in the pipeline and exports all of it using Prometheus.
+`rudder` already captures the most relevant performance metrics and execution times for various processes in the pipeline and exports all of it using Prometheus.
 
 See the full document on how to setup Prometheus and Grafana for [rudder metrics collection, monitoring, reporting and alerting](./docs/METRICS.md)
 
