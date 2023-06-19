@@ -57,21 +57,21 @@
 
 The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation.
 
-Generally, the Refiner has the capability to perform arbitrary transformations over any binary block specimen file, concurrently with other transformations. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit. Such concurrent execution of ethereum blocks (via block specimens), makes it possible to trace, enrich or analyze blockchain data at an unprecedented rate with no sequential bottlenecks (provided each block specimen is its own independent entity and available at a decentralized content address!).
+Generally, the Refiner can perform arbitrary transformations over any binary block specimen file concurrently. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit. Such concurrent execution of Ethereum blocks (via block specimens) makes it possible to trace, enrich or analyze blockchain data at an unprecedented rate with no sequential bottlenecks (provided each block specimen is its own independent entity and available at a decentralized content address!).
 
-Among many of the Refiners outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with the artifacts of block and tx execution like transaction `receipts`. The source of the block result, the block specimen meanwhile captures a few extra fields like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and `senders` etc. This full specification and its requirement is described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
+Among many of the Refiner's outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with the artifacts of block and tx execution like transaction `receipts`. The source of the block result, the block specimen, captures a few extra fields like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and `senders` etc. This full specification and its requirement are described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
 
 ### <span id="rudder_raison">Raison d'être</span>
 
 ![Phase2](./docs/phase-2.png)
 
-As it stands, the Block Specimen captures a state snapshot. That is, all of the state read and transaction information. However, it doesn't capture the side effects of executing the block, the information you would get from a trace, transaction re-execution artifacts like `receipts`, what contracts were interacted with during a transaction etc.
+As it stands, the Block Specimen captures a state snapshot. That is, all of the state read and transaction information. However, it doesn't capture the side effects of executing the block, the information you would get from a trace, transaction re-execution artifacts like `receipts`, what contracts were interacted with during a transaction, etc.
 
-In theory, the Block Specimen could contain this information. However, the Block Specimen only contains the minimum information required to re-execute a block and all its transactions, this makes the network and decentralized storage more efficient. Extracting and storing block specimens allows us to move away from relying on blockchain nodes (executing blocks sequentially) to re-execute the block and draw detailed insights from underlying captured data. This process can be made concurrent, as block specimens can be executed independently as currently done with the [erigon/covalent t8n tool](https://github.com/covalenthq/erigon/tree/covalent/cmd/evm/internal/t8ntool), and does not need any state constructed from previous block specimens.
+In theory, the Block Specimen could contain this information. However, the Block Specimen only includes the minimum information required to re-execute a block and all its transactions, making the network and decentralized storage more efficient. Extracting and storing block specimens allows us to move away from relying on blockchain nodes (executing blocks sequentially) to re-execute the block and draw detailed insights from underlying captured data. This process can be made concurrent, as block specimens can be executed independently as currently done with the [erigon/covalent t8n tool](https://github.com/covalenthq/erigon/tree/covalent/cmd/evm/internal/t8ntool), and does not need any state constructed from previous block specimens.
 
-At a very high level, the Refiner locates a source to apply a transformational rule to and outputs an object generated from applying such a rule. The source as well as the  output stored are available through a  decentralized storage service such as a wrapped IPFS node. A transformation-proof transaction is emitted confirming that it has done this work along with the output content ids (ipfs) access URL. To define what these three components are:
+At a very high level, the Refiner locates a source to apply a transformational rule to and outputs an object generated from using such a rule. The source and output are available through a  decentralized storage service such as a wrapped IPFS node. A transformation-proof transaction is emitted, confirming that it has done this work along with the output content ids (ipfs) access URL. To define what these three components are:
 
-- Source: The Block Specimen that serves as an input to the Refiner. Proof transactions that have been made earlier to a smart contract with the respective cids are where the source is checked.
+- Source: The Block Specimen that serves as an input to the Refiner. Proof transactions made earlier to a smart contract with the respective cids are where the source is checked.
 
 - Rule: A transformation plugin (or server) that can act on the Block Specimen (source). These can be compared to blueprints that have been shown to produce the data objects needed. Furthermore, anyone can create these rules to get a desired data object. Rule (or server) versions thus need to exist, tied to the decoded block specimen versions they are applied on.
 
@@ -81,11 +81,11 @@ At a very high level, the Refiner locates a source to apply a transformational r
 
 ![Rudder Pipeline](./docs/components.png)
 
-The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [FULL ARCHITECTURE document](./docs/ARCH.md).
+The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state, and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [FULL ARCHITECTURE document](./docs/ARCH.md).
 
 ## <span id="rudder _resources">Resources</span>
 
-Production of Block Results forms the core of the covalent network’s usable data objects specs. These result objects are created with the aid of six main pieces of open-source software published by Covalent for the Covalent Network’s decentralized blockchain data ETL stack.
+Production of Block Results forms the core of the covalent network’s functional data objects specs. These result objects are created using six main pieces of open-source software published by Covalent for the Covalent Network’s decentralized blockchain data ETL stack.
 
 ![Resources](./docs/arch-white.png)
 
@@ -93,7 +93,7 @@ Production of Block Results forms the core of the covalent network’s usable da
 Open source granular bulk blockchain data production and export of block specimens.
 
 1. [BSP Agent (Extract & Prove)](https://github.com/covalenthq/bsp-agent) - Operator run & deployed.
-Open source packaging, encoding, proving (and store specification) of block specimens.
+Open source packaging, encoding, proving (and storing specification) of block specimens.
 
 1. [BSP Staking (Consensus)](https://github.com/covalenthq/bsp-staking) - Covalent foundation operated & pre-deployed.
 Open source CQT staking and proof aggregating smart contracts deployed on moonbeam used for consensus and rewards distribution for covalent network operators.
@@ -105,7 +105,7 @@ Open source decentralized storage layer for covalent network block specimen and 
 Open source (anyone can call the rewards function on BSP Staking contracts) rewards distributer for covalent network operators.
 
 1. [T8n Server (Transform)](https://github.com/covalenthq/erigon) - Operator run & deployed.
-Open source ethereum virtual machine binary (stateless transition tool - t8n) plugin/http server for rudder.
+Open source Ethereum virtual machine binary (stateless transition tool - t8n) plugin/http server for the rudder.
 
 1. [Rudder (Refine & Prove)]( https://github.com/covalenthq/rudder) - Operator run & deployed.
 Open Source specialized transformation process and framework for block specimens to block results (Open sourced in Q2 2023).
@@ -148,7 +148,7 @@ Software Requirements (docker setup)
 
 Install Docker
 
-Follow instructions for your platform/architecture: https://docs.docker.com/engine/install.
+Follow the instructions for your platform/architecture: https://docs.docker.com/engine/install.
 
 README instructions will be based on Ubuntu 22.04 LTS x86_64/amd64: https://docs.docker.com/engine/install/ubuntu/.
 
@@ -366,7 +366,7 @@ Once the binary is compiled. Rudder can start to process block specimens into bl
 ```
 ### <span id="rudder_monitor">Monitor</span>
 
-`rudder`already captures the most relevant performance metrics and execution times for various processes in the pipeline and exports all of it using Prometheus.
+`rudder` already captures the most relevant performance metrics and execution times for various processes in the pipeline and exports all of it using Prometheus.
 
 See the full document on how to setup Prometheus and Grafana for [rudder metrics collection, monitoring, reporting and alerting](./docs/METRICS.md)
 
@@ -376,13 +376,13 @@ Installation Time: 35-40 mins depending on your machine and network.
 
 Install `git`, `go`, `asdf`, `erlang`, `elixir`, `direnv`, `go-ipfs`.
 
-- Git is used as the source code version control manager across all our repositories.
-- Go is the programming language that is used to develop on `go-ethereum`, `bsp-agent`, `erigon` (EVM plugin) all which are entirely written in go.
-- Asdf is a CLI tool that can manage multiple language runtime versions on a per-project basis.
-- Erlang is a programming language used to build massively scalable soft real-time systems with requirements on high availability.
+- Git is the source code version control manager across all our repositories.
+- Go is the programming language used to develop on `go-ethereum`, `bsp-agent`, `erigon` (EVM plugin), all of which are entirely written in go.
+- Asdf is a CLI tool that can manage multiple language runtime versions per-project.
+- Erlang is a programming language used to build massively scalable soft real-time systems with requirements of high availability.
 - Elixir is a programming language that runs on the Erlang VM, known for creating low-latency, distributed, high concurrency fault-tolerant systems.
 - IPFS as the InterPlanetary File System (IPFS) is a protocol, hypermedia and file sharing peer-to-peer network for storing and sharing data in a distributed file system.
-- Direnv is used for secret management and control. Since all the necessary parameters to the agent that are sensitive cannot be passed into a command line flag. Direnv allows for safe and easy management of secrets like ethereum private keys for the operator accounts on the CQT network and redis instance access passwords etc. As these applications are exposed to the internet on http ports it’s essential to not have the information be logged anywhere. To enable “direnv” on your machine add these to your ~./bash_profile or ~./zshrc depending on which you use as your default shell after installing it using brew.
+- Direnv is used for secret management and control since all the necessary sensitive parameters to the agent cannot be passed into a command line flag. Direnv allows for safe and easy management of secrets like Ethereum private keys for the operator accounts on the CQT network and redis instance access passwords etc. As these applications are exposed to the internet on http ports, it’s essential not to have the information be logged anywhere. To enable “direnv” on your machine, add these to your ~./bash_profile or ~./zshrc depending on which you use as your default shell after installing it using brew.
 
 ### <span id="rudder_source_linux">Linux x86_64 (Ubuntu 22.04 LTS) Install dependencies</span>
 
@@ -459,9 +459,9 @@ ipfs init
 
 ### <span id="rudder_source_env">Env Vars</span>
 
-Refer to above existing environment var setup for [rudder docker compose](#environment).
+Refer to the above existing environment var setup for [rudder docker compose](#environment).
 
-**Note**: When passing the private key into the env vars as above please remove the 0x prefix so the private key env var has exactly 64 characters.
+**Note**: When passing the private key into the env vars as above, please remove the 0x prefix so the private key env var has exactly 64 characters.
 
 ### <span id="rudder_source_run">Source Run</span>
 
@@ -617,7 +617,7 @@ sudo systemctl enable rudder-compose.service
 sudo systemctl start rudder-compose.service
 ```
 
-**Note**:: In order to run docker compose as a non-root user for the above shown service unit you need to create a docker group (if it doesn't exist) and add the user “blockchain” to the docker group.
+**Note**:: To run docker compose as a non-root user for the above shown service unit, you need to create a docker group (if it doesn't exist) and add the user “blockchain” to the docker group.
 
 ```bash
 sudo groupadd docker
