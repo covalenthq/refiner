@@ -10,11 +10,11 @@
   - [Pipeline Journal](#pipeline-journal)
   - [Pipeline Telemetry](#pipeline-telemetry)
 
-![Rudder Pipeline](./pipeline.jpg)
+![Rudder Pipeline](./pipeline-white.png)
 
-The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state and some don't.
+The happy path for the `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state, and some don't.
 
-The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation.
+The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html) that can bring them back up in case of a failure to continue a given pipeline operation.
 
 ![Rudder Supervisor](./supervisor.png)
 
@@ -29,15 +29,14 @@ There are currently 8 main components to the refiner.
   7. Pipeline Journal
   8. Pipeline Telemetry
 
-
-
 ## <span id="rudder_arch_listen">Block Specimen Event Listener</span>
 
 The block specimen event listener is the first to start in the rudder/refiner pipeline by listening to events happening in the [proof-chain contract](https://github.com/covalenthq/bsp-staking). The events refiner cares about relate to the finalized block specimens and the finalized block results.
 
-For the former for all block specimen proofs that have been submitted and achieved consensus are ready for being transformed in block results.
+All block specimen proofs that have been submitted and achieved consensus are ready to be transformed into block results.
 
 Start the listener.
+
 
 ```elixir
 iex -S mix
@@ -62,7 +61,7 @@ tail -f logs/log.log
 
 ## <span id="rudder_arch_encode_decode">Block Specimen Encoder Decoder</span>
 
-Once a block specimen that has been finalized has been received, rudder extracts the specimen directly async in the pipeline process, spawning a block specimen decode process for each specimen separately using AVRO client library `avrora`.
+Once a block specimen that has been finalized has been received, the rudder extracts the specimen directly async in the pipeline process, spawning a block specimen decode process for each specimen separately using AVRO client library `avrora`.
 
 It carries out the following steps -
   
@@ -115,11 +114,11 @@ iex(2)> Rudder.Avro.BlockSpecimenDecoder.decode_dir("test-data/*")
 
 ## <span id="rudder_arch_processor">Block Specimen Processor</span>
 
-Next the block specimen processor available as an http server with `export EVM_SERVER_URL="http://127.0.0.1:3002"`. This takes the `block_id` and `block_specimen` json object and provides the block result. The stateless transition tool needed to run the specimen, is written in `golang`, which is invoked via the http server outside of rudder.
+Next, the block specimen processor is available as an http server with `export EVM_SERVER_URL="http://127.0.0.1:3002"`. This takes the `block_id` and `block_specimen` json object and provides the block result. The stateless transition tool needed to run the specimen is written in `golang`, which is invoked via the http server outside of the rudder.
 
-In an earlier version of rudder server the server was originally a (golang) binary plugin to the rudder application and executed with the block specimen inputs in a `:porcelain` app within a shell process in erlang, but then moved out due to performance and consistency considerations.
+In an earlier version of the rudder, the server was originally a (golang) binary plugin to the rudder application and executed with the block specimen inputs in a `:porcelain` app within a shell process in erlang, but then moved out due to performance and consistency considerations.
 
-Below is an example of submitting a avro encoded block specimen binary to the specimen processor.
+Below is an example of submitting an avro encoded block specimen binary to the specimen processor.
 
 ```elixir
 iex(1)> replica_fp="test-data/1-15127602-replica-0xce9ed851812286e05cd34684c9ce3836ea62ebbfc3764c8d8a131f0fd054ca35"
@@ -145,7 +144,7 @@ That will lead to the corresponding logs:
 
 ## <span id="rudder_arch_uploader">Block Result Uploader</span>
 
-Once the block results have been produced they need to be proved and uploaded. This ideally happens atomically for rudder.
+Once the block results have been produced they need to be proved and uploaded. This ideally happens atomically for the rudder.
 
 Below is an example of how to interact with block result uploader that speaks to `ipfs-pinner` available with `export IPFS_PINNER_URL="http://127.0.0.1:3001"`. The file is directly uploaded to IPFS using the wrapped local IPFS node.
 
@@ -180,7 +179,7 @@ rudder        | 08:53:06.414 [info] 1:525D191D6492F1E0928d4e816c29778c proof sub
 
 ## <span id="rudder_arch_ipfs_interact">IPFS Interactor</span>
 
-Underlying the block result uploader is the IPFS interactor module that allows refiner to interact with IPFS cids, by listening for them and uploading them. Below is an example to fetch or discover a block specimen using its uploaded `cid` collected by listening to the log event of a block specimen proof submission.
+Underlying the block result uploader is the IPFS interactor module that allows refiner to interact with IPFS cids by listening for them and uploading them. Below is an example of fetching or discovering a block specimen using its uploaded `cid` collected by listening to the log event of a block specimen proof submission.
 
 ```elixir
 iex(1)> urls=["ipfs://bafybeifo5o7zatnudfyvixkziy5aj4fhikv5nq3pbizpgwdcz4fqwarhgu"]
@@ -267,9 +266,9 @@ Rudder keeps track of all the queue items that are in the following states of pr
 
 ## <span id="rudder_arch_journal">Pipeline Telemetry</span>
 
-Rudder records various metrics like `counter`, `lastvalue`, `sum` and `summary` during a pipeline process within each module and stores them in an ETF table by modules. This can then be used to understand how the processes have been progressing and where the performance bottlenecks may lay.
+Rudder records metrics like `counter`, `lastvalue`, `sum`, and `summary` during a pipeline process within each module and stores them in an ETF table by modules. This can then be used to understand how the processes have been progressing and where the performance bottlenecks may lay.
 
-The logs that pertain to the telemetry and performance of rudder can be seen as follows from fetching start (specimen event) to finish (pipeline success).
+The logs that pertain to the telemetry and performance of the rudder can be seen as follows from fetching start (specimen event) to finish (pipeline success).
 
 ```elixir
 rudder       | [info] starting event listener
