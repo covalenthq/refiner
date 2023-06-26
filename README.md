@@ -1,4 +1,4 @@
-[<img src=./docs/covalent-2.png>](https://www.covalenthq.com/docs/cqt-network/covalent-network-whitepaper/)
+[<img src=./docs/covalent-1.png>](https://www.covalenthq.com/docs/cqt-network/covalent-network-whitepaper/)
 
 <div align="center">
   <a href="https://github.com/covalenthq/rudder/releases/latest">
