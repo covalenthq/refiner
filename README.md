@@ -1,4 +1,4 @@
-[<img src=./docs/covalent-2.png>](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf)
+[<img src=./docs/covalent-2.png>](https://www.covalenthq.com/docs/cqt-network/covalent-network-whitepaper/)
 
 <div align="center">
   <a href="https://github.com/covalenthq/rudder/releases/latest">
@@ -112,15 +112,19 @@ Open Source specialized transformation process and framework for block specimens
 
 ### <span id="rudder _resources_add">Additional Resources</span>
 
-- Operator reference for instructions to run BSP Geth with the BSP Agent can be found in [Covalent Network: Block Specimen Producer Onboarding Process](https://docs.google.com/document/d/1eXv3YETJEU_UPhDYlWwe-7ogiQQLUv9YpHh6WzHLAOY/edit?usp=sharing).
+- Operator reference for instructions to run BSP Geth with the BSP Agent can be found in [Covalent Network: Block Specimen Producer Onboarding Process](<<ADD VORTEX LINKS>>).
 
 - Follow the moonbase alpha testnet operators onboarding document [Covalent Network Phase 2: Rudder (Refiner) Onboarding](https://docs.google.com/document/d/1LzBHvNnuDNapBzNT4hLo554bWjj7edhWBlO_bMDVYtQ/edit?usp=sharing).
 
 - View and follow the [1st Refiner workshop (07/02/2023)](https://covalent-hq.slack.com/files/U038D5LJ2S0/F04P6CA3XRN/gmt20230207-160648_recording_1920x1080.mp4).
 
-- Public reference to understand more about the functions of the various components can be found in the [Covalent Network Whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.1.pdf).
+- Reference to understand the functions of the various components can be found in the official [Covalent Network Whitepaper](https://www.covalenthq.com/docs/cqt-network/covalent-network-whitepaper/).
 
-- Public reference to understand more about the block specimen producer and its role in the Covalent Network can be found in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
+- Reference to understand the block specimen producer and its role in the Covalent Network can be found in the official [Block Specimen Whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
+
+- Reference to understand the Refiner's purpose, mission and its role in the Covalent Network can be found in the official [Refiner Whitepaper](http://covalenthq.com/docs/cqt-network/refiner-whitepaper/)
+
+- Operator reference for instructions to run Rudder/Refiner be found in [Covalent Network - Refiner Onboarding Process](<<ADD VORTEX LINKS>>).
 
 ## <span id="rudder _requirements">Requirements</span>
 
