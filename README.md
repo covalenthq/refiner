@@ -112,7 +112,7 @@ Open Source specialized transformation process and framework for block specimens
 
 ### <span id="rudder _resources_add">Additional Resources</span>
 
-- Operator reference for instructions to run BSP Geth with the BSP Agent can be found in [Covalent Network: Block Specimen Producer Onboarding Process](<<ADD VORTEX LINKS>>).
+- Operator reference for instructions to run BSP Geth with the BSP Agent can be found in [Covalent Network: Block Specimen Producer Onboarding Process](https://www.covalenthq.com/docs/cqt-network/operator-onboarding-bsp/).
 
 - Follow the moonbase alpha testnet operators onboarding document [Covalent Network Phase 2: Rudder (Refiner) Onboarding](https://docs.google.com/document/d/1LzBHvNnuDNapBzNT4hLo554bWjj7edhWBlO_bMDVYtQ/edit?usp=sharing).
 
@@ -124,7 +124,7 @@ Open Source specialized transformation process and framework for block specimens
 
 - Reference to understand the Refiner's purpose, mission and its role in the Covalent Network can be found in the official [Refiner Whitepaper](http://covalenthq.com/docs/cqt-network/refiner-whitepaper/)
 
-- Operator reference for instructions to run Rudder/Refiner be found in [Covalent Network - Refiner Onboarding Process](<<ADD VORTEX LINKS>>).
+- Operator reference for instructions to run Rudder/Refiner be found in [Covalent Network - Refiner Onboarding Process](https://www.covalenthq.com/docs/cqt-network/operator-onboarding-refiner/).
 
 ## <span id="rudder _requirements">Requirements</span>
 
