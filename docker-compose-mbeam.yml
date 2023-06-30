@@ -52,7 +52,6 @@ services:
     entrypoint: >
       /bin/bash -l -c "
         echo "moonbase-node:" $NODE_ETHEREUM_MAINNET;
-        echo "brp-operator:" $BLOCK_RESULT_OPERATOR_PRIVATE_KEY;
         echo "evm-server:" $EVM_SERVER_URL;
         echo "ipfs-node:" $IPFS_PINNER_URL;
         cd /app;
