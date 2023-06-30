@@ -50,16 +50,29 @@
 - [Troubleshooting](#troubleshooting)
   - [Bugs Reporting & Contributions](#bugs-reporting-contributions)
 - [Scripts](#scripts)
+- [Appendix](#appendix)
 
 ## <span id="rudder_intro">Introduction</span>
 
 ![Layers](./docs/network-layers.png)
 
-The Refiner is a block specimen data processing and transformation framework (Rudder), the purpose of which is validated data transformation.
+Refiner is the primary Block Specimen data processing framework, the purpose of which is data transformation and various block data representations.
 
 Generally, the Refiner can perform arbitrary transformations over any binary block specimen file concurrently. This enables simultaneous data indexing, with any consumer of the data slicing and dicing the data as they see fit. Such concurrent execution of Ethereum blocks (via block specimens) makes it possible to trace, enrich or analyze blockchain data at an unprecedented rate with no sequential bottlenecks (provided each block specimen is its own independent entity and available at a decentralized content address!).
 
+The [Refiner Whitepaper](https://www.covalenthq.com/docs/cqt-network/refiner-whitepaper/) goes into detail on its purpose and mission.
+
 Among many of the Refiner's outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with the artifacts of block and tx execution like transaction `receipts`. The source of the block result, the block specimen, captures a few extra fields like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and `senders` etc. This full specification and its requirement are described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
+
+Running the Refiner stack involves running three main pieces of Covalent Network OS infrastructure,  [`rudder`](https://github.com/covalenthq/rudder), [`ipfs-pinner`](https://github.com/covalenthq/ipfs-pinner) and [`evm-server`](https://github.com/covalenthq/erigon) that coordinate and execute a transformation pipeline per Block Specimen.
+
+Here `rudder` serves as the primary orchestrator and supervisor for all transformation pipeline processes that locates a source Covalent Network data object to apply a tracing/execution/transformational rule to and outputs a new object generated from using such a rule.
+
+Running these nodes are not as disk I/O (or cpu/memory) intense as running [`bsp-geth`](https://github.com/covalenthq/bsp-geth) and [`bsp-agent`](https://github.com/covalenthq/bsp-agent) on local machines, however they do require sufficient bandwidth for access to distributed store resources and sending transaction proofs using ethereum clients - connecting to our EVM public blockchain partner - [moonbeam](https://moonbeam.network/). We shall setup all of these step-by-step in this guide in two main ways:
+
+- [Run with Docker Compose](#run-with-docker-compose) (Recommended method)
+
+- [Build & Run from Source](#build-from-source) (Optional method)
 
 ### <span id="rudder_raison">Raison d'être</span>
 
@@ -71,17 +84,17 @@ In theory, the Block Specimen could contain this information. However, the Block
 
 At a very high level, the Refiner locates a source to apply a transformational rule to and outputs an object generated from using such a rule. The source and output are available through a  decentralized storage service such as a wrapped IPFS node. A transformation-proof transaction is emitted, confirming that it has done this work along with the output content ids (ipfs) access URL. To define what these three components are:
 
-- Source: The Block Specimen that serves as an input to the Refiner. Proof transactions made earlier to a smart contract with the respective cids are where the source is checked.
+- **Source**: The Block Specimen that serves as an input to the Refiner. Proof transactions made earlier to a smart contract with the respective cids are where the source is checked.
 
-- Rule: A transformation plugin (or server) that can act on the Block Specimen (source). These can be compared to blueprints that have been shown to produce the data objects needed. Furthermore, anyone can create these rules to get a desired data object. Rule (or server) versions thus need to exist, tied to the decoded block specimen versions they are applied on.
+- **Rule**: A transformation plugin (or server) that can act on the Block Specimen (source). These can be compared to blueprints that have been shown to produce the data objects needed. Furthermore, anyone can create these rules to get a desired data object. Rule (or server) versions thus need to exist, tied to the decoded block specimen versions they are applied on.
 
-- Target: The output generated from running the rule over the object that came from the source that is the block result.
+- **Target**: The output generated from running the rule over the object that came from the source that is the block result.
 
 ## <span id="rudder_arch">Architecture</span>
 
 ![Rudder Pipeline](./docs/components.png)
 
-The happy path for `rudder` (the refiner) application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state, and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [FULL ARCHITECTURE document](./docs/ARCH.md).
+The happy path for `rudder` application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state, and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [FULL ARCHITECTURE document](./docs/ARCH.md).
 
 ## <span id="rudder _resources">Resources</span>
 
@@ -122,25 +135,31 @@ Open Source specialized transformation process and framework for block specimens
 
 - Operator reference for instructions to run Rudder/Refiner be found in [Covalent Network - Refiner Onboarding Process](https://www.covalenthq.com/docs/cqt-network/operator-onboarding-refiner/).
 
-- View and follow the [1st Refiner workshop (07/02/2023)](<<ADD-ONBOARDING-VIDEO-LINKS>>).
+- View [The Refiner: A Web3 Solution for Accessing Granular Blockchain Data for Developers](https://www.youtube.com/watch?v=o7yTUY8s_Yk&pp=ygUQcmVmaW5lciBjb3ZhbGVudA%3D%3D)
+
+- Setting up monitoring and alerting with [Grafana and Prometheus for Refiner](https://github.com/covalenthq/rudder/blob/main/docs/METRICS.md)
+
+- Refiner [contributions and bug bounty guidelines](https://github.com/covalenthq/rudder/blob/main/docs/CONTRIBUTING.md)
+
+- Detailed [Refiner Architecture](https://github.com/covalenthq/rudder/blob/main/docs/ARCH.md)
 
 ## <span id="rudder _requirements">Requirements</span>
 
-Minimum hardware requirements
+**Minimum**
 
 - 2 vCPUs (cores)
 - 3GB RAM
 - 200GB HDD free storage (mostly storing artifacts on local ipfs; can be pruned periodically)
 - 8 MBit/sec download Internet service
 
-Recommended
+**Recommended**
 
 - 4 vCPUs
 - 8 GB+ RAM
 - SSD with >= 500GB storage space
 - 25+ MBit/sec download Internet service
 
-Software Requirements (docker setup)
+**Software Requirements (docker setup)**
 
 - 64-bit Linux, Mac OS 13+
 - SSL certificates
@@ -176,11 +195,11 @@ Create `envrc.local` file and add the following env vars.
 **Note**: When passing the private key into the env vars as above please remove the `0x` prefix so the private key env var has exactly 64 characters.
 
 ```bash
-export BLOCK_RESULT_OPERATOR_PRIVATE_KEY=block-result-operator-private-key-without-0x-prefix
-export NODE_ETHEREUM_MAINNET="https://moonbeam-alphanet.web3.covalenthq.com/alphanet/direct-rpc"
+export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
+export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
 export IPFS_PINNER_URL="http://ipfs-pinner:3001"
 export EVM_SERVER_URL="http://evm-server:3002"
-export WEB3_JWT="****"
+export WEB3_JWT="<<WEB3.STORAGE-API-TOKEN>>"
 ```
 
 Load the env vars.
@@ -221,6 +240,8 @@ For moonbeam.
 ```bash
 docker compose --env-file ".env" -f "docker-compose-mbeam.yml" up --remove-orphans
 ```
+
+**NOTE**: On a system where an `ipfs-pinner` instance is already running, check the instruction in the [Appendix](#appendix) to run `rudder` docker alongside.
 
 Running this will pull all the images and services that are ready to run.
 
@@ -459,6 +480,13 @@ bash install.sh
 ipfs init
 ```
 
+**Note**: To avoid permissions and netscan issues execute the following against ipfs binary home directory application
+
+```bash
+sudo chmod -R 700 ~/.ipfs
+ipfs config profile apply server
+```
+
 ### <span id="rudder_source_env">Env Vars</span>
 
 Refer to the above existing environment var setup for [rudder docker compose](#environment).
@@ -467,7 +495,9 @@ Refer to the above existing environment var setup for [rudder docker compose](#e
 
 ### <span id="rudder_source_run">Source Run</span>
 
-Run the `evm-server` by cloning the https://github.com/covalenthq/erigon repo, checkout the `covalent` branch, build the `evm-server` binary and run it.
+The EVM-Server is a stateless EVM block execution tool. It's stateless because in Ethereum nodes like geth, it doesn't need to maintain database of blocks to do a block execution or re-execution. The `evm-server` service transforms Block Specimens to Block Results entirely on the input of underlying capture of Block Specimen data.
+
+Clone [covalenthq/erigon](https://github.com/covalenthq/erigon) that contains the fork for this particular stateless execution function, checkout the `covalent` branch, build the `evm-server` binary and run it.
 
 ```bash
 git checkout covalent
@@ -477,12 +507,19 @@ Updating git submodules
 Building evm
 go: downloading github.com/ledgerwatch/erigon-lib v0.0.0-20230328191829-416af23d9dcd...
 
+```
+
+Run the generated binary
+
+```bash
 ./build/bin/evm t8n --server.mode --server.port 3002
 
 INFO[04-17|11:03:07.516] Listening                                port=3002
 ```
 
-Run `ipfs-pinner` by cloning the https://github.com/covalenthq/ipfs-pinner, build the `ipfs-pinner` server binary and run it.
+The IPFS-Pinner is an interface to the storage layer of the Covalent network using a decentralized storage network underneath. Primarily it's a custom [IPFS (Inter Planetary File System)](https://ipfs.tech/) node with pinning service components for [Web3.storage](https://web3.storage/) and [Pinata](https://www.pinata.cloud/); content archive manipulation etc. Additionally there's support for fetching using `dweb.link`. It is meant for uploading/fetching artifacts (like Block Specimens and uploading Block Results or any other processed/transformed data asset) of the Covalent Decentralized Network.
+
+Clone [covalenthq/ipfs-pinner](https://github.com/covalenthq/ipfs-pinner) and build the pinner server binary
 
 ```bash
 git clone https://github.com/covalenthq/ipfs-pinner.git --depth 1
@@ -490,13 +527,13 @@ cd ipfs-pinner
 make server-dbg
 ```
 
-Set the environment variable required by `ipfs-pinner` by getting WEB3_JWT from web3.storage and adding it to an `.envrc` file.
+Set the environment variable required by `ipfs-pinner` by getting `WEB3_JWT` from web3.storage and adding it to an `.envrc` file.
 
 ```bash
 export WEB3_JWT="WEB3_JWT_TOKEN"
 ```
 
-Start the ipfs-pinner server.
+Start the `ipfs-pinner` server.
 
 ```bash
 ./build/bin/server
@@ -514,9 +551,49 @@ Run 'ipfs swarm limit all' to see the resulting limits.
 2023/04/20 12:47:49 Listening...
 ```
 
+Clone the `rudder` repo
+
+```bash
+git clone https://github.com/covalenthq/rudder.git
+cd rudder
+git checkout main
+```
+
+Get your `BLOCK_RESULT_OPERATOR_PRIVATE_KEY` that has `DEV` tokens for Moonbase Alpha and is already whitelisted as Block Result Producer operator. Set the following environment variables for the local rudder by creating an `.envrc.local` file
+
+```bash
+touch .envrc.local
+```
+
+Copy paste the environment variables into this file
+
+```bash
+export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
+export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
+export IPFS_PINNER_URL="http://127.0.0.1:3001"
+export EVM_SERVER_URL="http://127.0.0.1:3002"
+export WEB3_JWT="<<WEB3.STORAGE-API-TOKEN>>"
+```
+
+Call to load `.envrc.local + .envrc` files with the command below and observe the following output, make sure the environment variables are loaded into the shell.
+
+```bash
+direnv allow .
+
+direnv: loading ~/Covalent/rudder/.envrc
+direnv: loading ~/Covalent/rudder/.envrc.local
+direnv: export +BLOCK_RESULT_OPERATOR_PRIVATE_KEY +ERIGON_NODE +IPFS_PINNER_URL +NODE_ETHEREUM_MAINNET
+```
+
 Once the env vars are passed into the `.envrc.local` file and loaded in the shell with `direnv allow .`, build the `rudder` application for the `prod` env i.e moonbeam mainnet or `dev` env for moonbase alpha as discussed before.
 
-For moonbeam.
+Get all the required dependencies and build the `rudder` app for the `dev` environment (this points to Moonbase Alpha contracts). **Note**: Windows is currently not supported.
+
+```bash
+mix local.hex --force && mix local.rebar --force && mix deps.get
+```
+
+For moonbeam mainnet.
 
 ```bash
 MIX_ENV=prod mix release
@@ -526,51 +603,99 @@ For moonbase alpha.
 
 ```bash
 MIX_ENV=dev mix release
+.
+..
+....
+evm-server: http://127.0.0.1:3002
+ipfs-node: http://127.0.0.1:3001
+* assembling rudder-0.2.12 on MIX_ENV=dev
+* skipping runtime configuration (config/runtime.exs not found)
+* skipping elixir.bat for windows (bin/elixir.bat not found in the Elixir installation)
+* skipping iex.bat for windows (bin/iex.bat not found in the Elixir installation)
+Release created at _build/dev/rel/rudder
+    # To start your system
+    _build/dev/rel/rudder/bin/rudder start
+Once the release is running:
+    # To connect to it remotely
+    _build/dev/rel/rudder/bin/rudder remote
+    # To stop it gracefully (you may also send SIGINT/SIGTERM)
+    _build/dev/rel/rudder/bin/rudder stop
+To list all commands:
+   _build/dev/rel/rudder/bin/rudder
 ```
 
-Start the application and the event listener by calling the generated binary.
+Start the `rudder` application and execute the proof-chain block specimen listener call which should run the Refiner pipeline pulling Block Specimens from IPFS using the cids read from recent proof-chain finalized transactions, decoding them, and uploading and proofing Block Results while keeping a track of failed ones and continuing (soft real-time) in case of failure. The erlang concurrent fault tolerance allows each pipeline to be an independent worker that can fail (for any given Block Specimen) without crashing the entire pipeline application. Multiple pipeline worker children threads continue their work in the synchronous queue of Block Specimen AVRO binary files running the stateless EVM binary (`evm-server`) re-execution tool.
 
 For moonbeam.
 
 ```elixir
-./_build/prod/rel/rudder/bin/rudder eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()'
+MIX_ENV=prod mix run --no-halt --eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()';
 ```
 
 For moonbase.
 
-```elixir
-./_build/dev/rel/rudder/bin/rudder eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()'
+```bash
+MIX_ENV=dev mix run --no-halt --eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()';
+..
+...
+rudder       | [info] found 1 bsps to process
+ipfs-pinner  | 2023/06/29 20:28:30 unixfsApi.Get: getting the cid: bafybeiaxl44nbafdmydaojz7krve6lcggvtysk6r3jaotrdhib3wpdb3di
+ipfs-pinner  | 2023/06/29 20:28:30 trying out https://w3s.link/ipfs/bafybeiaxl44nbafdmydaojz7krve6lcggvtysk6r3jaotrdhib3wpdb3di
+ipfs-pinner  | 2023/06/29 20:28:31 got the content!
+rudder       | [info] Counter for ipfs_metrics - [fetch: 1]
+rudder       | [info] LastValue for ipfs_metrics - [fetch_last_exec_time: 0.001604]
+rudder       | [info] Sum for ipfs_metrics - [fetch_total_exec_time: 0.001604]
+rudder       | [info] Summary for ipfs_metrics  - {0.001604, 0.001604}
+rudder       | [debug] reading schema `block-ethereum` from the file /app/priv/schemas/block-ethereum.avsc
+rudder       | [info] Counter for bsp_metrics - [decode: 1]
+rudder       | [info] LastValue for bsp_metrics - [decode_last_exec_time: 0.0]
+rudder       | [info] Sum for bsp_metrics - [decode_total_exec_time: 0.0]
+rudder       | [info] Summary for bsp_metrics  - {0.0, 0.0}
+rudder       | [info] submitting 17586995 to evm http server...
+evm-server   | [INFO] [06-29|20:28:31.859] input file at                            loc=/tmp/3082854681
+evm-server   | [INFO] [06-29|20:28:31.862] output file at:                          loc=/tmp/1454174090
+evm-server   | [INFO] [06-29|20:28:32.112] Wrote file                               file=/tmp/1454174090
+rudder       | [info] writing block result into "/tmp/briefly-1688/briefly-576460747542186916-YRw0mRjfExGMk4M672"
+rudder       | [info] Counter for bsp_metrics - [execute: 1]
+rudder       | [info] LastValue for bsp_metrics - [execute_last_exec_time: 3.14e-4]
+rudder       | [info] Sum for bsp_metrics - [execute_total_exec_time: 3.14e-4]
+rudder       | [info] Summary for bsp_metrics  - {3.14e-4, 3.14e-4}
+ipfs-pinner  | 2023/06/29 20:28:32 generated dag has root cid: bafybeic6ernzbb6x4qslwfgklveisyz4vkuqhaafqzwlvto6c2njonxi3e
+ipfs-pinner  | 2023/06/29 20:28:32 car file location: /tmp/249116437.car
+[119B blob data]
+ipfs-pinner  | 2023/06/29 20:28:34 Received /health request: source= 127.0.0.1:34980 status= OK
+ipfs-pinner  | 2023/06/29 20:28:34 uploaded file has root cid: bafybeic6ernzbb6x4qslwfgklveisyz4vkuqhaafqzwlvto6c2njonxi3e
+rudder       | [info] Counter for ipfs_metrics - [pin: 1]
+rudder       | [info] LastValue for ipfs_metrics - [pin_last_exec_time: 0.002728]
+rudder       | [info] Sum for ipfs_metrics - [pin_total_exec_time: 0.002728]
+rudder       | [info] Summary for ipfs_metrics  - {0.002728, 0.002728}
+rudder       | [info] 17586995:48f1e992d1ac800baed282e12ef4f2200820061b5b8f01ca0a9ed9a7d6b5ddb3 has been successfully uploaded at ipfs://bafybeic6ernzbb6x4qslwfgklveisyz4vkuqhaafqzwlvto6c2njonxi3e
+rudder       | [info] 17586995:48f1e992d1ac800baed282e12ef4f2200820061b5b8f01ca0a9ed9a7d6b5ddb3 proof submitting
+rudder       | [info] Counter for brp_metrics - [proof: 1]
+rudder       | [info] LastValue for brp_metrics - [proof_last_exec_time: 3.6399999999999996e-4]
+rudder       | [info] Sum for brp_metrics - [proof_total_exec_time: 3.6399999999999996e-4]
+rudder       | [info] Summary for brp_metrics  - {3.6399999999999996e-4, 3.6399999999999996e-4}
+rudder       | [info] 17586995 txid is 0xd8a8ea410240bb0324433bc26fdc79d496ad0c8bfd18b60314a05e3a0de4fb06
+rudder       | [info] Counter for brp_metrics - [upload_success: 1]
+rudder       | [info] LastValue for brp_metrics - [upload_success_last_exec_time: 0.0031149999999999997]
+rudder       | [info] Sum for brp_metrics - [upload_success_total_exec_time: 0.0031149999999999997]
+rudder       | [info] Summary for brp_metrics  - {0.0031149999999999997, 0.0031149999999999997}
+rudder       | [info] Counter for rudder_metrics - [pipeline_success: 1]
+rudder       | [info] LastValue for rudder_metrics - [pipeline_success_last_exec_time: 0.0052]
+rudder       | [info] Sum for rudder_metrics - [pipeline_success_total_exec_time: 0.0052]
+rudder       | [info] Summary for rudder_metrics  - {0.0052, 0.0052}
 ```
 
-This should start listening to on-chain events for reward finalization of submitted block specimens. Once one such event is found, the block specimen will be fetched and processed in the pipeline and you should start seeing logs from `rudder` in the shell directly.
+Check logs for any errors in the pipeline process and note the performance metrics in line with execution. Checkout the documentation on what is being measured and why [here](https://github.com/covalenthq/rudder/blob/main/docs/METRICS.md).
 
-```elixir
-[info] starting event listener
-[info] The function passed as a handler with ID {Phoenix.Logger, [:phoenix, :channel_handled_in]} is a local function.
-[info] getting ids with status=discover
-[info] Counter for journal_metrics - [fetch_items: 1]
-[info] LastValue for journal_metrics - [fetch_items_last_exec_time: 4.2e-5]
-[info] Sum for journal_metrics - [fetch_items_total_exec_time: 4.2e-5]
-[info] Summary for journal_metrics  - {4.2e-5, 4.2e-5}
-[info] getting the last unprocessed block height
-[info] Counter for journal_metrics - [fetch_last: 1]
-[info] LastValue for journal_metrics - [fetch_last_last_exec_time: 3.9e-5]
-[info] Sum for journal_metrics - [fetch_last_total_exec_time: 3.9e-5]
-```
-
-You can also tail the logs to check the state:
-
-```elixir
+```bash
 tail -f logs/log.log
-17:52:11.222 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=100 [info] listening for events at 3707084
-17:52:11.481 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=114 [info] found 0 bsps to process
-17:52:11.742 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=125 [info] curr_block: 3707085 and latest_block_num:3769853
-17:52:11.742 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=100 [info] listening for events at 3707085
-17:52:12.001 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=114 [info] found 0 bsps to process
-17:52:12.260 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=125 [info] curr_block: 3707086 and latest_block_num:3769853
-17:52:12.261 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=100 [info] listening for events at 3707086
-17:52:12.520 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=114 [info] found 0 bsps to process
-17:52:12.913 file=lib/rudder/proof_chain/block_specimen_event_listener.ex line=125 [info] curr_block: 3707087 and latest_block_num:3769854
+..
+...
+rudder       | [info] Counter for rudder_metrics - [pipeline_success: 1]
+rudder       | [info] LastValue for rudder_metrics - [pipeline_success_last_exec_time: 0.0052]
+rudder       | [info] Sum for rudder_metrics - [pipeline_success_total_exec_time: 0.0052]
+rudder       | [info] Summary for rudder_metrics  - {0.0052, 0.0052}
 ```
 
 Alternatively - check proof-chain logs for correct block result proof submissions and transactions made by your block result producer.
@@ -578,6 +703,14 @@ Alternatively - check proof-chain logs for correct block result proof submission
 [For moonbeam.](https://moonscan.io/address/0x4f2E285227D43D9eB52799D0A28299540452446E)
 
 [For moonbase](https://moonbase.moonscan.io/address/0x19492a5019B30471aA8fa2c6D9d39c99b5Cda20C).
+
+**Note**:For any issues associated with building and re-compiling execute the following commands, that cleans, downloads and re-compiles the dependencies for `rudder`.
+
+```bash
+rm -rf _build deps && mix clean && mix deps.get && mix deps.compile
+```
+
+If you got everything working so far. Congratulations! You're now a Refiner operator on the Covalent Network. Set up Grafana monitoring and alerting from links in the [additional resources](#additional-resources) section.
 
 ## <span id="rudder_troubleshooting">Troubleshooting</span>
 
@@ -612,7 +745,7 @@ Please follow the guide in docs [contribution guidelines](./docs/CONTRIBUTING.md
 
 ## <span id="rudder_scripts">Scripts</span>
 
-In order to run `rudder` docker compose as a service unit. The example service unit file in [docs](./docs/rudder-compose.service) should suffice. After adding the env vars in their respective fields in the service unit file, enable the service and start it.
+In order to run the Refiner docker compose services as a service unit. The example service unit file in [docs](./docs/rudder-compose.service) should suffice. After adding the env vars in their respective fields in the service unit file, enable the service and start it.
 
 ```bash
 sudo systemctl enable rudder-compose.service
@@ -626,4 +759,93 @@ sudo groupadd docker
 sudo usermod -aG docker blockchain
 sudo su - blockchain
 docker run hello-world
+```
+
+### Appendix
+
+#### Run With Existing IPFS-Pinner Service
+
+On a system where an `ipfs-pinner` instance is already running, use this modified `.envrc.local` and `docker-compose-mbase.yml`
+
+```bash
+export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
+export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
+export IPFS_PINNER_URL="http://host.docker.internal:3001"
+export EVM_SERVER_URL="http://evm-server:3002"
+export WEB3_JWT="<<WEB3.STORAGE-API-TOKEN>>"
+```
+
+**Note**: When passing the private key into the env vars as above please remove the `0x` prefix so the private key env var has exactly 64 characters.
+
+```bash
+version: '3'
+# runs the entire rudder pipeline with all supporting services (including rudder) in docker
+# set .env such that all services in docker are talking to each other only; ipfs-pinnern is assumed
+# to be hosted on the host machine. It's accessed through http://host.docker.internal:3001/ url from
+# inside rudder docker container.
+services:
+  evm-server:
+    image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
+    container_name: evm-server
+    restart: always
+    labels:
+      "autoheal": "true"
+    expose:
+      - "3002:3002"
+    networks:
+      - cqt-net
+    ports:
+      - "3002:3002"
+
+  rudder:
+    image: "us-docker.pkg.dev/covalent-project/network/rudder:stable"
+    container_name: rudder
+    links:
+      - "evm-server:evm-server"
+    restart: always
+    depends_on:
+      evm-server:
+        condition: service_healthy
+    entrypoint: >
+      /bin/bash -l -c "
+        echo "moonbase-node:" $NODE_ETHEREUM_MAINNET;
+        echo "evm-server:" $EVM_SERVER_URL;
+        echo "ipfs-pinner:" $IPFS_PINNER;
+        cd /app;
+        MIX_ENV=dev mix release --overwrite;
+        MIX_ENV=dev mix run --no-halt --eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()';"
+    environment:
+      - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
+      - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
+      - EVM_SERVER_URL=${EVM_SERVER_URL}
+      - IPFS_PINNER_URL=${IPFS_PINNER_URL}
+    networks:
+      - cqt-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "9568:9568"
+
+  autoheal:
+    image: willfarrell/autoheal
+    container_name: autoheal
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    environment:
+      - AUTOHEAL_INTERVAL=10
+      - CURL_TIMEOUT=30
+
+networks:
+  cqt-net:
+```
+
+and start the `rudder` and `evm-server` services:
+
+```bash
+$ docker compose -f "docker-compose-mbase.yml" up --remove-orphans
+
+[+] Running 3/3
+ ⠿ Network rudder1_cqt-net  Created                                   0.0s
+ ⠿ Container evm-server     Started                                   0.7s
+ ⠿ Container rudder         Started                                   1.5s
 ```
