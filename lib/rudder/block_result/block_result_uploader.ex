@@ -51,7 +51,7 @@ defmodule Rudder.BlockResultUploader do
                block_height,
                specimen_hash_bytes32,
                block_result_hash,
-               cid
+               "ipfs://#{cid}"
              ) do
           {:ok, :submitted} ->
             :ok = Events.brp_upload_success(System.monotonic_time(:millisecond) - start_upload_ms)

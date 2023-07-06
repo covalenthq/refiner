@@ -12,14 +12,12 @@ services:
     labels:
       "autoheal": "true"
     expose:
-      - "4001:4001"
       - "3001:3001"
     environment:
       - WEB3_JWT=${WEB3_JWT}
     networks:
       - cqt-net
     ports:
-      - "4001:4001"
       - "3001:3001"
 
   evm-server:
@@ -66,7 +64,7 @@ services:
     networks:
       - cqt-net
     ports:
-      - "9568:9568"
+      - "9568:9568"    # prometheus metrics will be exported at http://localhost:9568/metrics etc.
 
   autoheal:
     image: willfarrell/autoheal
