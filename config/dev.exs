@@ -51,7 +51,7 @@ config :phoenix, :plug_init_mode, :runtime
 config :rudder,
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
   bsp_proofchain_address: "0x1BFa3b5E9bE2c5298B7DE11B5Acb08c37683f4eF",
-  brp_proofchain_address: "0xeFD84B6F1C04Ad9A7D666E21C9608a2ea2FE4B83",
+  brp_proofchain_address: "0x06A38f70c8e245e1cfe1b7d5ACa1B7cd29380343",
   proofchain_chain_id: 1287,
   proofchain_node: System.get_env("NODE_ETHEREUM_MAINNET"),
   ipfs_pinner_url: System.get_env("IPFS_PINNER_URL"),
