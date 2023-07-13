@@ -143,6 +143,8 @@ Open Source specialized transformation process and framework for block specimens
 
 - Detailed [Refiner Architecture](https://github.com/covalenthq/rudder/blob/main/docs/ARCH.md)
 
+- Refiner [Incentivized Testnet Validator-Operator Onboarding](https://www.youtube.com/watch?v=PHx4NT1_1E0)
+
 ## <span id="rudder _requirements">Requirements</span>
 
 **Minimum**
