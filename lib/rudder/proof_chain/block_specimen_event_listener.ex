@@ -25,7 +25,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     Application.ensure_all_started(:rudder)
     proofchain_address = Application.get_env(:rudder, :bsp_proofchain_address)
     Logger.info("retrying older uprocessed bsps (if any) before starting to listen")
-    Rudder.Pipeline.push_bsps_to_process(Rudder.Journal.items_with_status(:discover), true)
+    push_bsps_to_process(Rudder.Journal.items_with_status(:discover), true)
     block_height = load_last_checked_block()
     listen_for_event(proofchain_address, block_height)
   end
@@ -123,7 +123,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
     bsps_to_process = extract_awarded_specimens(bsp_awarded_logs)
     Logger.info("found #{length(bsps_to_process)} bsps to process")
-    Rudder.Pipeline.push_bsps_to_process(bsps_to_process)
+    push_bsps_to_process(bsps_to_process)
     Rudder.Journal.block_height_committed(block_height)
 
     next_block_height = block_height + 1
