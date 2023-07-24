@@ -3,6 +3,7 @@ defmodule Rudder.IPFSInteractor do
 
   alias Multipart.Part
   alias Rudder.Events
+  import GVA
 
   require Logger
 

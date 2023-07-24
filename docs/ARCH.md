@@ -127,10 +127,10 @@ iex(2)> [replica_fp] |> Stream.map(&Rudder.Avro.BlockSpecimenDecoder.decode_file
 
 ```
 
-The block processor takes the block specimen, runs it through the stateless evm tool (server) and gives the block result. Another way by which we can achieve the transformation is by calling `push_bsps_to_process` from the event listener.
+The block processor takes the block specimen, runs it through the stateless evm tool (server) and gives the block result. Another way by which we can achieve the transformation is by calling `push_bsps_to_process`.
 
 ```elixir
-iex(1)> Rudder.ProofChain.BlockSpecimenEventListener.push_bsps_to_process(["1_16582405_7f85dc42062468a6bbe420ae4fe4455b9c2423b798a6031f8ea7826997046907_402705672e34a250dcc798bb9ae3a14593e7cdc49750d57ef6018100503f3024"])
+iex(1)> Rudder.Pipeline.push_bsps_to_process(["1_16582405_7f85dc42062468a6bbe420ae4fe4455b9c2423b798a6031f8ea7826997046907_402705672e34a250dcc798bb9ae3a14593e7cdc49750d57ef6018100503f3024"])
 ```
 
 That will lead to the corresponding logs:

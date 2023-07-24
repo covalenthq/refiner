@@ -20,10 +20,12 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   @spec start :: no_return
   def start() do
     reregister_process()
+    Rudder.Pipeline.init_state()
     Logger.info("starting event listener")
     Application.ensure_all_started(:rudder)
     proofchain_address = Application.get_env(:rudder, :bsp_proofchain_address)
-    push_bsps_to_process(Rudder.Journal.items_with_status(:discover))
+    Logger.info("retrying older uprocessed bsps (if any) before starting to listen")
+    Rudder.Pipeline.push_bsps_to_process(Rudder.Journal.items_with_status(:discover), true)
     block_height = load_last_checked_block()
     listen_for_event(proofchain_address, block_height)
   end
@@ -81,9 +83,11 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     end)
   end
 
-  defp push_bsps_to_process(bsp_keys) do
+  def push_bsps_to_process(bsp_keys, mark_discover \\ false) do
     Enum.map(bsp_keys, fn bsp_key ->
-      Rudder.Journal.discover(bsp_key)
+      if !mark_discover do
+        Rudder.Journal.discover(bsp_key)
+      end
       [_chain_id, block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
       is_brp_sesion_open = Rudder.ProofChain.Interactor.is_block_result_session_open(block_height)
 
@@ -98,6 +102,12 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
   end
 
   defp listen_for_event(proofchain_address, block_height) do
+    if Rudder.Pipeline.is_retry_failed_bsp() do
+      Rudder.Pipeline.clear_retry_failed_bsp()
+      Logger.info("retrying older unprocessed bsps (if any)")
+      push_bsps_to_process(Rudder.Journal.items_with_status(:discover), true)
+    end
+
     Logger.info("listening for events at #{block_height}")
     Rudder.Journal.block_height_started(block_height)
 
@@ -113,7 +123,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
     bsps_to_process = extract_awarded_specimens(bsp_awarded_logs)
     Logger.info("found #{length(bsps_to_process)} bsps to process")
-    push_bsps_to_process(bsps_to_process)
+    Rudder.Pipeline.push_bsps_to_process(bsps_to_process)
     Rudder.Journal.block_height_committed(block_height)
 
     next_block_height = block_height + 1
