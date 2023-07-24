@@ -63,9 +63,11 @@ defmodule Rudder.Pipeline do
           case Rudder.BlockResultUploader.upload_block_result(block_result_metadata) do
             {:ok, cid, block_result_hash} ->
               :ok = Rudder.Journal.commit(bsp_key)
+              Events.rudder_pipeline_success(System.monotonic_time(:millisecond) - start_pipeline_ms)
               {:ok, cid, block_result_hash}
 
             {:error, :irreparable, errormsg} ->
+              Events.rudder_pipeline_failure(System.monotonic_time(:millisecond) - start_pipeline_ms)
               raise(Rudder.Pipeline.ProofSubmissionIrreparableError, errormsg)
 
             {:error, error, _block_result_hash} ->
@@ -74,10 +76,10 @@ defmodule Rudder.Pipeline do
               )
 
               write_to_backlog(bsp_key, urls, error)
+              Events.rudder_pipeline_failure(System.monotonic_time(:millisecond) - start_pipeline_ms)
               {:error, error}
           end
 
-        Events.rudder_pipeline_success(System.monotonic_time(:millisecond) - start_pipeline_ms)
         return_val
       else
         err ->
@@ -90,7 +92,6 @@ defmodule Rudder.Pipeline do
       e in Rudder.Pipeline.ProofSubmissionIrreparableError ->
         write_to_backlog(bsp_key, urls, e)
         Logger.error(Exception.format(:error, e, __STACKTRACE__))
-        Events.rudder_pipeline_failure(System.monotonic_time(:millisecond) - start_pipeline_ms)
         Process.exit(Process.whereis(:bspec_listener), :irreparable)
 
       e ->
