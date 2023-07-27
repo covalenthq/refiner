@@ -1,7 +1,8 @@
 defmodule Rudder.Pipeline do
   alias Rudder.Events
   require Logger
-  import GVA
+  alias Rudder.Util.GVA
+  require GVA
 
   defmodule ProofSubmissionIrreparableError do
     defexception message: "default message"
@@ -93,9 +94,6 @@ defmodule Rudder.Pipeline do
               Logger.info(
                 "#{block_height} has error on upload/proof submission: #{inspect(error)}"
               )
-
-              write_to_backlog(bsp_key, urls, error)
-
               Events.rudder_pipeline_failure(
                 System.monotonic_time(:millisecond) - start_pipeline_ms
               )
@@ -106,19 +104,18 @@ defmodule Rudder.Pipeline do
         return_val
       else
         err ->
-          write_to_backlog(bsp_key, urls, err)
+          bsp_upload_failure()
       end
     after
       # resource cleanups
       Briefly.cleanup()
     rescue
       e in Rudder.Pipeline.ProofSubmissionIrreparableError ->
-        write_to_backlog(bsp_key, urls, e)
         Logger.error(Exception.format(:error, e, __STACKTRACE__))
         Process.exit(Process.whereis(:bspec_listener), :irreparable)
 
       e ->
-        write_to_backlog(bsp_key, urls, e)
+        _
     end
   end
 
@@ -153,38 +150,33 @@ defmodule Rudder.Pipeline do
     end
   end
 
-  defp write_to_backlog(bsp_key, urls, err) do
-    Logger.warn("key #{bsp_key} written to backlog with #{urls}; error: #{inspect(err)}")
-    Rudder.Journal.abort(bsp_key)
-  end
-
   def init_state() do
-    gnew(:state)
-    gput(:state, :retry_failed_bsp, false)
-    gput(:state, :bsp_upload_status, :ok)
+    GVA.gnew(:state)
+    GVA.gput(:state, :retry_failed_bsp, false)
+    GVA.gput(:state, :bsp_upload_status, :ok)
   end
 
   def set_retry_failed_bsp() do
-    gput(:state, :retry_failed_bsp, true)
+    GVA.gput(:state, :retry_failed_bsp, true)
   end
 
   def clear_retry_failed_bsp() do
-    gput(:state, :retry_failed_bsp, false)
+    GVA.gput(:state, :retry_failed_bsp, false)
   end
 
   def is_retry_failed_bsp() do
-    gget(:state, :retry_failed_bsp)
+    GVA.gget(:state, :retry_failed_bsp)
   end
 
   def is_bsp_upload_status_ok() do
-    :ok == gget(:state, :bsp_upload_status)
+    :ok == GVA.gget(:state, :bsp_upload_status)
   end
 
   def bsp_upload_success() do
-    gput(:state, :bsp_upload_status, :ok)
+    GVA.gput(:state, :bsp_upload_status, :ok)
   end
 
   def bsp_upload_failure() do
-    gput(:state, :bsp_upload_status, :err)
+    GVA.gput(:state, :bsp_upload_status, :err)
   end
 end

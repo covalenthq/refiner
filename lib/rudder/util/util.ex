@@ -49,4 +49,40 @@ defmodule Rudder.Util do
   def convert_to_bytes32(str) do
     Base.decode16!(str, case: :mixed)
   end
+
+  defmodule GVA do
+    @moduledoc """
+    Global VAriable utilities.
+    """
+
+    @doc """
+    Create a new table to hold your variables.
+    A table can hold as much variables (and associated data) as your RAM allows you.
+    """
+    defmacro gnew(name) do
+      quote do
+        :ets.new(unquote(name), [:set, :public, :named_table])
+      end
+    end
+
+    @doc """
+    Put a value in a variable table.
+    """
+    defmacro gput(table, key, value) do
+      quote do
+        :ets.insert(unquote(table), {unquote(key), unquote(value)})
+      end
+    end
+
+    @doc """
+    Get an variable's value from a table by it's key.
+    """
+    defmacro gget(table, key) do
+      quote do
+        [{_key, value}] = :ets.lookup(unquote(table), unquote(key))
+        value
+      end
+    end
+  end
+
 end

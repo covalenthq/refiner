@@ -19,8 +19,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
   @spec start :: no_return
   def start() do
-    reregister_process()
-    Rudder.Pipeline.init_state()
+    initialize()
     Logger.info("starting event listener")
     Application.ensure_all_started(:rudder)
     proofchain_address = Application.get_env(:rudder, :bsp_proofchain_address)
@@ -30,12 +29,14 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     listen_for_event(proofchain_address, block_height)
   end
 
-  @spec reregister_process :: true
-  def reregister_process() do
+  @spec initialize :: true
+  def initialize() do
     register_name = :bspec_listener
 
     case Process.whereis(register_name) do
       nil ->
+        Logger.info("initializing state for GVA")
+        Rudder.Pipeline.init_state()
         :ok
 
       _pid ->
@@ -88,6 +89,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       if !mark_discover do
         Rudder.Journal.discover(bsp_key)
       end
+      Logger.info("processing specimen #{bsp_key}")
 
       [_chain_id, block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
       is_brp_sesion_open = Rudder.ProofChain.Interactor.is_block_result_session_open(block_height)
