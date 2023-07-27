@@ -95,6 +95,8 @@ defmodule Rudder.Pipeline do
                 "#{block_height} has error on upload/proof submission: #{inspect(error)}"
               )
 
+              log_error_info(bsp_key, urls, error)
+
               Events.rudder_pipeline_failure(
                 System.monotonic_time(:millisecond) - start_pipeline_ms
               )
@@ -105,6 +107,7 @@ defmodule Rudder.Pipeline do
         return_val
       else
         err ->
+          log_error_info(bsp_key, urls, err)
           bsp_upload_failure()
       end
     after
@@ -112,11 +115,12 @@ defmodule Rudder.Pipeline do
       Briefly.cleanup()
     rescue
       e in Rudder.Pipeline.ProofSubmissionIrreparableError ->
+        log_error_info(bsp_key, urls, e)
         Logger.error(Exception.format(:error, e, __STACKTRACE__))
         Process.exit(Process.whereis(:bspec_listener), :irreparable)
 
       e ->
-        _
+        log_error_info(bsp_key, urls, e)
     end
   end
 
@@ -149,6 +153,11 @@ defmodule Rudder.Pipeline do
       err ->
         err
     end
+  end
+
+  defp log_error_info(bsp_key, urls, err) do
+    # logging key and url, so that it can be retried from local elixir shell
+    Logger.warn("key #{bsp_key} written to backlog with #{urls}; error: #{inspect(err)}")
   end
 
   def init_state() do
