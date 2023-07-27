@@ -94,6 +94,7 @@ defmodule Rudder.Pipeline do
               Logger.info(
                 "#{block_height} has error on upload/proof submission: #{inspect(error)}"
               )
+
               Events.rudder_pipeline_failure(
                 System.monotonic_time(:millisecond) - start_pipeline_ms
               )

@@ -84,5 +84,4 @@ defmodule Rudder.Util do
       end
     end
   end
-
 end

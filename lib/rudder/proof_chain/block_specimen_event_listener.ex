@@ -89,6 +89,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       if !mark_discover do
         Rudder.Journal.discover(bsp_key)
       end
+
       Logger.info("processing specimen #{bsp_key}")
 
       [_chain_id, block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
