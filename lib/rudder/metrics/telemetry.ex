@@ -163,7 +163,7 @@ defmodule Rudder.Telemetry do
       sum("rudder.events.rudder_pipeline_failure.duration",
         unit: {:native, :millisecond},
         tags: [:table, :operation]
-      ),
+      )
     ]
 
     children = [

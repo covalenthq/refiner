@@ -66,26 +66,40 @@ defmodule Rudder.Pipeline do
             {:ok, cid, block_result_hash} ->
               :ok = Rudder.Journal.commit(bsp_key)
               bsp_upload_success()
+
               if !is_prev_uploader_state_ok && is_bsp_upload_status_ok() do
                 # upload pipeline is succeeding again, retry the older failed bsps
                 set_retry_failed_bsp()
               end
-              Events.rudder_pipeline_success(System.monotonic_time(:millisecond) - start_pipeline_ms)
+
+              Events.rudder_pipeline_success(
+                System.monotonic_time(:millisecond) - start_pipeline_ms
+              )
+
               {:ok, cid, block_result_hash}
 
             {:error, :irreparable, errormsg} ->
               bsp_upload_failure()
-              Events.rudder_pipeline_failure(System.monotonic_time(:millisecond) - start_pipeline_ms)
+
+              Events.rudder_pipeline_failure(
+                System.monotonic_time(:millisecond) - start_pipeline_ms
+              )
+
               raise(Rudder.Pipeline.ProofSubmissionIrreparableError, errormsg)
 
             {:error, error, _block_result_hash} ->
               bsp_upload_failure()
+
               Logger.info(
                 "#{block_height} has error on upload/proof submission: #{inspect(error)}"
               )
 
               write_to_backlog(bsp_key, urls, error)
-              Events.rudder_pipeline_failure(System.monotonic_time(:millisecond) - start_pipeline_ms)
+
+              Events.rudder_pipeline_failure(
+                System.monotonic_time(:millisecond) - start_pipeline_ms
+              )
+
               {:error, error}
           end
 
@@ -145,32 +159,32 @@ defmodule Rudder.Pipeline do
   end
 
   def init_state() do
-    gnew :state
-    gput :state, :retry_failed_bsp, false
-    gput :state, :bsp_upload_status, :ok
+    gnew(:state)
+    gput(:state, :retry_failed_bsp, false)
+    gput(:state, :bsp_upload_status, :ok)
   end
 
   def set_retry_failed_bsp() do
-    gput :state, :retry_failed_bsp, true
+    gput(:state, :retry_failed_bsp, true)
   end
 
   def clear_retry_failed_bsp() do
-    gput :state, :retry_failed_bsp, false
+    gput(:state, :retry_failed_bsp, false)
   end
 
   def is_retry_failed_bsp() do
-    gget :state, :retry_failed_bsp
+    gget(:state, :retry_failed_bsp)
   end
 
   def is_bsp_upload_status_ok() do
-    :ok == (gget :state, :bsp_upload_status)
+    :ok == gget(:state, :bsp_upload_status)
   end
 
   def bsp_upload_success() do
-    gput :state, :bsp_upload_status, :ok
+    gput(:state, :bsp_upload_status, :ok)
   end
 
   def bsp_upload_failure() do
-    gput :state, :bsp_upload_status, :err
+    gput(:state, :bsp_upload_status, :err)
   end
 end

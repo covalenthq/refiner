@@ -88,6 +88,7 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
       if !mark_discover do
         Rudder.Journal.discover(bsp_key)
       end
+
       [_chain_id, block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
       is_brp_sesion_open = Rudder.ProofChain.Interactor.is_block_result_session_open(block_height)
 
