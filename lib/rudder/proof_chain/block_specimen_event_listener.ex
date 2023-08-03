@@ -35,8 +35,6 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
 
     case Process.whereis(register_name) do
       nil ->
-        Logger.info("initializing state for GVA")
-        Rudder.Pipeline.init_state()
         :ok
 
       _pid ->

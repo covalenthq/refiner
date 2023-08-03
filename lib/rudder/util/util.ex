@@ -66,6 +66,15 @@ defmodule Rudder.Util do
     end
 
     @doc """
+    Check if a table exists.
+    """
+    defmacro gexists(name) do
+      quote do
+        :ets.info(unquote(name)) != :undefined
+      end
+    end
+
+    @doc """
     Put a value in a variable table.
     """
     defmacro gput(table, key, value) do

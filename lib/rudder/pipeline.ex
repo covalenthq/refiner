@@ -160,33 +160,57 @@ defmodule Rudder.Pipeline do
     Logger.warn("key #{bsp_key} written to backlog with #{urls}; error: #{inspect(err)}")
   end
 
-  def init_state() do
+  defp init_state() do
     GVA.gnew(:state)
     GVA.gput(:state, :retry_failed_bsp, false)
     GVA.gput(:state, :bsp_upload_status, :ok)
   end
 
   def set_retry_failed_bsp() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
     GVA.gput(:state, :retry_failed_bsp, true)
   end
 
   def clear_retry_failed_bsp() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
     GVA.gput(:state, :retry_failed_bsp, false)
   end
 
   def is_retry_failed_bsp() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
     GVA.gget(:state, :retry_failed_bsp)
   end
 
   def is_bsp_upload_status_ok() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
     :ok == GVA.gget(:state, :bsp_upload_status)
   end
 
   def bsp_upload_success() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
     GVA.gput(:state, :bsp_upload_status, :ok)
   end
 
   def bsp_upload_failure() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
     GVA.gput(:state, :bsp_upload_status, :err)
   end
 end
