@@ -7,8 +7,9 @@
 1. [Contributing Doc](./CONTRIBUTING.md)
 1. [Development Doc](./DEVELOPMENT.md)
 
-## List of Diagrams
+## List of Images
 
+1. Covalent Banner![Covalent Verifiable Stack](./covalent-1.png)
 1. Phase 2 Refiner![Phase 2 Refiner](./phase-2.png)
 1. Covalent Network Layers![Covalent Network Layers](./network-layers.png)
 1. Full Architecture of Covalent Network![Full Architecture of Covalent Network](./arch-white.png)
