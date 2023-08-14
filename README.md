@@ -64,9 +64,9 @@ The [Refiner Whitepaper](https://www.covalenthq.com/docs/cqt-network/refiner-whi
 
 Among many of the Refiner's outputs feasible, the Block Result is one. The block result is a one-to-one representation of block data returned from an RPC call to a blockchain node along with the artifacts of block and tx execution like transaction `receipts`. The source of the block result, the block specimen, captures a few extra fields like the [State Specimen](https://github.com/covalenthq/bsp-agent#state-specimen) and `senders` etc. This full specification and its requirement are described well in the [BSP whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
 
-Running the Refiner stack involves running three main pieces of Covalent Network OS infrastructure,  [`rudder`](https://github.com/covalenthq/rudder), [`ipfs-pinner`](https://github.com/covalenthq/ipfs-pinner) and [`evm-server`](https://github.com/covalenthq/erigon) that coordinate and execute a transformation pipeline per Block Specimen.
+Running the Refiner stack involves running three main pieces of CQT Network OS infrastructure,  [`rudder`](https://github.com/covalenthq/rudder), [`ipfs-pinner`](https://github.com/covalenthq/ipfs-pinner) and [`evm-server`](https://github.com/covalenthq/erigon) that coordinate and execute a transformation pipeline per Block Specimen.
 
-Here `rudder` serves as the primary orchestrator and supervisor for all transformation pipeline processes that locates a source Covalent Network data object to apply a tracing/execution/transformational rule to and outputs a new object generated from using such a rule.
+Here `rudder` serves as the primary orchestrator and supervisor for all transformation pipeline processes that locates a source CQT Network data object to apply a tracing/execution/transformational rule to and outputs a new object generated from using such a rule.
 
 Running these nodes are not as disk I/O (or cpu/memory) intense as running [`bsp-geth`](https://github.com/covalenthq/bsp-geth) and [`bsp-agent`](https://github.com/covalenthq/bsp-agent) on local machines, however they do require sufficient bandwidth for access to distributed store resources and sending transaction proofs using ethereum clients - connecting to our EVM public blockchain partner - [moonbeam](https://moonbeam.network/). We shall setup all of these step-by-step in this guide in two main ways:
 
@@ -94,11 +94,11 @@ At a very high level, the Refiner locates a source to apply a transformational r
 
 ![Rudder Pipeline](./docs/components.png)
 
-The happy path for `rudder` application in the Covalent Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state, and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [FULL ARCHITECTURE document](./docs/ARCH.md).
+The happy path for `rudder` application in the CQT Network is made up of actor processes spawned through many [Gen Servers](https://elixir-lang.org/getting-started/mix-otp/genserver.html) processes that are loosely coupled, here some maintain state, and some don't. The children processes can be called upon to fulfill responsibilities at different sections in the refinement/transformation process pipeline - under one umbrella [Dynamic Supervisor](https://elixir-lang.org/getting-started/mix-otp/dynamic-supervisor.html), that can bring them back up in case of a failure to continue a given pipeline operation. Read more about the components and their operations in the [FULL ARCHITECTURE document](./docs/ARCH.md).
 
 ## <span id="rudder _resources">Resources</span>
 
-Production of Block Results forms the core of the covalent network’s functional data objects specs. These result objects are created using six main pieces of open-source software published by Covalent for the Covalent Network’s decentralized blockchain data ETL stack.
+Production of Block Results forms the core of the cQT network’s functional data objects specs. These result objects are created using six main pieces of open-source software published by Covalent for the CQT Network’s decentralized blockchain data ETL stack.
 
 ![Resources](./docs/arch-white.png)
 
@@ -109,13 +109,13 @@ Open source granular bulk blockchain data production and export of block specime
 Open source packaging, encoding, proving (and storing specification) of block specimens.
 
 1. [BSP Staking (Consensus)](https://github.com/covalenthq/bsp-staking) - Covalent foundation operated & pre-deployed.
-Open source CQT staking and proof aggregating smart contracts deployed on moonbeam used for consensus and rewards distribution for covalent network operators.
+Open source CQT staking and proof aggregating smart contracts deployed on moonbeam used for consensus and rewards distribution for cQT network operators.
 
 1. [IPFS Pinner (Store)](https://github.com/covalenthq/ipfs-pinner) - Operator run & deployed.
-Open source decentralized storage layer for covalent network block specimen and transformations (results).
+Open source decentralized storage layer for cQT network block specimen and transformations (results).
 
 1. [BSP Finalizer (Reward)](https://github.com/covalenthq/bsp-finalizer) - Covalent foundation operated & pre-deployed.
-Open source (anyone can call the rewards function on BSP Staking contracts) rewards distributer for covalent network operators.
+Open source (anyone can call the rewards function on BSP Staking contracts) rewards distributer for cQT network operators.
 
 1. [T8n Server (Transform)](https://github.com/covalenthq/erigon) - Operator run & deployed.
 Open source Ethereum virtual machine binary (stateless transition tool - t8n) plugin/http server for the rudder.
@@ -125,15 +125,15 @@ Open Source specialized transformation process and framework for block specimens
 
 ### <span id="rudder _resources_add">Additional Resources</span>
 
-- Reference to understand the functions of the various components can be found in the official [Covalent Network Whitepaper](https://www.covalenthq.com/docs/cqt-network/covalent-network-whitepaper/).
+- Reference to understand the functions of the various components can be found in the official [CQT Network Whitepaper](https://www.covalenthq.com/docs/cqt-network/covalent-network-whitepaper/).
 
-- Reference to understand the block specimen producer and its role in the Covalent Network can be found in the official [Block Specimen Whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
+- Reference to understand the block specimen producer and its role in the CQT Network can be found in the official [Block Specimen Whitepaper](https://www.covalenthq.com/static/documents/Block%20Specimen%20Whitepaper%20V1.2.pdf).
 
-- Reference to understand the Refiner's purpose, mission and its role in the Covalent Network can be found in the official [Refiner Whitepaper](http://covalenthq.com/docs/cqt-network/refiner-whitepaper/)
+- Reference to understand the Refiner's purpose, mission and its role in the CQT Network can be found in the official [Refiner Whitepaper](http://covalenthq.com/docs/cqt-network/refiner-whitepaper/)
 
-- Operator reference for instructions to run BSP Geth with the BSP Agent can be found in [Covalent Network: Block Specimen Producer Onboarding Process](https://www.covalenthq.com/docs/cqt-network/operator-onboarding-bsp/).
+- Operator reference for instructions to run BSP Geth with the BSP Agent can be found in [CQT Network: Block Specimen Producer Onboarding Process](https://www.covalenthq.com/docs/cqt-network/operator-onboarding-bsp/).
 
-- Operator reference for instructions to run Rudder/Refiner be found in [Covalent Network - Refiner Onboarding Process](https://www.covalenthq.com/docs/cqt-network/operator-onboarding-refiner/).
+- Operator reference for instructions to run Rudder/Refiner be found in [CQT Network - Refiner Onboarding Process](https://www.covalenthq.com/docs/cqt-network/operator-onboarding-refiner/).
 
 - View [The Refiner: A Web3 Solution for Accessing Granular Blockchain Data for Developers](https://www.youtube.com/watch?v=o7yTUY8s_Yk&pp=ygUQcmVmaW5lciBjb3ZhbGVudA%3D%3D)
 
@@ -519,7 +519,7 @@ Run the generated binary
 INFO[04-17|11:03:07.516] Listening                                port=3002
 ```
 
-The IPFS-Pinner is an interface to the storage layer of the Covalent network using a decentralized storage network underneath. Primarily it's a custom [IPFS (Inter Planetary File System)](https://ipfs.tech/) node with pinning service components for [Web3.storage](https://web3.storage/) and [Pinata](https://www.pinata.cloud/); content archive manipulation etc. Additionally there's support for fetching using `dweb.link`. It is meant for uploading/fetching artifacts (like Block Specimens and uploading Block Results or any other processed/transformed data asset) of the Covalent Decentralized Network.
+The IPFS-Pinner is an interface to the storage layer of the CQT network using a decentralized storage network underneath. Primarily it's a custom [IPFS (Inter Planetary File System)](https://ipfs.tech/) node with pinning service components for [Web3.storage](https://web3.storage/) and [Pinata](https://www.pinata.cloud/); content archive manipulation etc. Additionally there's support for fetching using `dweb.link`. It is meant for uploading/fetching artifacts (like Block Specimens and uploading Block Results or any other processed/transformed data asset) of the Covalent Decentralized Network.
 
 Clone [covalenthq/ipfs-pinner](https://github.com/covalenthq/ipfs-pinner) and build the pinner server binary
 
@@ -712,7 +712,7 @@ Alternatively - check proof-chain logs for correct block result proof submission
 rm -rf _build deps && mix clean && mix deps.get && mix deps.compile
 ```
 
-If you got everything working so far. Congratulations! You're now a Refiner operator on the Covalent Network. Set up Grafana monitoring and alerting from links in the [additional resources](#additional-resources) section.
+If you got everything working so far. Congratulations! You're now a Refiner operator on the CQT Network. Set up Grafana monitoring and alerting from links in the [additional resources](#additional-resources) section.
 
 ## <span id="rudder_troubleshooting">Troubleshooting</span>
 
@@ -810,12 +810,12 @@ services:
         condition: service_healthy
     entrypoint: >
       /bin/bash -l -c "
-        echo "moonbase-node:" $NODE_ETHEREUM_MAINNET;
+        echo "moonbeam-node:" $NODE_ETHEREUM_MAINNET;
         echo "evm-server:" $EVM_SERVER_URL;
         echo "ipfs-pinner:" $IPFS_PINNER;
         cd /app;
-        MIX_ENV=dev mix release --overwrite;
-        MIX_ENV=dev mix run --no-halt --eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()';"
+        MIX_ENV=prod mix release --overwrite;
+        MIX_ENV=prod mix run --no-halt --eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()';"
     environment:
       - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
       - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
@@ -844,10 +844,10 @@ networks:
 and start the `rudder` and `evm-server` services:
 
 ```bash
-$ docker compose -f "docker-compose-mbase.yml" up --remove-orphans
+$ docker compose -f "docker-compose-mbeam.yml" up --remove-orphans
 
 [+] Running 3/3
- ⠿ Network rudder1_cqt-net  Created                                   0.0s
+ ⠿ Network rudder_cqt-net  Created                                   0.0s
  ⠿ Container evm-server     Started                                   0.7s
  ⠿ Container rudder         Started                                   1.5s
 ```

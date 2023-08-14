@@ -51,7 +51,7 @@ services:
         condition: service_healthy
     entrypoint: >
       /bin/bash -l -c "
-        echo "moonbase-node:" $NODE_ETHEREUM_MAINNET;
+        echo "moonbeam-node:" $NODE_ETHEREUM_MAINNET;
         echo "evm-server:" $EVM_SERVER_URL;
         echo "ipfs-node:" $IPFS_PINNER_URL;
         cd /app;
