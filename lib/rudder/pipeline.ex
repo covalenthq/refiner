@@ -45,7 +45,7 @@ defmodule Rudder.Pipeline do
   @spec process_specimen(any, any) :: any
   def process_specimen(bsp_key, urls) do
     start_pipeline_ms = System.monotonic_time(:millisecond)
-    is_prev_uploader_state_ok = is_bsp_upload_status_ok()
+    is_prev_uploader_state_ok = is_uploader_status_ok()
 
     try do
       with [_chain_id, _block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
@@ -66,9 +66,9 @@ defmodule Rudder.Pipeline do
           case Rudder.BlockResultUploader.upload_block_result(block_result_metadata) do
             {:ok, cid, block_result_hash} ->
               :ok = Rudder.Journal.commit(bsp_key)
-              bsp_upload_success()
+              rec_uploader_success()
 
-              if !is_prev_uploader_state_ok && is_bsp_upload_status_ok() do
+              if !is_prev_uploader_state_ok && is_uploader_status_ok() do
                 # upload pipeline is succeeding again, retry the older failed bsps
                 set_retry_failed_bsp()
               end
@@ -80,7 +80,7 @@ defmodule Rudder.Pipeline do
               {:ok, cid, block_result_hash}
 
             {:error, :irreparable, errormsg} ->
-              bsp_upload_failure()
+              rec_uploader_failure()
 
               Events.rudder_pipeline_failure(
                 System.monotonic_time(:millisecond) - start_pipeline_ms
@@ -89,7 +89,7 @@ defmodule Rudder.Pipeline do
               raise(Rudder.Pipeline.ProofSubmissionIrreparableError, errormsg)
 
             {:error, error, _block_result_hash} ->
-              bsp_upload_failure()
+              rec_uploader_failure()
 
               Logger.info(
                 "#{block_height} has error on upload/proof submission: #{inspect(error)}"
@@ -108,7 +108,7 @@ defmodule Rudder.Pipeline do
       else
         err ->
           log_error_info(bsp_key, urls, err)
-          bsp_upload_failure()
+          rec_uploader_failure()
       end
     after
       # resource cleanups
@@ -163,7 +163,7 @@ defmodule Rudder.Pipeline do
   defp init_state() do
     GVA.gnew(:state)
     GVA.gput(:state, :retry_failed_bsp, false)
-    GVA.gput(:state, :bsp_upload_status, :ok)
+    GVA.gput(:state, :uploader_status, :ok)
   end
 
   def set_retry_failed_bsp() do
@@ -190,27 +190,27 @@ defmodule Rudder.Pipeline do
     GVA.gget(:state, :retry_failed_bsp)
   end
 
-  def is_bsp_upload_status_ok() do
+  def is_uploader_status_ok() do
     if !GVA.gexists(:state) do
       init_state()
     end
 
-    :ok == GVA.gget(:state, :bsp_upload_status)
+    :ok == GVA.gget(:state, :uploader_status)
   end
 
-  def bsp_upload_success() do
+  def rec_uploader_success() do
     if !GVA.gexists(:state) do
       init_state()
     end
 
-    GVA.gput(:state, :bsp_upload_status, :ok)
+    GVA.gput(:state, :uploader_status, :ok)
   end
 
-  def bsp_upload_failure() do
+  def rec_uploader_failure() do
     if !GVA.gexists(:state) do
       init_state()
     end
 
-    GVA.gput(:state, :bsp_upload_status, :err)
+    GVA.gput(:state, :uploader_status, :err)
   end
 end
