@@ -43,7 +43,10 @@ defmodule SupervisionTreeTest do
     block_id = "1234_f_"
 
     specimen = get_sample_specimen!()
-    {:ok, bpid} = Rudder.BlockProcessor.start_link(["http://evm-server:3002"])
+
+    {:ok, bpid} =
+      Rudder.BlockProcessor.start_link([Application.get_env(:rudder, :evm_server_url)])
+
     {:error, error_msg} = GenServer.call(bpid, {:process, "invalid content"}, 60_000)
 
     assert error_msg ==

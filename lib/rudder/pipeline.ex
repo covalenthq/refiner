@@ -1,6 +1,8 @@
 defmodule Rudder.Pipeline do
   alias Rudder.Events
   require Logger
+  alias Rudder.Util.GVA
+  require GVA
 
   defmodule ProofSubmissionIrreparableError do
     defexception message: "default message"
@@ -43,6 +45,7 @@ defmodule Rudder.Pipeline do
   @spec process_specimen(any, any) :: any
   def process_specimen(bsp_key, urls) do
     start_pipeline_ms = System.monotonic_time(:millisecond)
+    is_prev_uploader_state_ok = is_uploader_status_ok()
 
     try do
       with [_chain_id, _block_height, _block_hash, specimen_hash] <- String.split(bsp_key, "_"),
@@ -63,38 +66,61 @@ defmodule Rudder.Pipeline do
           case Rudder.BlockResultUploader.upload_block_result(block_result_metadata) do
             {:ok, cid, block_result_hash} ->
               :ok = Rudder.Journal.commit(bsp_key)
+              rec_uploader_success()
+
+              if !is_prev_uploader_state_ok && is_uploader_status_ok() do
+                # upload pipeline is succeeding again, retry the older failed bsps
+                set_retry_failed_bsp()
+              end
+
+              Events.rudder_pipeline_success(
+                System.monotonic_time(:millisecond) - start_pipeline_ms
+              )
+
               {:ok, cid, block_result_hash}
 
             {:error, :irreparable, errormsg} ->
+              rec_uploader_failure()
+
+              Events.rudder_pipeline_failure(
+                System.monotonic_time(:millisecond) - start_pipeline_ms
+              )
+
               raise(Rudder.Pipeline.ProofSubmissionIrreparableError, errormsg)
 
             {:error, error, _block_result_hash} ->
+              rec_uploader_failure()
+
               Logger.info(
                 "#{block_height} has error on upload/proof submission: #{inspect(error)}"
               )
 
-              write_to_backlog(bsp_key, urls, error)
+              log_error_info(bsp_key, urls, error)
+
+              Events.rudder_pipeline_failure(
+                System.monotonic_time(:millisecond) - start_pipeline_ms
+              )
+
               {:error, error}
           end
 
-        Events.rudder_pipeline_success(System.monotonic_time(:millisecond) - start_pipeline_ms)
         return_val
       else
         err ->
-          write_to_backlog(bsp_key, urls, err)
+          log_error_info(bsp_key, urls, err)
+          rec_uploader_failure()
       end
     after
       # resource cleanups
       Briefly.cleanup()
     rescue
       e in Rudder.Pipeline.ProofSubmissionIrreparableError ->
-        write_to_backlog(bsp_key, urls, e)
+        log_error_info(bsp_key, urls, e)
         Logger.error(Exception.format(:error, e, __STACKTRACE__))
-        Events.rudder_pipeline_failure(System.monotonic_time(:millisecond) - start_pipeline_ms)
         Process.exit(Process.whereis(:bspec_listener), :irreparable)
 
       e ->
-        write_to_backlog(bsp_key, urls, e)
+        log_error_info(bsp_key, urls, e)
     end
   end
 
@@ -129,8 +155,62 @@ defmodule Rudder.Pipeline do
     end
   end
 
-  defp write_to_backlog(bsp_key, urls, err) do
+  defp log_error_info(bsp_key, urls, err) do
+    # logging key and url, so that it can be retried from local elixir shell
     Logger.warn("key #{bsp_key} written to backlog with #{urls}; error: #{inspect(err)}")
-    Rudder.Journal.abort(bsp_key)
+  end
+
+  defp init_state() do
+    GVA.gnew(:state)
+    GVA.gput(:state, :retry_failed_bsp, false)
+    GVA.gput(:state, :uploader_status, :ok)
+  end
+
+  def set_retry_failed_bsp() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
+    GVA.gput(:state, :retry_failed_bsp, true)
+  end
+
+  def clear_retry_failed_bsp() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
+    GVA.gput(:state, :retry_failed_bsp, false)
+  end
+
+  def is_retry_failed_bsp() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
+    GVA.gget(:state, :retry_failed_bsp)
+  end
+
+  def is_uploader_status_ok() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
+    :ok == GVA.gget(:state, :uploader_status)
+  end
+
+  def rec_uploader_success() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
+    GVA.gput(:state, :uploader_status, :ok)
+  end
+
+  def rec_uploader_failure() do
+    if !GVA.gexists(:state) do
+      init_state()
+    end
+
+    GVA.gput(:state, :uploader_status, :err)
   end
 end

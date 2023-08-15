@@ -47,11 +47,11 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-# Default these should point to moonbase alpha since we do all the development testing there
+# Default these should point to moonbeam since we do all prod deployments there
 config :rudder,
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
   bsp_proofchain_address: "0x4f2E285227D43D9eB52799D0A28299540452446E",
-  brp_proofchain_address: "0x4f2E285227D43D9eB52799D0A28299540452446E",
+  brp_proofchain_address: "0x254E3FA072324fa202577F24147066359947bC23",
   proofchain_chain_id: 1284,
   proofchain_node: System.get_env("NODE_ETHEREUM_MAINNET"),
   ipfs_pinner_url: System.get_env("IPFS_PINNER_URL"),
