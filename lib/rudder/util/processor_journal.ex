@@ -1,7 +1,7 @@
 defmodule Rudder.Journal do
   @moduledoc """
   A journal for recording work done by the processing engine. Before the engine starts processing, the work item, identified by some <b>id</b>
-  is "start"-ed. When the processing is done, the work item is either "commit"-ed or "abort"-ed.
+  is "discovered"-ed. When the processing is done, the work item is either "commit"-ed or "abort"-ed.
   """
   use GenServer
 
