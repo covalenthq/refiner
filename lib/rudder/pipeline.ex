@@ -34,7 +34,7 @@ defmodule Rudder.Pipeline do
     def push_hash(bsp_key, urls) do
       DynamicSupervisor.start_child(
         __MODULE__,
-        {Agent,
+        {Task,
          fn ->
            Rudder.Pipeline.process_specimen(bsp_key, urls)
          end}
