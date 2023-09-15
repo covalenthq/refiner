@@ -79,7 +79,8 @@ defmodule Rudder.MixProject do
       {:telemetry_metrics_prometheus_core, "~>0.2.2"},
 
       # utils
-      {:briefly, "~> 0.4.1"}
+      {:briefly, "~> 0.4.1"},
+      {:rustler, ">= 0.0.0", optional: true}
 
       # Unused
       # {:erlexec, "~> 2.0"},
