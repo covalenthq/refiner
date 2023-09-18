@@ -24,15 +24,21 @@ defmodule Rudder.PipelineTest do
     test_urls = ["ipfs://bafybeihfjhxfr3r2ti7phs7gzwbx5oimzf6ainhccrk2hlzoozcmcsu36q"]
     test_block_specimen_hash = "6a1a24cfbee3d64c7f6c7fd478ec0e1112176d1340f18d0ba933352c6ce2026a"
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
-    {:ok, agent} = Rudder.Pipeline.Spawner.push_hash(test_bsp_key, test_urls)
+    {:ok, task} = Rudder.Pipeline.Spawner.push_hash(test_bsp_key, test_urls, true)
+
+    {status, cid, block_result_hash} =
+      receive do
+        {:result, result} -> result
+        _ -> assert(false)
+      after
+        30_000 -> assert(false)
+      end
 
     expected_block_result_cid = "bafybeifkk56vhaiqwfijernkd3blthcavol6dmwgcfm2g3op6wmw3obiy4"
 
     expected_block_result_hash =
       <<125, 209, 148, 90, 204, 95, 113, 187, 206, 110, 137, 86, 41, 90, 1, 140, 224, 3, 206, 72,
         126, 126, 247, 116, 234, 15, 9, 93, 220, 190, 153, 210>>
-
-    {status, cid, block_result_hash} = Agent.get(agent, & &1)
 
     assert status == :ok
     assert cid == expected_block_result_cid

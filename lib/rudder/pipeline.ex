@@ -3,6 +3,7 @@ defmodule Rudder.Pipeline do
   require Logger
   alias Rudder.Util.GVA
   require GVA
+  use Task
 
   defmodule ProofSubmissionIrreparableError do
     defexception message: "default message"
@@ -31,12 +32,18 @@ defmodule Rudder.Pipeline do
     end
 
     @spec push_hash(any, any) :: :ignore | {:error, any} | {:ok, pid} | {:ok, pid, any}
-    def push_hash(bsp_key, urls) do
+    def push_hash(bsp_key, urls, reply \\ false) do
+      caller_pid = self()
+
       DynamicSupervisor.start_child(
         __MODULE__,
         {Task,
          fn ->
-           Rudder.Pipeline.process_specimen(bsp_key, urls)
+           return_val = Rudder.Pipeline.process_specimen(bsp_key, urls)
+
+           if reply do
+             send(caller_pid, {:result, return_val})
+           end
          end}
       )
     end
