@@ -4,7 +4,7 @@ defmodule Rudder.MixProject do
   def project do
     [
       app: :rudder,
-      version: "0.2.14",
+      version: "0.2.15",
       elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -43,7 +43,7 @@ defmodule Rudder.MixProject do
        github: "tsutsu/ethereum_abi",
        branch: "feature-parse-events-from-abi-specifications",
        override: true},
-      {:ex_secp256k1, "0.7.0", override: true},
+      {:ex_secp256k1, "0.7.2", override: true},
       {:ex_keccak, "~> 0.7.1", override: true},
       {:mnemonic, "~> 0.3"},
       {:ex_rlp, "~> 0.6.0", override: true},
@@ -79,7 +79,8 @@ defmodule Rudder.MixProject do
       {:telemetry_metrics_prometheus_core, "~>0.2.2"},
 
       # utils
-      {:briefly, "~> 0.4.1"}
+      {:briefly, "~> 0.4.1"},
+      {:rustler, ">= 0.0.0", optional: true}
 
       # Unused
       # {:erlexec, "~> 2.0"},
