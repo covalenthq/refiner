@@ -46,7 +46,7 @@ jobs:
           echo BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets.BLOCK_RESULT_OPERATOR_PRIVATE_KEY }} >> .env
           echo EVM_SERVER_URL=${{ secrets.EVM_SERVER_URL }} >> .env
           echo CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} >> .env
-          echo CODECOV_SLUG=$CODECOV_SLUG >> .env
+          echo CODECOV_SLUG=covalenthq/rudder >> .env
           echo GITHUB_SHA=$GITHUB_SHA >> .env
           echo CI=${{ secrets.CI }} >> .env
           cat .env

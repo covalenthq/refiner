@@ -89,7 +89,9 @@ services:
         echo "brp-op-pk:" $BLOCK_RESULT_OPERATOR_PRIVATE_KEY;
         echo "evm-server-address:" $EVM_SERVER_URL;
         echo "code-test-coverage:" $CODECOV_TOKEN;
+        echo "github-sha:" $GITHUB_SHA;
         echo "ci-run:" $CI;
+        echo "slug:" $CODECOV_SLUG;
         echo Waiting for proof-chain to be deployed...;
         while ! nc -v -l -k -p 8008;
         do
@@ -102,9 +104,10 @@ services:
         echo Test bsp files uploaded!;
         cd /mix;
         MIX_ENV=docker mix coveralls.json;
+        # ci_env='bash <(curl -s https://codecov.io/env)'
         curl -Os https://uploader.codecov.io/latest/linux/codecov;
         chmod +x codecov;
-        ./codecov -t $CODECOV_TOKEN;"
+        ./codecov -t $CODECOV_TOKEN -C $GITHUB_SHA -e CODECOV_SLUG=$CODECOV_SLUG; "
         # exit $?;"
     environment:
       - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
