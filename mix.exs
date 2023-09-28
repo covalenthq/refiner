@@ -7,7 +7,14 @@ defmodule Rudder.MixProject do
       version: "0.2.15",
       elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :docker,
+        "coveralls.detail": :docker,
+        "coveralls.post": :docker,
+        "coveralls.html": :docker
+      ]
     ]
   end
 
@@ -64,6 +71,7 @@ defmodule Rudder.MixProject do
       # static code analysis
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.10", only: [:test, :docker], runtime: false},
 
       # avro tools
       {:avrora, "~> 0.21"},
