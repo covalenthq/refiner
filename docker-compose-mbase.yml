@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 # runs the entire rudder pipeline with all supporting services (including rudder) in docker
 # set .env such that all services in docker are talking to each other only
 
@@ -53,7 +53,7 @@ services:
         echo "moonbase-node:" $NODE_ETHEREUM_MAINNET;
         echo "evm-server:" $EVM_SERVER_URL;
         echo "ipfs-node:" $IPFS_PINNER_URL;
-        cd /app;
+        cd /mix;
         MIX_ENV=dev mix release --overwrite;
         MIX_ENV=dev mix run --no-halt --eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()';"
     environment:
@@ -64,13 +64,13 @@ services:
     networks:
       - cqt-net
     ports:
-      - "9568:9568"    # prometheus metrics will be exported at http://localhost:9568/metrics etc.
+      - "9568:9568" # prometheus metrics will be exported at http://localhost:9568/metrics etc.
 
   autoheal:
     image: willfarrell/autoheal
     container_name: autoheal
     volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock'
+      - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
       - AUTOHEAL_INTERVAL=10
       - CURL_TIMEOUT=30
