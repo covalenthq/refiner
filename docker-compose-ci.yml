@@ -1,9 +1,9 @@
-version: '3'
+version: "3"
 # runs the entire rudder pipeline with all supporting services (including rudder) in docker
 # set .env such that all services in docker are talking to each other only
 services:
   eth-node:
-    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder"
+    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder@sha256:e498818b3f6d6f15d8ad8414611eeb8e2d71be2b06bb928ebce1d90ba96fe36c"
     container_name: hardhat-node
     restart: on-failure
     expose:
@@ -20,7 +20,7 @@ services:
       - "8545:8545"
 
   operational-staking:
-    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder"
+    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder@sha256:e498818b3f6d6f15d8ad8414611eeb8e2d71be2b06bb928ebce1d90ba96fe36c"
     container_name: proof-chain
     restart: on-failure
     entrypoint: |
