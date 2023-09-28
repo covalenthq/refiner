@@ -8,7 +8,7 @@ defmodule Rudder.MixProject do
       elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls],
+      test_coverage: [tool: ExCoveralls, export: "cov"],
       preferred_cli_env: [
         coveralls: :docker,
         "coveralls.detail": :docker,
