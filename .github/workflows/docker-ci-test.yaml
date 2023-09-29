@@ -29,9 +29,9 @@ jobs:
       # - uses: satackey/action-docker-layer-caching@v0.0.10
       #   # Ignore the failure of a step and avoid terminating the job.
       #   continue-on-error: true
-      - name: Build & Publish the Docker image
-        run: |
-          docker buildx create --name builder --use --platform=linux/amd64,linux/arm64  && docker buildx build --platform=linux/amd64,linux/arm64 . -t  us-docker.pkg.dev/covalent-project/network/rudder:latest --push
+      # - name: Build & Publish the Docker image
+      #   run: |
+      #     docker buildx create --name builder --use --platform=linux/amd64,linux/arm64  && docker buildx build --platform=linux/amd64,linux/arm64 . -t  us-docker.pkg.dev/covalent-project/network/rudder:latest --push
 
       - name: Create .env file
         run: |
@@ -44,7 +44,8 @@ jobs:
           echo EVM_SERVER_URL=${{ secrets.EVM_SERVER_URL }} >> .env
           echo CI=${{ secrets.CI }} >> .env
           echo CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} >> .env
-          echo CODECOV_SLUG=covalenthq/rudder >> .env
+          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+          echo CODECOV_SLUG=$GITHUB_OUTPUT >> .env
           echo GITHUB_SHA=$GITHUB_SHA >> .env
           cat .env
 

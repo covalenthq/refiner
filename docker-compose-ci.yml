@@ -68,13 +68,13 @@ services:
       - "3002:3002"
 
   rudder:
-    image: "us-docker.pkg.dev/covalent-project/network/rudder:latest"
+    # image: "us-docker.pkg.dev/covalent-project/network/rudder:latest"
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: on-failure
     depends_on:
       ipfs-pinner:
