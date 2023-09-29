@@ -68,13 +68,13 @@ services:
       - "3002:3002"
 
   rudder:
-    # image: "us-docker.pkg.dev/covalent-project/network/rudder:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/rudder:latest"
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     restart: on-failure
     depends_on:
       ipfs-pinner:
@@ -102,7 +102,7 @@ services:
         MIX_ENV=docker mix coveralls.json;
         curl -Os https://uploader.codecov.io/latest/linux/codecov;
         chmod +x codecov;
-        ./codecov -t $CODECOV_TOKEN -C $GITHUB_SHA -r $CODECOV_SLUG -B GITHUB_BRANCH; "
+        ./codecov -t $CODECOV_TOKEN -C $GITHUB_SHA -r $CODECOV_SLUG -B $GITHUB_HEAD_REF; "
     environment:
       - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
       - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}
