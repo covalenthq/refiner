@@ -102,7 +102,7 @@ services:
         MIX_ENV=docker mix coveralls.json;
         curl -Os https://uploader.codecov.io/latest/linux/codecov;
         chmod +x codecov;
-        ./codecov -t $CODECOV_TOKEN -C $GITHUB_SHA -e CODECOV_SLUG=$CODECOV_SLUG; "
+        ./codecov -t $CODECOV_TOKEN -C $GITHUB_SHA -r $CODECOV_SLUG -B GITHUB_BRANCH; "
     environment:
       - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
       - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}

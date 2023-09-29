@@ -44,9 +44,10 @@ jobs:
           echo EVM_SERVER_URL=${{ secrets.EVM_SERVER_URL }} >> .env
           echo CI=${{ secrets.CI }} >> .env
           echo CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} >> .env
-          echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-          echo CODECOV_SLUG=$GITHUB_OUTPUT >> .env
+          echo CODECOV_SLUG=covalenthq/rudder >> .env
           echo GITHUB_SHA=$GITHUB_SHA >> .env
+          echo GITHUB_BRANCH=$GITHUB_REF_NAME >> .env
+          echo 
           cat .env
 
       - name: Load .env file
