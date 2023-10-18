@@ -24,6 +24,9 @@
   <a href="https://github.com/covalenthq/rudder/actions/workflows/hadolint.ymlquery=branch%3Amain+workflow%3Ahadolint">
     <img alt="Docker Lint Status" src="https://github.com/covalenthq/rudder/actions/workflows/hadolint.yml/badge.svg?branch=main" />
   </a>
+    <a href="https://codecov.io/github/covalenthq/rudder" > 
+ <img src="https://codecov.io/github/covalenthq/rudder/graph/badge.svg?token=u6d8eqXldF"/> 
+ </a>
   <a href="https://twitter.com/@Covalent_HQ">
     <img alt="Twitter Follow Covalent" src="https://img.shields.io/twitter/follow/Covalent_HQ"/>
   </a>
