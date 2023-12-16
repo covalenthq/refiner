@@ -50,8 +50,8 @@ config :phoenix, :plug_init_mode, :runtime
 # Default these should point to moonbase alpha since we do all the development testing there
 config :rudder,
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
-  bsp_proofchain_address: "0x1BFa3b5E9bE2c5298B7DE11B5Acb08c37683f4eF",
-  brp_proofchain_address: "0x06A38f70c8e245e1cfe1b7d5ACa1B7cd29380343",
+  bsp_proofchain_address: "0x30F220B44E937dd6A2A43D91D564E259f3574eb8",
+  brp_proofchain_address: "0x3f91F5034dACc2961F62dCF744286540C8786710",
   proofchain_chain_id: 1287,
   proofchain_node: System.get_env("NODE_ETHEREUM_MAINNET"),
   ipfs_pinner_url: System.get_env("IPFS_PINNER_URL"),
