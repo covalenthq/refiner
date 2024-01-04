@@ -14,8 +14,8 @@ services:
       - "4001:4001"
       - "3001:3001"
     environment:
-      - w3-agent-key=${AGENT_KEY}
-      - w3-delegation-file=${DELEGATION_PROOF_FILE_PATH}
+      - W3_AGENT_KEY=${W3_AGENT_KEY}
+      - W3_DELEGATION_FILE=${W3_DELEGATION_FILE}
     networks:
       - cqt-net
     ports:
