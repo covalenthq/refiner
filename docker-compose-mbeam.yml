@@ -3,7 +3,7 @@ version: "3"
 # set .env such that all services in docker are talking to each other only
 services:
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:latest"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
@@ -14,7 +14,8 @@ services:
       - "4001:4001"
       - "3001:3001"
     environment:
-      - WEB3_JWT=${WEB3_JWT}
+      - w3-agent-key=${AGENT_KEY}
+      - w3-delegation-file=${DELEGATION_PROOF_FILE_PATH}
     networks:
       - cqt-net
     ports:
