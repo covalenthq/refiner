@@ -4,7 +4,7 @@ version: "3"
 
 services:
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:latest"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner

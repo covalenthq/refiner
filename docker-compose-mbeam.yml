@@ -3,7 +3,7 @@ version: "3"
 # set .env such that all services in docker are talking to each other only
 services:
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
