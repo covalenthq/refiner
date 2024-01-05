@@ -3,11 +3,11 @@ name: docker-ci-test
 on:
   push:
     branches:
-    - "main"
+      - "main"
   pull_request:
-    branches: 
-    - "main"
-    - "develop"
+    branches:
+      - "main"
+      - "develop"
 
 jobs:
   deploy-test:

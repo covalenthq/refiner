@@ -4,7 +4,7 @@ defmodule Rudder.MixProject do
   def project do
     [
       app: :rudder,
-      version: "0.2.15",
+      version: "0.3.0",
       elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -87,7 +87,7 @@ defmodule Rudder.MixProject do
       {:telemetry_metrics_prometheus_core, "~>0.2.2"},
 
       # utils
-      {:briefly, "~> 0.4.1"},
+      {:briefly, "~> 0.5.0"},
       {:rustler, ">= 0.0.0", optional: true}
 
       # Unused

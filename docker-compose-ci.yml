@@ -3,7 +3,7 @@ version: "3"
 # set .env such that all services in docker are talking to each other only
 services:
   eth-node:
-    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder@sha256:e498818b3f6d6f15d8ad8414611eeb8e2d71be2b06bb928ebce1d90ba96fe36c"
+    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder"
     container_name: hardhat-node
     restart: on-failure
     expose:
@@ -16,11 +16,12 @@ services:
       - cqt-net
     environment:
       - ERIGON_NODE=${ERIGON_NODE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - "8545:8545"
 
   operational-staking:
-    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder@sha256:e498818b3f6d6f15d8ad8414611eeb8e2d71be2b06bb928ebce1d90ba96fe36c"
+    image: "us-docker.pkg.dev/covalent-project/network/operational-staking:latest-rudder"
     container_name: proof-chain
     restart: on-failure
     entrypoint: |
@@ -40,7 +41,7 @@ services:
       - "8008:8008"
 
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner@sha256:d188af2ac2e08f643867f34ddf4c1ba9d545484376e792870b5eb0fdbee1752e"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
