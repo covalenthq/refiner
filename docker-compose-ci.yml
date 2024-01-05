@@ -41,7 +41,7 @@ services:
       - "8008:8008"
 
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner@sha256:d188af2ac2e08f643867f34ddf4c1ba9d545484376e792870b5eb0fdbee1752e"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
