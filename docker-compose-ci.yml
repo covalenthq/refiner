@@ -16,6 +16,7 @@ services:
       - cqt-net
     environment:
       - ERIGON_NODE=${ERIGON_NODE}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     ports:
       - "8545:8545"
 
