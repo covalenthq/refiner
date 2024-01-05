@@ -14,7 +14,8 @@ services:
       - "4001:4001"
       - "3001:3001"
     environment:
-      - WEB3_JWT=${WEB3_JWT}
+      - W3_AGENT_KEY=${W3_AGENT_KEY}
+      - W3_DELEGATION_FILE=/root/.ipfs/proof.out
     networks:
       - cqt-net
     ports:

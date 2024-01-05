@@ -198,13 +198,14 @@ source ~/.zshrc
 Create `envrc.local` file and add the following env vars.
 
 **Note**: When passing the private key into the env vars as above please remove the `0x` prefix so the private key env var has exactly 64 characters.
+**Note**: You can get the value for `W3_AGENT_KEY` by asking on discord. It has to be issued to you from Covalent.
 
 ```bash
 export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
 export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
 export IPFS_PINNER_URL="http://ipfs-pinner:3001"
 export EVM_SERVER_URL="http://evm-server:3002"
-export WEB3_JWT="<<WEB3.STORAGE-API-TOKEN>>"
+export W3_AGENT_KEY="<<W3_AGENT_KEY>>"
 ```
 
 Load the env vars.
@@ -218,7 +219,7 @@ That will lead to the corresponding logs:
 ```bash
 direnv: loading ~/rudder/.envrc
 direnv: loading ~/rudder/.envrc.local
-direnv: export +BLOCK_RESULT_OPERATOR_PRIVATE_KEY +ERIGON_NODE +EVM_SERVER_URL +IPFS_PINNER_URL +NODE_ETHEREUM_MAINNET +WEB3_JWT
+direnv: export +BLOCK_RESULT_OPERATOR_PRIVATE_KEY +ERIGON_NODE +EVM_SERVER_URL +IPFS_PINNER_URL +NODE_ETHEREUM_MAINNET +W3_AGENT_KEY
 ```
 
 This shows that the shell is loaded correctly. You can check if they're what you expect.
@@ -226,6 +227,11 @@ This shows that the shell is loaded correctly. You can check if they're what you
 ```bash
 echo $IPFS_PINNER_URL
 http://ipfs-pinner:3001
+```
+
+Copy over the delegation proof file to ~/.ipfs repo. You should have gotten this from Covalent in addition to the `W3_AGENT_KEY` value.
+```bash
+mv path_to_delegation_file ~/.ipfs/proof.out
 ```
 
 ### <span id="rudder_docker_pull">Pull</span>
@@ -532,16 +538,10 @@ cd ipfs-pinner
 make server-dbg
 ```
 
-Set the environment variable required by `ipfs-pinner` by getting `WEB3_JWT` from web3.storage and adding it to an `.envrc` file.
+You should get the "w3 agent key" and "delegation proof file" from Covalent. After that, start the `ipfs-pinner` server.
 
 ```bash
-export WEB3_JWT="WEB3_JWT_TOKEN"
-```
-
-Start the `ipfs-pinner` server.
-
-```bash
-./build/bin/server
+./build/bin/server -w3-agent-key $W3_AGENT_KEY -w3-delegation-file $W3_DELEGATION_FILE
 
 generating 2048-bit RSA keypair...done
 peer identity: QmZQSGUEVKQuCmChKqTBGdavEKGheCQgKgo2rQpPiQp7F8
@@ -577,7 +577,6 @@ export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
 export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
 export IPFS_PINNER_URL="http://127.0.0.1:3001"
 export EVM_SERVER_URL="http://127.0.0.1:3002"
-export WEB3_JWT="<<WEB3.STORAGE-API-TOKEN>>"
 ```
 
 Call to load `.envrc.local + .envrc` files with the command below and observe the following output, make sure the environment variables are loaded into the shell.
@@ -777,7 +776,6 @@ export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
 export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
 export IPFS_PINNER_URL="http://host.docker.internal:3001"
 export EVM_SERVER_URL="http://evm-server:3002"
-export WEB3_JWT="<<WEB3.STORAGE-API-TOKEN>>"
 ```
 
 **Note**: When passing the private key into the env vars as above please remove the `0x` prefix so the private key env var has exactly 64 characters.

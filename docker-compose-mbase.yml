@@ -4,7 +4,7 @@ version: "3"
 
 services:
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:latest"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
@@ -14,7 +14,8 @@ services:
     expose:
       - "3001:3001"
     environment:
-      - WEB3_JWT=${WEB3_JWT}
+      - W3_AGENT_KEY=${W3_AGENT_KEY}
+      - W3_DELEGATION_FILE=/root/.ipfs/proof.out
     networks:
       - cqt-net
     ports:
@@ -34,7 +35,7 @@ services:
       - "3002:3002"
 
   rudder:
-    image: "us-docker.pkg.dev/covalent-project/network/rudder:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/rudder:latest"
     container_name: rudder
     links:
       - "ipfs-pinner:ipfs-pinner"
