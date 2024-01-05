@@ -9,8 +9,8 @@ defmodule Rudder.ProofChain.BlockSpecimenEventListener do
     {:ok, []}
   end
 
-  @bsp_submitted_event_hash "0x57b0cb34d2ff9ed661f8b3c684aaee6cbf0bda5da02f4044205556817fa8e76c"
-  @bsp_awarded_event_hash "0xf05ac779af1ec75a7b2fbe9415b33a67c00294a121786f7ce2eb3f92e4a6424a"
+  @bsp_submitted_event_hash "0xf99d1fa24f771fe2a688bbd7ac8ca9020c745fbe3abb61ea5edafafb1a1dee8f"
+  @bsp_awarded_event_hash "0x858deae9d885ee978c04934ceabf15ebe77ae274f3af6a05ecf3bd9880b08e1e"
 
   @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
