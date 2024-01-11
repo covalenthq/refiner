@@ -52,6 +52,7 @@ jobs:
             echo "GITHUB_SHA=$GITHUB_SHA"
             echo "GITHUB_HEAD_REF=$GITHUB_HEAD_REF"
             echo "GITHUB_ENV=$GITHUB_ENV"
+            echo "W3_AGENT_KEY=${{ secrets.W3_AGENT_KEY }}"
             echo "PROOF_OUT_HEX=${{ secrets.PROOF_OUT_HEX }}"
           } >> .env
           cat .env
