@@ -41,18 +41,18 @@ services:
       - "8008:8008"
 
   ipfs-pinner:
-    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:latest"
+    image: "us-docker.pkg.dev/covalent-project/network/ipfs-pinner:stable"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ipfs-pinner
     restart: on-failure
     entrypoint: |
       /bin/bash -l -c "
-        echo "proof-out-hex:" $PROOF_OUT_HEX;
         touch proof_out_hex.txt;
         chmod +x proof_out_hex.txt;
-        echo $PROOF_OUT_HEX > proof_out_hex.txt;
+        echo "$PROOF_OUT_HEX" > proof_out_hex.txt;
         xxd -r -p proof_out_hex.txt > proof_from_hex.out;
+        chmod +x proof_from_hex.out;
         mv ./proof_from_hex.out /root/.ipfs/proof_from_hex.out;
         ./ipfs-server -port 3001 -w3-agent-key $W3_AGENT_KEY -w3-delegation-file $W3_DELEGATION_FILE;"
     expose:
@@ -60,7 +60,7 @@ services:
       - "3001:3001"
     environment:
       - W3_AGENT_KEY=${W3_AGENT_KEY}
-      - W3_DELEGATION_FILE=/root/.ipfs/proof_from_hex.out
+      - W3_DELEGATION_FILE=${W3_AGENT_KEY}
       - PROOF_OUT_HEX=${PROOF_OUT_HEX}
     networks:
       - cqt-net

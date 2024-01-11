@@ -54,6 +54,7 @@ jobs:
             echo "GITHUB_ENV=$GITHUB_ENV"
             echo "W3_AGENT_KEY=${{ secrets.W3_AGENT_KEY }}"
             echo "PROOF_OUT_HEX=${{ secrets.PROOF_OUT_HEX }}"
+            echo "W3_DELEGATION_FILE=${{ secrets.W3_DELEGATION_FILE }}"
           } >> .env
           cat .env
 
