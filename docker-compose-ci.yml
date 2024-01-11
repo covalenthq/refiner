@@ -50,7 +50,17 @@ services:
       - "4001:4001"
       - "3001:3001"
     environment:
-      - WEB3_JWT=${WEB3_JWT}
+      - W3_AGENT_KEY=${W3_AGENT_KEY}
+      - PRPROOF_OUT_HEX=${PROOF_OUT_HEX}
+      - W3_DELEGATION_FILE=/root/.ipfs/proof_from_hex.out
+    entrypoint: >
+      /bin/bash -l -c "
+        echo "proof-out-hex:" $PROOF_OUT_HEX;
+        touch proof_out_hex.txt
+        chmod +x proof_out_hex.txt
+        echo $PROOF_OUT_HEX > proof_out_hex.txt
+        xxd -r -p proof_out_hex.txt > proof_from_hex.out;
+        mv ./proof_from_hex.out /root/.ipfs/proof_from_hex.out
     networks:
       - cqt-net
     ports:
