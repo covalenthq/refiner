@@ -113,7 +113,7 @@
                     "uid": "${DS_PROMETHEUS}"
                 },
                 "editorMode": "builder",
-                "expr": "rudder_events_brp_upload_success_count",
+                "expr": "refiner_events_brp_upload_success_count",
                 "legendFormat": "__auto",
                 "range": true,
                 "refId": "A"
@@ -175,7 +175,7 @@
                     "uid": "${DS_PROMETHEUS}"
                 },
                 "editorMode": "builder",
-                "expr": "rudder_events_rudder_pipeline_success_count",
+                "expr": "refiner_events_refiner_pipeline_success_count",
                 "legendFormat": "__auto",
                 "range": true,
                 "refId": "A"
@@ -237,7 +237,7 @@
                     "uid": "${DS_PROMETHEUS}"
                 },
                 "editorMode": "builder",
-                "expr": "rudder_events_rudder_pipeline_failure_count",
+                "expr": "refiner_events_refiner_pipeline_failure_count",
                 "legendFormat": "__auto",
                 "range": true,
                 "refId": "A"
@@ -333,7 +333,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "builder",
-                    "expr": "rudder_events_rudder_pipeline_success_count",
+                    "expr": "refiner_events_refiner_pipeline_success_count",
                     "legendFormat": "__auto",
                     "range": true,
                     "refId": "A"
@@ -344,7 +344,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "builder",
-                    "expr": "rudder_events_ipfs_fetch_count",
+                    "expr": "refiner_events_ipfs_fetch_count",
                     "hide": false,
                     "legendFormat": "__auto",
                     "range": true,
@@ -356,14 +356,14 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "builder",
-                    "expr": "rudder_events_brp_upload_success_count",
+                    "expr": "refiner_events_brp_upload_success_count",
                     "hide": false,
                     "legendFormat": "__auto",
                     "range": true,
                     "refId": "C"
                 }
             ],
-            "title": "Rudder Events Success Count",
+            "title": "Refiner Events Success Count",
             "type": "timeseries"
         },
         {
@@ -456,7 +456,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "builder",
-                    "expr": "rudder_events_rudder_pipeline_success_duration",
+                    "expr": "refiner_events_refiner_pipeline_success_duration",
                     "legendFormat": "__auto",
                     "range": true,
                     "refId": "A"
@@ -467,7 +467,7 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "builder",
-                    "expr": "rudder_events_brp_proof_duration",
+                    "expr": "refiner_events_brp_proof_duration",
                     "hide": false,
                     "legendFormat": "__auto",
                     "range": true,
@@ -479,14 +479,14 @@
                         "uid": "${DS_PROMETHEUS}"
                     },
                     "editorMode": "builder",
-                    "expr": "rudder_events_ipfs_fetch_duration",
+                    "expr": "refiner_events_ipfs_fetch_duration",
                     "hide": false,
                     "legendFormat": "__auto",
                     "range": true,
                     "refId": "C"
                 }
             ],
-            "title": "Rudder Pipeline Event Durations",
+            "title": "Refiner Pipeline Event Durations",
             "type": "timeseries"
         }
     ],
@@ -504,7 +504,7 @@
     },
     "timepicker": {},
     "timezone": "",
-    "title": "Rudder Dashboard",
+    "title": "Refiner Dashboard",
     "uid": "poakTV8Vz",
     "version": 7,
     "weekStart": ""

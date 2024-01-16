@@ -1,4 +1,4 @@
-defmodule Rudder.PipelineTest do
+defmodule Refiner.PipelineTest do
   use ExUnit.Case, async: true
 
   test "returns the cid and hash of the processed block hash", %{} do
@@ -12,7 +12,7 @@ defmodule Rudder.PipelineTest do
       <<105, 50, 175, 90, 71, 36, 11, 89, 40, 141, 86, 97, 77, 37, 70, 218, 93, 72, 45, 15, 41,
         190, 77, 26, 60, 229, 65, 201, 154, 114, 47, 253>>
 
-    {status, cid, block_result_hash} = Rudder.Pipeline.process_specimen(test_bsp_key, test_urls)
+    {status, cid, block_result_hash} = Refiner.Pipeline.process_specimen(test_bsp_key, test_urls)
 
     assert status == :ok
     assert cid == expected_block_result_cid
@@ -24,7 +24,7 @@ defmodule Rudder.PipelineTest do
     test_urls = ["ipfs://bafybeihfjhxfr3r2ti7phs7gzwbx5oimzf6ainhccrk2hlzoozcmcsu36q"]
     test_block_specimen_hash = "6a1a24cfbee3d64c7f6c7fd478ec0e1112176d1340f18d0ba933352c6ce2026a"
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
-    {:ok, task} = Rudder.Pipeline.Spawner.push_hash(test_bsp_key, test_urls, true)
+    {:ok, task} = Refiner.Pipeline.Spawner.push_hash(test_bsp_key, test_urls, true)
 
     {status, cid, block_result_hash} =
       receive do

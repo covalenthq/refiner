@@ -1,9 +1,9 @@
-defmodule Rudder.MixProject do
+defmodule Refiner.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :rudder,
+      app: :refiner,
       version: "0.4.0",
       elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
@@ -24,7 +24,7 @@ defmodule Rudder.MixProject do
   def application do
     [
       extra_applications: [:logger_file_backend, :runtime_tools, :poison, :avrora],
-      mod: {Rudder.Application, []}
+      mod: {Refiner.Application, []}
     ]
   end
 

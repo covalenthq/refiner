@@ -159,7 +159,7 @@
           #
           # Controversial and experimental checks (opt-in, just move the check to `:enabled`
           #   and be sure to use `mix credo --strict` to see low priority checks)
-          # Disabled for rudder repo
+          # Disabled for brp-refiner repo
           {Credo.Check.Readability.FunctionNames, []},
           {Credo.Check.Refactor.LongQuoteBlocks, []},
           {Credo.Check.Design.TagTODO, [exit_status: 2]},

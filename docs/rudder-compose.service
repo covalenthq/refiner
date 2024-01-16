@@ -1,5 +1,5 @@
 [Unit]
-Description=rudder docker compose
+Description=refiner docker compose
 PartOf=docker.service
 After=docker.service
 
