@@ -1,0 +1,2 @@
+ignore:
+  - "lib/rudder/proof_chain/block_specimen_event_listener.ex"
