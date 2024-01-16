@@ -20,7 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-rudder-*.tar
+brp-refiner-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
@@ -28,7 +28,7 @@ rudder-*.tar
 # Generated beam files
 *.beam
 
-# secrets for rudder app
+# secrets for brp-refiner app
 /config/*.secret.exs
 
 #ElixirLS vscode extension
