@@ -38,19 +38,24 @@ jobs:
           GIT_BRANCH=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
           touch .env
-          echo WEB3_JWT=${{ secrets.WEB3_JWT }} >> .env
-          echo IPFS_PINNER_URL=${{ secrets.IPFS_PINNER_URL }} >> .env
-          echo ERIGON_NODE=${{ secrets.ERIGON_NODE }} >> .env
-          echo NODE_ETHEREUM_MAINNET=${{ secrets.NODE_ETHEREUM_MAINNET }} >> .env
-          echo BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets.BLOCK_RESULT_OPERATOR_PRIVATE_KEY }} >> .env
-          echo EVM_SERVER_URL=${{ secrets.EVM_SERVER_URL }} >> .env
-          echo CI=${{ secrets.CI }} >> .env
-          echo CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} >> .env
-          echo GITHUB_REF=${{ github.ref_name }} >> .env
-          echo CODECOV_SLUG=covalenthq/rudder >> .env
-          echo GITHUB_SHA=$GITHUB_SHA >> .env
-          echo GITHUB_HEAD_REF=$GITHUB_HEAD_REF >> .env
-          echo GITHUB_ENV=$GITHUB_ENV >> .env
+          {
+            echo "WEB3_JWT=${{ secrets.WEB3_JWT }}"
+            echo "IPFS_PINNER_URL=${{ secrets.IPFS_PINNER_URL }}"
+            echo "ERIGON_NODE=${{ secrets.ERIGON_NODE }}"
+            echo "NODE_ETHEREUM_MAINNET=${{ secrets.NODE_ETHEREUM_MAINNET }}"
+            echo "BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${{ secrets.BLOCK_RESULT_OPERATOR_PRIVATE_KEY }}"
+            echo "EVM_SERVER_URL=${{ secrets.EVM_SERVER_URL }}"
+            echo "CI=${{ secrets.CI }}"
+            echo "CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}"
+            echo "GITHUB_REF=${{ github.ref_name }}"
+            echo "CODECOV_SLUG=covalenthq/rudder"
+            echo "GITHUB_SHA=$GITHUB_SHA"
+            echo "GITHUB_HEAD_REF=$GITHUB_HEAD_REF"
+            echo "GITHUB_ENV=$GITHUB_ENV"
+            echo "W3_AGENT_KEY=${{ secrets.W3_AGENT_KEY }}"
+            echo "PROOF_OUT_HEX=${{ secrets.PROOF_OUT_HEX }}"
+            echo "W3_DELEGATION_FILE=${{ secrets.W3_DELEGATION_FILE }}"
+          } >> .env
           cat .env
 
       - name: Load .env file

@@ -4,7 +4,7 @@ defmodule Rudder.MixProject do
   def project do
     [
       app: :rudder,
-      version: "0.3.0",
+      version: "0.4.0",
       elixir: "~> 1.14.3",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -63,7 +63,7 @@ defmodule Rudder.MixProject do
       # networking
       {:certifi, "~> 2.9", override: true},
       {:cors_plug, "~> 3.0"},
-      {:finch, "~> 0.16.0"},
+      {:finch, "~> 0.17.0"},
       {:downstream, "~> 1.0"},
       {:websockex, "~> 0.4.3"},
       {:multipart, "~> 0.4.0"},
