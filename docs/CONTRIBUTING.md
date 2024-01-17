@@ -15,14 +15,14 @@
 ## <span id="bugs">Reporting Bugs</span>
 
 Please file bugs in the [GitHub Issue
-Tracker](https://github.com/covalenthq/rudder). Include at
+Tracker](https://github.com/covalenthq/refiner). Include at
 least the following:
 
 * What happened.
 * What did you expect to happen instead of what *did* happen, if it's
    not crazy obvious.
 * What operating system, operating system version and version of
-   `rudder` you are running.
+   `refiner` you are running.
 * Console log entries, where possible and relevant.
 
 If you're not sure whether something is relevant, erring on the side of too much information will never be a cause for concern.
@@ -31,8 +31,8 @@ If you're not sure whether something is relevant, erring on the side of too much
 
 Contributing to this repo can mean many things such as participating in discussion or proposing code changes. To ensure a smooth workflow for all contributors, the following general procedure for contributing has been established:
 
-1. Either [open](https://github.com/covalenthq/rudder/issues/new/choose)
-   or [find](https://github.com/covalenthq/rudder/issues) an issue you have identified and would like to contribute to
+1. Either [open](https://github.com/covalenthq/refiner/issues/new/choose)
+   or [find](https://github.com/covalenthq/refiner/issues) an issue you have identified and would like to contribute to
    resolving.
 
 2. Participate in thoughtful discussion on that issue.
@@ -45,7 +45,7 @@ Contributing to this repo can mean many things such as participating in discussi
        if you are eager and do not get a prompt response, feel free to dive on in!
     4. Follow standard Github best practices:
         1. Fork the repo
-        2. Branch from the HEAD of `develop`(For core developers working within the `rudder` repo, to ensure a clear ownership of branches, branches must be named with the convention `{moniker}/{issue#}-branch-name`).
+        2. Branch from the HEAD of `develop`(For core developers working within the `refiner` repo, to ensure a clear ownership of branches, branches must be named with the convention `{moniker}/{issue#}-branch-name`).
         3. Make commits
         4. Submit a PR to `develop`
     5. Be sure to submit the PR in `Draft` mode. Submit your PR early, even if it's incomplete as this indicates to the community you're working on something and allows them to provide comments early in the development process.
@@ -53,12 +53,12 @@ Contributing to this repo can mean many things such as participating in discussi
     7. Be sure to include a relevant change log entry in the `Unreleased` section of `CHANGELOG.md` (see file for log
        format).
     8. Please make sure to run `mix format mix.exs "lib/**/*.{ex,exs}" "test/**/*.{ex,exs}" "config/*.{ex,exs}"` before every commit - the easiest way to do this is having your editor run it for you upon saving a file. Additionally, please ensure that your code is lint compliant by running `mix deps.get, mix deps.compile` .
-   There are CI tests built into the `rudder` repository and all PR’s will require that these tests pass before they are able to be merged.
+   There are CI tests built into the `refiner` repository and all PR’s will require that these tests pass before they are able to be merged.
 
 **Note**: for very small or blatantly obvious problems (such as typos), it is not required to open an issue to submit a PR, but be aware that for more complex problems/features, if a PR is opened before an adequate design discussion has taken place in a github issue, that PR runs a high likelihood of being rejected.
 
 Looking for a good place to start contributing? How about checking out
-some [good first issues](https://github.com/covalenthq/rudder/issues).
+some [good first issues](https://github.com/covalenthq/refiner/issues).
 
 ### <span id="dev_procedure">Development Procedure</span>
 
@@ -66,7 +66,7 @@ some [good first issues](https://github.com/covalenthq/rudder/issues).
 2. `main` must never
    fail `mix format --check-formatted, mix credo`
 3. No `--force` onto `main` (except when reverting a broken commit, which should seldom happen).
-4. Create your feature branch from `main` either on `github.com/covalenthq/rudder`, or your fork (
+4. Create your feature branch from `main` either on `github.com/covalenthq/refiner`, or your fork (
    using `git remote add origin`).
 5. Before submitting a pull request, begin `git rebase` on top of `main`.
 6. Code must adhere to the official elixir [formatting](https://hexdocs.pm/mix/main/Mix.Tasks.Format.html) guidelines.
@@ -79,11 +79,11 @@ some [good first issues](https://github.com/covalenthq/rudder/issues).
 
 We use [Mix](https://elixir-lang.org/getting-started/mix-otp/introduction-to-mix.html) to manage dependency versions.
 
-The main branch of every `rudder` repository should just build with `mix deps.get, mix deps.compile`, which means they should be kept up-to-date with their dependencies, so we can get away with telling people they can just `mix deps.get` our software. Since some dependencies are not under our control, a third party may break our build, in which case we can fall back on `rm -rf _build deps && mix clean && mix deps.get && mix deps.compile`.
+The main branch of every `refiner` repository should just build with `mix deps.get, mix deps.compile`, which means they should be kept up-to-date with their dependencies, so we can get away with telling people they can just `mix deps.get` our software. Since some dependencies are not under our control, a third party may break our build, in which case we can fall back on `rm -rf _build deps && mix clean && mix deps.get && mix deps.compile`.
 
 ### <span id="testing">Testing</span>
 
-Covalent uses [GitHub Actions](https://github.com/features/actions) for automated [integration testing](https://github.com/covalenthq/rudder/actions).
+Covalent uses [GitHub Actions](https://github.com/features/actions) for automated [integration testing](https://github.com/covalenthq/refiner/actions).
 
 ### <spand id="linting">Linting</span>
 
@@ -97,7 +97,7 @@ The repo uses `credo` to run linters and enforce coding standards. There are two
 User-facing repos should adhere to the [trunk based development branching model](https://trunkbaseddevelopment.com/).
 
 Libraries need not follow the model strictly, but would be wise to.
-`rudder` utilizes [semantic versioning](https://semver.org/).
+`refiner` utilizes [semantic versioning](https://semver.org/).
 
 ### <span id="pr_targeting">PR Targeting</span>
 

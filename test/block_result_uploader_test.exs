@@ -1,9 +1,9 @@
-defmodule Rudder.BlockResultUploaderTest do
+defmodule Refiner.BlockResultUploaderTest do
   use ExUnit.Case, async: true
 
   setup_all do
-    block_result_uploader = start_supervised!(Rudder.BlockResultUploader)
-    ipfs_interactor = start_supervised!(Rudder.IPFSInteractor)
+    block_result_uploader = start_supervised!(Refiner.BlockResultUploader)
+    ipfs_interactor = start_supervised!(Refiner.IPFSInteractor)
 
     %{block_result_uploader: block_result_uploader, ipfs_interactor: ipfs_interactor}
   end
@@ -22,7 +22,7 @@ defmodule Rudder.BlockResultUploaderTest do
       <<44, 242, 77, 186, 95, 176, 163, 14, 38, 232, 59, 42, 197, 185, 226, 158, 27, 22, 30, 92,
         31, 167, 66, 94, 115, 4, 51, 98, 147, 139, 152, 36>>
 
-    block_result_metadata = %Rudder.BlockResultMetadata{
+    block_result_metadata = %Refiner.BlockResultMetadata{
       chain_id: 1,
       block_height: 1,
       block_specimen_hash: "525D191D6492F1E0928d4e816c29778c",
@@ -30,7 +30,7 @@ defmodule Rudder.BlockResultUploaderTest do
     }
 
     {error, cid, block_result_hash} =
-      Rudder.BlockResultUploader.upload_block_result(block_result_metadata)
+      Refiner.BlockResultUploader.upload_block_result(block_result_metadata)
 
     assert error == :ok
     assert cid == expected_cid
@@ -42,7 +42,7 @@ defmodule Rudder.BlockResultUploaderTest do
     block_result_uploader: _block_result_uploader
   } do
     file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp.txt")))
-    {err, cid} = Rudder.IPFSInteractor.pin(file_path)
+    {err, cid} = Refiner.IPFSInteractor.pin(file_path)
     expected_cid = "bafkreiehfggmf4y7xjzrqhvcvhto6eg44ipnsxuyxwwjytqvatvbn5eg4q"
 
     assert err == :ok
@@ -53,12 +53,12 @@ defmodule Rudder.BlockResultUploaderTest do
     ipfs_interactor: _ipfs_interactor,
     block_result_uploader: _block_result_uploader
   } do
-    ipfs_url = Application.get_env(:rudder, :ipfs_pinner_url)
+    ipfs_url = Application.get_env(:refiner, :ipfs_pinner_url)
     url = "#{ipfs_url}/upload"
 
     {err, _} =
       Finch.build(:get, "#{url}/upload")
-      |> Finch.request(Rudder.Finch)
+      |> Finch.request(Refiner.Finch)
 
     assert err != :error
   end

@@ -1,0 +1,151 @@
+defmodule Refiner.ProofChain.BlockSpecimenEventListener do
+  require Logger
+  use GenServer
+
+  @impl true
+  @spec init(any) :: none
+  def init(_) do
+    start()
+    {:ok, []}
+  end
+
+  @bsp_submitted_event_hash "0xd79027d5232050798063d67d05f9e1545ea5b954e2334b09db548e63823fa1b1"
+  @bsp_awarded_event_hash "0x858deae9d885ee978c04934ceabf15ebe77ae274f3af6a05ecf3bd9880b08e1e"
+
+  @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  end
+
+  @spec start :: no_return
+  def start() do
+    initialize()
+    Logger.info("starting event listener")
+    Application.ensure_all_started(:refiner)
+    proofchain_address = Application.get_env(:refiner, :bsp_proofchain_address)
+    Logger.info("retrying older uprocessed bsps (if any) before starting to listen")
+    push_bsps_to_process(Refiner.Journal.items_with_status(:discover), true)
+    block_height = load_last_checked_block()
+    listen_for_event(proofchain_address, block_height)
+  end
+
+  @spec initialize :: true
+  def initialize() do
+    register_name = :bspec_listener
+
+    case Process.whereis(register_name) do
+      nil ->
+        :ok
+
+      _pid ->
+        _ = Process.unregister(register_name)
+        :ok
+    end
+
+    Process.register(self(), register_name)
+  end
+
+  @spec load_last_checked_block :: any
+  def load_last_checked_block() do
+    {:ok, block_height} = Refiner.Journal.last_started_block()
+
+    if block_height == 1 do
+      {:ok, block_height} = Refiner.Network.EthereumMainnet.eth_blockNumber()
+      block_height
+    else
+      block_height
+    end
+  end
+
+  defp extract_awarded_specimens([]), do: []
+
+  defp extract_awarded_specimens(log_events) do
+    Enum.reduce(log_events, [], fn log_event, keys ->
+      {:ok, [_event_hash, chain_id_raw, block_height_raw, block_hash]} =
+        Map.fetch(log_event, "topics")
+
+      [_validator_bit_map, specimen_hash_raw] =
+        Refiner.Util.extract_data(log_event, "(uint256,bytes32)")
+
+      # prepare data to generate key
+      specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
+      "0x" <> chain_id_raw = chain_id_raw
+      "0x" <> block_height_raw = block_height_raw
+      "0x" <> block_hash = block_hash
+      {chain_id, _} = Integer.parse(chain_id_raw, 16)
+      {block_height, _} = Integer.parse(block_height_raw, 16)
+
+      key =
+        to_string(chain_id) <>
+          "_" <> to_string(block_height) <> "_" <> block_hash <> "_" <> specimen_hash
+
+      [key | keys]
+    end)
+  end
+
+  def push_bsps_to_process(bsp_keys, mark_discover \\ false) do
+    Enum.map(bsp_keys, fn bsp_key ->
+      if !mark_discover do
+        Refiner.Journal.discover(bsp_key)
+      end
+
+      Logger.info("processing specimen #{bsp_key}")
+
+      [_chain_id, block_height, _block_hash, specimen_hash] = String.split(bsp_key, "_")
+
+      is_brp_sesion_open =
+        Refiner.ProofChain.Interactor.is_block_result_session_open(block_height)
+
+      if is_brp_sesion_open do
+        specimen_hash_bytes32 = Refiner.Util.convert_to_bytes32(specimen_hash)
+        bsp_urls = Refiner.ProofChain.Interactor.get_urls(specimen_hash_bytes32)
+        Refiner.Pipeline.Spawner.push_hash(bsp_key, bsp_urls)
+      else
+        Refiner.Journal.skip(bsp_key)
+      end
+    end)
+  end
+
+  defp listen_for_event(proofchain_address, block_height) do
+    if Refiner.Pipeline.is_retry_failed_bsp() do
+      Refiner.Pipeline.clear_retry_failed_bsp()
+      Logger.info("retrying older unprocessed bsps (if any)")
+      push_bsps_to_process(Refiner.Journal.items_with_status(:discover), true)
+    end
+
+    Logger.info("listening for events at #{block_height}")
+    Refiner.Journal.block_height_started(block_height)
+
+    {:ok, bsp_awarded_logs} =
+      Refiner.Network.EthereumMainnet.eth_getLogs([
+        %{
+          address: proofchain_address,
+          fromBlock: "0x" <> Integer.to_string(block_height, 16),
+          toBlock: "0x" <> Integer.to_string(block_height, 16),
+          topics: [@bsp_awarded_event_hash]
+        }
+      ])
+
+    bsps_to_process = extract_awarded_specimens(bsp_awarded_logs)
+    Logger.info("found #{length(bsps_to_process)} bsps to process")
+    push_bsps_to_process(bsps_to_process)
+    Refiner.Journal.block_height_committed(block_height)
+
+    next_block_height = block_height + 1
+    loop(next_block_height)
+    listen_for_event(proofchain_address, next_block_height)
+  end
+
+  defp loop(curr_block_height) do
+    {:ok, latest_block_number} = Refiner.Network.EthereumMainnet.eth_blockNumber()
+
+    if curr_block_height > latest_block_number do
+      Logger.info("synced to latest; waiting for #{curr_block_height} to be mined")
+      # ~12 seconds is mining time of one moonbeam block
+      :timer.sleep(12_000)
+      loop(curr_block_height)
+    else
+      Logger.info("curr_block: #{curr_block_height} and latest_block_num:#{latest_block_number}")
+    end
+  end
+end

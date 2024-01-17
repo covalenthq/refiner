@@ -43,13 +43,13 @@ COPY --from=builder-elixir /mix/lib /mix/lib
 COPY --from=builder-elixir /mix/priv /mix/priv
 COPY --from=builder-elixir /mix/mix.exs /mix/
 COPY --from=builder-elixir /mix/mix.lock /mix/
-# COPY --from=builder-elixir /mix/_build/dev/rel/rudder/ /mix/prod/
+# COPY --from=builder-elixir /mix/_build/dev/rel/refiner/ /mix/prod/
 COPY --from=builder-elixir /mix/test/ /mix/test
 COPY --from=builder-elixir /mix/test-data/ /mix/test-data
 
 # Used only for testing in compose
 # CMD [ "mix", "test", "./test/block_specimen_decoder_test.exs", "./test/block_result_uploader_test.exs"]
 
-CMD ["/mix/prod/bin/rudder", "start"]
+CMD ["/mix/prod/bin/refiner", "start"]
 
 EXPOSE 9568

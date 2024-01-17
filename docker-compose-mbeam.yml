@@ -1,5 +1,5 @@
 version: "3"
-# runs the entire rudder pipeline with all supporting services (including rudder) in docker
+# runs the entire refiner pipeline with all supporting services (including refiner) in docker
 # set .env such that all services in docker are talking to each other only
 services:
   ipfs-pinner:
@@ -35,9 +35,9 @@ services:
     ports:
       - "3002:3002"
 
-  rudder:
-    image: "us-docker.pkg.dev/covalent-project/network/rudder:stable"
-    container_name: rudder
+  refiner:
+    image: "us-docker.pkg.dev/covalent-project/network/refiner:stable"
+    container_name: refiner
     links:
       - "ipfs-pinner:ipfs-pinner"
       - "evm-server:evm-server"
@@ -57,7 +57,7 @@ services:
         echo "ipfs-node:" $IPFS_PINNER_URL;
         cd /mix;
         MIX_ENV=prod mix release --overwrite;
-        MIX_ENV=prod mix run --no-halt --eval 'Rudder.ProofChain.BlockSpecimenEventListener.start()';"
+        MIX_ENV=prod mix run --no-halt --eval 'Refiner.ProofChain.BlockSpecimenEventListener.start()';"
     environment:
       - NODE_ETHEREUM_MAINNET=${NODE_ETHEREUM_MAINNET}
       - BLOCK_RESULT_OPERATOR_PRIVATE_KEY=${BLOCK_RESULT_OPERATOR_PRIVATE_KEY}

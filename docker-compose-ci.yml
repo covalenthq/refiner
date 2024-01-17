@@ -1,9 +1,9 @@
 version: "3"
-# runs the entire brp-refiner pipeline with all supporting services (including brp-refiner) in docker
+# runs the entire refiner pipeline with all supporting services (including refiner) in docker
 # set .env such that all services in docker are talking to each other only
 services:
   eth-node:
-    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-rudder"
+    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-refiner"
     container_name: hardhat-node
     restart: on-failure
     expose:
@@ -21,7 +21,7 @@ services:
       - "8545:8545"
 
   cqt-staking:
-    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-rudder"
+    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-refiner"
     container_name: proof-chain
     restart: on-failure
     entrypoint: |
@@ -31,7 +31,7 @@ services:
       echo hard-hat node started!;
       echo "web3-jwt:" $WEB3_JWT;
       npm run docker:deploy;
-      nc -v brp-refiner 8008;
+      nc -v refiner 8008;
       sleep 1000000;"
     depends_on:
       - eth-node
@@ -79,9 +79,9 @@ services:
     ports:
       - "3002:3002"
 
-  brp-refiner:
-    image: "us-docker.pkg.dev/covalent-project/network/brp-refiner:latest"
-    container_name: brp-refiner
+  refiner:
+    image: "us-docker.pkg.dev/covalent-project/network/refiner:latest"
+    container_name: refiner
     links:
       - "ipfs-pinner:ipfs-pinner"
     # build:

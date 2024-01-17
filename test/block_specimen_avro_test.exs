@@ -1,25 +1,25 @@
-defmodule Rudder.BlockSpecimenDecoderEncoderTest do
+defmodule Refiner.BlockSpecimenDecoderEncoderTest do
   use ExUnit.Case, async: true
 
   setup do
-    block_specimen_avro = start_supervised(Rudder.Avro.BlockSpecimen)
+    block_specimen_avro = start_supervised(Refiner.Avro.BlockSpecimen)
     %{block_specimen_avro: block_specimen_avro}
   end
 
-  test "Rudder.Avro.BlockSpecimen.list/0 returns an empty list", %{
+  test "Refiner.Avro.BlockSpecimen.list/0 returns an empty list", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    assert Rudder.Avro.BlockSpecimen.list() == :ok
+    assert Refiner.Avro.BlockSpecimen.list() == :ok
   end
 
-  test "Rudder.Avro.BlockSpecimen.get_schema/0 returns correct schema", %{
+  test "Refiner.Avro.BlockSpecimen.get_schema/0 returns correct schema", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    assert Rudder.Avro.BlockSpecimen.get_schema() ==
+    assert Refiner.Avro.BlockSpecimen.get_schema() ==
              "com.covalenthq.brp.avro.ReplicationSegment"
   end
 
-  test "Rudder.Avro.BlockSpecimen.decode_file/1 decodes binary specimen file", %{
+  test "Refiner.Avro.BlockSpecimen.decode_file/1 decodes binary specimen file", %{
     block_specimen_avro: _block_specimen_avro
   } do
     specimen_path =
@@ -28,7 +28,7 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     expected_start_block = 17_090_940
     expected_hash = "0x54245042c6cc9a9d80888db816525d097984c3c2ba4f11d64e9cdf6aaefe5e8d"
 
-    {:ok, decoded_specimen} = Rudder.Avro.BlockSpecimen.decode_file(specimen_path)
+    {:ok, decoded_specimen} = Refiner.Avro.BlockSpecimen.decode_file(specimen_path)
 
     {:ok, decoded_specimen_start_block} = Map.fetch(decoded_specimen, "startBlock")
     {:ok, specimen_event} = Map.fetch(decoded_specimen, "replicaEvent")
@@ -40,7 +40,7 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     assert decoded_specimen_hash == expected_hash
   end
 
-  test "Rudder.Avro.BlockSpecimen.decode_dir/1 streams directory binary files", %{
+  test "Refiner.Avro.BlockSpecimen.decode_dir/1 streams directory binary files", %{
     block_specimen_avro: _block_specimen_avro
   } do
     dir_path = "./test-data/codec-0.35/encoded/*"
@@ -51,7 +51,7 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     expected_start_hash = "0x54245042c6cc9a9d80888db816525d097984c3c2ba4f11d64e9cdf6aaefe5e8d"
     expected_last_hash = "0x6a1a24cfbee3d64c7f6c7fd478ec0e1112176d1340f18d0ba933352c6ce2026a"
 
-    decode_specimen_stream = Rudder.Avro.BlockSpecimen.decode_dir(dir_path)
+    decode_specimen_stream = Refiner.Avro.BlockSpecimen.decode_dir(dir_path)
 
     start_block_stream = List.first(decode_specimen_stream)
     last_block_stream = List.last(decode_specimen_stream)
@@ -99,14 +99,14 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     assert decoded_last_hash == expected_last_hash
   end
 
-  test "Rudder.Avro.BlockSpecimen.decode_dir/1 decodes all binary files", %{
+  test "Refiner.Avro.BlockSpecimen.decode_dir/1 decodes all binary files", %{
     block_specimen_avro: _block_specimen_avro
   } do
     dir_path = "./test-data/codec-0.35/encoded/*"
 
     expected_specimens = 3
 
-    decode_specimen_stream = Rudder.Avro.BlockSpecimen.decode_dir(dir_path)
+    decode_specimen_stream = Refiner.Avro.BlockSpecimen.decode_dir(dir_path)
 
     # stream resolved earlier to full specimen list
     resolved_stream = decode_specimen_stream |> Enum.map(fn x -> Enum.to_list(x) end)
@@ -115,7 +115,7 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     assert resolved_specimens == expected_specimens
   end
 
-  test "Rudder.Avro.BlockSpecimen.encode_file/1 encodes segment json file", %{
+  test "Refiner.Avro.BlockSpecimen.encode_file/1 encodes segment json file", %{
     block_specimen_avro: _block_specimen_avro
   } do
     segment_path = "./test-data/codec-0.35/segment/17090940.segment.json"
@@ -123,7 +123,7 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     expected_start_block = 17_090_940
     expected_hash = "0x54245042c6cc9a9d80888db816525d097984c3c2ba4f11d64e9cdf6aaefe5e8d"
 
-    {:ok, encoded_segment_avro} = Rudder.Avro.BlockSpecimen.encode_file(segment_path)
+    {:ok, encoded_segment_avro} = Refiner.Avro.BlockSpecimen.encode_file(segment_path)
 
     {:ok, decoded_segment_avro} =
       Avrora.decode_plain(encoded_segment_avro, schema_name: "block-ethereum")
@@ -138,7 +138,7 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     assert decoded_segment_hash == expected_hash
   end
 
-  test "Rudder.Avro.BlockSpecimen.encode_dir/1 streams encoded .json files", %{
+  test "Refiner.Avro.BlockSpecimen.encode_dir/1 streams encoded .json files", %{
     block_specimen_avro: _block_specimen_avro
   } do
     dir_path = "./test-data/codec-0.35/segment/*"
@@ -146,7 +146,7 @@ defmodule Rudder.BlockSpecimenDecoderEncoderTest do
     expected_start_block = 17_090_940
     expected_last_block = 17_090_960
 
-    encoded_segment_stream = Rudder.Avro.BlockSpecimen.encode_dir(dir_path)
+    encoded_segment_stream = Refiner.Avro.BlockSpecimen.encode_dir(dir_path)
 
     start_segment_stream = List.first(encoded_segment_stream)
     last_segment_stream = List.last(encoded_segment_stream)

@@ -14,9 +14,9 @@ Wait a minute then in Terminal 2 run:
 mix test
 ```
 
-### <span id="rudder_docker_pull">Pull</span>
+### <span id="refiner_docker_pull">Pull</span>
 
-Pull only the latest containerized version of rudder using the following -
+Pull only the latest containerized version of refiner using the following -
 
 Make sure you're logged into gcr by running
 
@@ -27,10 +27,10 @@ gcloud auth print-access-token | docker login -u oauth2accesstoken --password-st
 Pull image
 
 ```docker
-docker pull us-docker.pkg.dev/covalent-project/network/rudder
+docker pull us-docker.pkg.dev/covalent-project/network/refiner
 ```
 
-### <span id="rudder_docker_env">Environment</span>
+### <span id="refiner_docker_env">Environment</span>
 
 Add the env vars to a .env file as below. Ask your node operator about these if you have questions. Check the `.env_example` for the list of required (and optional) environment variables.
 
