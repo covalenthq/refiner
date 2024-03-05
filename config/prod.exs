@@ -50,9 +50,9 @@ config :phoenix, :plug_init_mode, :runtime
 # Default these should point to moonbeam since we do all prod deployments there
 config :refiner,
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
-  bsp_proofchain_address: "0x4f2E285227D43D9eB52799D0A28299540452446E",
-  brp_proofchain_address: "0x254E3FA072324fa202577F24147066359947bC23",
-  proofchain_chain_id: 1284,
+  bsp_proofchain_address: System.get_env("BSP_PROOFCHAIN_ADDRESS", "0x4f2E285227D43D9eB52799D0A28299540452446E"),
+  brp_proofchain_address: System.get_env("BRP_PROOFCHAIN_ADDRESS", "0x254E3FA072324fa202577F24147066359947bC23"),
+  proofchain_chain_id: Integer.parse(System.get_env("PROOFCHAIN_CHAIN_ID", "1284")) |> elem(0),
   proofchain_node: System.get_env("NODE_ETHEREUM_MAINNET"),
   ipfs_pinner_url: System.get_env("IPFS_PINNER_URL"),
   evm_server_url: System.get_env("EVM_SERVER_URL")
