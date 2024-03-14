@@ -35,13 +35,13 @@ defmodule Refiner.UtilTest do
   end
 
   test "returns 'map' for a map" do
-    result_path = "./test-data/codec-0.35/block-result/17090940.result.json"
+    result_path = "./test-data/codec-0.36/block-result/19434485.result.json"
 
     {:ok, result_binary} = File.read(result_path)
     {:ok, result_decoded_map} = Poison.decode(result_binary)
 
     specimen_path =
-      "./test-data/codec-0.35/encoded/1-17090940-replica-0x7b8e1d463a0fbc6fce05b31c5c30e605aa13efaca14a1f3ba991d33ea979b12b"
+      "./test-data/codec-0.36/encoded/1-19434485-replica-0x5800aab40ca1c9aedae3329ad82ad051099edaa293d68504b987a12acfa7b799"
 
     {:ok, decoded_specimen} = Refiner.Avro.BlockSpecimen.decode_file(specimen_path)
 
@@ -64,9 +64,9 @@ defmodule Refiner.UtilTest do
   test "returns 'struct' for a struct" do
     block_result_metadata = %Refiner.BlockResultMetadata{
       chain_id: 1,
-      block_height: 17_090_940,
-      block_specimen_hash: 0x54245042C6CC9A9D80888DB816525D097984C3C2BA4F11D64E9CDF6AAEFE5E8D,
-      file_path: "./test-data/codec-0.35/block-result/17090940.result.json"
+      block_height: 19_434_485
+      block_specimen_hash: 0x3cf79c299079befbbf7852364921455e75d6b73cef1b559f6791fd0490160836,
+      file_path: "./test-data/codec-0.36/block-result/19434485.result.json"
     }
 
     assert Refiner.Util.typeof(block_result_metadata) == "struct"
@@ -87,10 +87,10 @@ defmodule Refiner.UtilTest do
   end
 
   test "get_file_paths returns a list of files in the given directory" do
-    assert Refiner.Util.get_file_paths("./test-data/codec-0.35/block-specimen/*") == [
-             "test-data/codec-0.35/block-specimen/17090940.specimen.json",
-             "test-data/codec-0.35/block-specimen/17090950.specimen.json",
-             "test-data/codec-0.35/block-specimen/17090960.specimen.json"
+    assert Refiner.Util.get_file_paths("./test-data/codec-0.36/block-specimen/*") == [
+             "test-data/codec-0.36/block-specimen/19434485.specimen.json",
+             "test-data/codec-0.36/block-specimen/19434520.specimen.json",
+             "test-data/codec-0.36/block-specimen/19434555.specimen.json"
            ]
   end
 
