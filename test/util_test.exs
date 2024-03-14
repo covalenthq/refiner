@@ -64,8 +64,8 @@ defmodule Refiner.UtilTest do
   test "returns 'struct' for a struct" do
     block_result_metadata = %Refiner.BlockResultMetadata{
       chain_id: 1,
-      block_height: 19_434_485
-      block_specimen_hash: 0x3cf79c299079befbbf7852364921455e75d6b73cef1b559f6791fd0490160836,
+      block_height: 19_434_485,
+      block_specimen_hash: 0x3CF79C299079BEFBBF7852364921455E75D6B73CEF1B559F6791FD0490160836,
       file_path: "./test-data/codec-0.36/block-result/19434485.result.json"
     }
 
