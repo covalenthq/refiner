@@ -69,7 +69,7 @@ services:
       - "3001:3001"
 
   evm-server:
-    image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/evm-server:latest"
     container_name: evm-server
     restart: on-failure
     expose:
@@ -107,8 +107,8 @@ services:
         done;
         echo Proof-chain contracts deployed!;
         echo Uploading test files to local .ipfs...;
-        curl -F "filedata=@/app/test-data/codec-0.35/encoded/1-17090940-replica-0x7b8e1d463a0fbc6fce05b31c5c30e605aa13efaca14a1f3ba991d33ea979b12b" http://ipfs-pinner:3001/upload;
-        curl -F "filedata=@/app/test-data/codec-0.35/encoded/1-17090960-replica-0xc95d44182ee006e79f1352ef32664210f383baa016988d5ab2fd950b52bf22ff" http://ipfs-pinner:3001/upload;
+        curl -F "filedata=@/app/test-data/codec-0.36/encoded/1-19434485-replica-0x5800aab40ca1c9aedae3329ad82ad051099edaa293d68504b987a12acfa7b799" http://ipfs-pinner:3001/upload;
+        curl -F "filedata=@/app/test-data/codec-0.36/encoded/1-19434555-replica-0x3e6af5a88c6205e03364e4a8e4d6d558d53bbea0ed9398df0ee078e6bce3086e" http://ipfs-pinner:3001/upload;
         echo Test bsp files uploaded!;
         cd /mix;
         MIX_ENV=docker mix coveralls.json;
