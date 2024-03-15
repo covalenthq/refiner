@@ -23,7 +23,7 @@ services:
       - "3001:3001"
 
   evm-server:
-    image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/evm-server:latest"
     container_name: evm-server
     restart: always
     labels:
