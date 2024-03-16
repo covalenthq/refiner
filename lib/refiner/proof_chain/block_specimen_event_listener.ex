@@ -9,8 +9,8 @@ defmodule Refiner.ProofChain.BlockSpecimenEventListener do
     {:ok, []}
   end
 
-  @bsp_submitted_event_hash "0xd79027d5232050798063d67d05f9e1545ea5b954e2334b09db548e63823fa1b1"
-  @bsp_awarded_event_hash "0x858deae9d885ee978c04934ceabf15ebe77ae274f3af6a05ecf3bd9880b08e1e"
+  @bsp_submitted_event_hash "0x57b0cb34d2ff9ed661f8b3c684aaee6cbf0bda5da02f4044205556817fa8e76c"
+  @bsp_awarded_event_hash "0xf05ac779af1ec75a7b2fbe9415b33a67c00294a121786f7ce2eb3f92e4a6424a"
 
   @spec start_link(any) :: :ignore | {:error, any} | {:ok, pid}
   def start_link(_) do
@@ -64,8 +64,7 @@ defmodule Refiner.ProofChain.BlockSpecimenEventListener do
       {:ok, [_event_hash, chain_id_raw, block_height_raw, block_hash]} =
         Map.fetch(log_event, "topics")
 
-      [_validator_bit_map, specimen_hash_raw] =
-        Refiner.Util.extract_data(log_event, "(uint256,bytes32)")
+      [specimen_hash_raw] = Rudder.Util.extract_data(log_event, "(bytes32)")
 
       # prepare data to generate key
       specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
