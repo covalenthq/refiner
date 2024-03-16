@@ -64,8 +64,7 @@ defmodule Refiner.ProofChain.BlockSpecimenEventListener do
       {:ok, [_event_hash, chain_id_raw, block_height_raw, block_hash]} =
         Map.fetch(log_event, "topics")
 
-      [_validator_bit_map, specimen_hash_raw] =
-        Refiner.Util.extract_data(log_event, "(uint256,bytes32)")
+      [specimen_hash_raw] = Rudder.Util.extract_data(log_event, "(bytes32)")
 
       # prepare data to generate key
       specimen_hash = Base.encode16(specimen_hash_raw, case: :lower)
