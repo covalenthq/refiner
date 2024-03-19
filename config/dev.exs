@@ -48,7 +48,7 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 # Default these should point to moonbase alpha since we do all the development testing there
-config :rudder,
+config :refiner,
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
   bsp_proofchain_address:
     System.get_env("BSP_PROOFCHAIN_ADDRESS", "0x916B54696A70588a716F899bE1e8f2A5fFd5f135"),
