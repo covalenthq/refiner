@@ -3,7 +3,7 @@ version: "3"
 # set .env such that all services in docker are talking to each other only
 services:
   eth-node:
-    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-refiner"
+    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:stable"
     container_name: hardhat-node
     restart: on-failure
     expose:
@@ -21,7 +21,7 @@ services:
       - "8545:8545"
 
   cqt-staking:
-    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:latest-refiner"
+    image: "us-docker.pkg.dev/covalent-project/network/cqt-staking:stable"
     container_name: proof-chain
     restart: on-failure
     entrypoint: |
