@@ -50,6 +50,12 @@
         "internalType": "string",
         "name": "storageURL",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint128",
+        "name": "submittedStake",
+        "type": "uint128"
       }
     ],
     "name": "BlockSpecimenProductionProofSubmitted",
@@ -71,25 +77,19 @@
         "type": "uint64"
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "validatorBitMap",
-        "type": "uint256"
-      },
-      {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "blockSpecimenHash",
+        "name": "blockhash",
         "type": "bytes32"
       },
       {
         "indexed": false,
         "internalType": "bytes32",
-        "name": "resulthash",
+        "name": "specimenhash",
         "type": "bytes32"
       }
     ],
-    "name": "BlockSpecimenQuorum",
+    "name": "BlockSpecimenRewardAwarded",
     "type": "event"
   },
   {
@@ -227,24 +227,32 @@
         "internalType": "address",
         "name": "operator",
         "type": "address"
-      },
+      }
+    ],
+    "name": "OperatorDisabled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": false,
-        "internalType": "uint128",
-        "name": "validatorId",
-        "type": "uint128"
-      },
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "name": "OperatorEnabled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": false,
-        "internalType": "uint128",
-        "name": "activeOperatorCount",
-        "type": "uint128"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
       }
     ],
     "name": "OperatorRemoved",
@@ -371,37 +379,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "newStakingManager",
+        "name": "newInterfaceAddress",
         "type": "address"
       }
     ],
-    "name": "StakingManagerChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint128",
-        "name": "validatorId",
-        "type": "uint128"
-      }
-    ],
-    "name": "ValidatorDisabled",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint128",
-        "name": "validatorId",
-        "type": "uint128"
-      }
-    ],
-    "name": "ValidatorEnabled",
+    "name": "StakingInterfaceChanged",
     "type": "event"
   },
   {
@@ -490,12 +472,58 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "validator",
+        "type": "address"
+      },
+      {
         "internalType": "uint128",
-        "name": "validatorId",
+        "name": "commissionRate",
         "type": "uint128"
       }
     ],
-    "name": "disableValidator",
+    "name": "addValidator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint64",
+        "name": "chainId",
+        "type": "uint64"
+      },
+      {
+        "internalType": "uint64",
+        "name": "blockHeight",
+        "type": "uint64"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "blockHash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "definitiveSpecimenHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "arbitrateBlockSpecimenSession",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "name": "disableBSPOperator",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -506,9 +534,27 @@
         "internalType": "uint128",
         "name": "validatorId",
         "type": "uint128"
+      },
+      {
+        "internalType": "uint256",
+        "name": "blockNumber",
+        "type": "uint256"
       }
     ],
-    "name": "enableValidator",
+    "name": "disableValidator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "name": "enableBSPOperator",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -526,7 +572,7 @@
         "type": "uint64"
       }
     ],
-    "name": "finalizeResultSession",
+    "name": "finalizeAndRewardSpecimenSession",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -617,31 +663,12 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint128",
-        "name": "validatorId",
-        "type": "uint128"
-      }
-    ],
-    "name": "getEnabledOperatorCount",
-    "outputs": [
-      {
-        "internalType": "uint128",
-        "name": "",
-        "type": "uint128"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getMetadata",
     "outputs": [
       {
         "internalType": "address",
-        "name": "stakingManager",
+        "name": "stakingInterface",
         "type": "address"
       },
       {
@@ -695,32 +722,13 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "specimenhash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getURLS",
-    "outputs": [
-      {
-        "internalType": "string[]",
-        "name": "",
-        "type": "string[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "initialOwner",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "stakingManager",
+        "name": "stakingContract",
         "type": "address"
       }
     ],
@@ -738,54 +746,6 @@
       }
     ],
     "name": "isEnabled",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "chainId",
-        "type": "uint64"
-      },
-      {
-        "internalType": "uint64",
-        "name": "blockHeight",
-        "type": "uint64"
-      },
-      {
-        "internalType": "address",
-        "name": "operator",
-        "type": "address"
-      }
-    ],
-    "name": "isSessionOpen",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint128",
-        "name": "validatorId",
-        "type": "uint128"
-      }
-    ],
-    "name": "isValidatorEnabled",
     "outputs": [
       {
         "internalType": "bool",
@@ -870,6 +830,19 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint128",
+        "name": "newStakeAmount",
+        "type": "uint128"
+      }
+    ],
+    "name": "setBSPRequiredStake",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1025,11 +998,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "stakingManagerAddress",
+        "name": "stakingContractAddress",
         "type": "address"
       }
     ],
-    "name": "setStakingManagerAddress",
+    "name": "setStakingInterface",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
