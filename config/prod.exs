@@ -51,9 +51,9 @@ config :phoenix, :plug_init_mode, :runtime
 config :refiner,
   operator_private_key: System.get_env("BLOCK_RESULT_OPERATOR_PRIVATE_KEY"),
   bsp_proofchain_address:
-    System.get_env("BSP_PROOFCHAIN_ADDRESS", "0x4f2E285227D43D9eB52799D0A28299540452446E"),
+    System.get_env("BSP_PROOFCHAIN_ADDRESS", "0x7487b04899c2572A223A8c6eC9bA919e27BBCd36"),
   brp_proofchain_address:
-    System.get_env("BRP_PROOFCHAIN_ADDRESS", "0x254E3FA072324fa202577F24147066359947bC23"),
+    System.get_env("BRP_PROOFCHAIN_ADDRESS", "0x4932bDc983e5146224b9C2e68cfFBFEb004A2824"),
   proofchain_chain_id: Integer.parse(System.get_env("PROOFCHAIN_CHAIN_ID", "1284")) |> elem(0),
   proofchain_node: System.get_env("NODE_ETHEREUM_MAINNET"),
   ipfs_pinner_url: System.get_env("IPFS_PINNER_URL"),
