@@ -35,13 +35,12 @@ defmodule Refiner.UtilTest do
   end
 
   test "returns 'map' for a map" do
-    result_path = "./test-data/codec-0.36/block-result/19434485.result.json"
+    result_path = "./test-data/codec-0.37/block-result/19529630.result.json"
 
     {:ok, result_binary} = File.read(result_path)
     {:ok, result_decoded_map} = Poison.decode(result_binary)
 
-    specimen_path =
-      "./test-data/codec-0.36/encoded/1-19434485-replica-0x5800aab40ca1c9aedae3329ad82ad051099edaa293d68504b987a12acfa7b799"
+    specimen_path = "./test-data/codec-0.37/encoded/1-19529630"
 
     {:ok, decoded_specimen} = Refiner.Avro.BlockSpecimen.decode_file(specimen_path)
 
