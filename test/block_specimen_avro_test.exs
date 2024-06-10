@@ -44,11 +44,11 @@ defmodule Refiner.BlockSpecimenDecoderEncoderTest do
   } do
     dir_path = "./test-data/codec-0.37/encoded/*"
 
-    expected_start_block = 195_294_93
-    expected_last_block = 19_529_630
+    expected_start_block = 19_529_493
+    expected_last_block = 20_063_085
 
     expected_start_hash = "0x313990d54795a7e251672161a5671a72bce4254e7f773cf86b309f772b548194"
-    expected_last_hash = "0x36354e6f5603ae907b1a1e38cfab9b937ff5efd0fe3651b95ea41b089871792d"
+    expected_last_hash = "0x0cfa8133a57504678b9003e1f6827ef5f394e41678a5336b6d4b6de4230596d9"
 
     decode_specimen_stream = Refiner.Avro.BlockSpecimen.decode_dir(dir_path)
 

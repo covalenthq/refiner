@@ -4,7 +4,7 @@ defmodule Refiner.PipelineTest do
   test "returns the cid and hash of the processed block hash", %{} do
     # encoded specimen file: ./test-data/codec-0.37/encoded/1-20063085 (codec-0.37)
     test_urls = ["ipfs://bafybeidpfxf7czfkeaiszdciyvaeahnqhop6flcssqf6s4udb7jolgciky"]
-    expected_block_result_cid = "bafybeib3xkzaxuldyiyadngetbd622wmj4zegwcnd4pl4unslqurxa4xi4"
+    expected_block_result_cid = "bafybeicenu7e7ahguyjund5lq24wvei6uhdsdc37sng5p762s56gyc3qkm"
     test_block_specimen_hash = "0cfa8133a57504678b9003e1f6827ef5f394e41678a5336b6d4b6de4230596d9"
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
 
@@ -34,7 +34,7 @@ defmodule Refiner.PipelineTest do
         30_000 -> assert(false)
       end
 
-    expected_block_result_cid = "bafybeicpsrm3h5g6st6k2vi5awwu55wzdtvgmailpod2e53leexsk2ptcy"
+    expected_block_result_cid = "bafybeig2bqbxhk42aznq6fap4ubbfg4zqcmdc27lb4iaymslcat56tayam"
 
     expected_block_result_hash =
       <<48, 29, 244, 136, 156, 152, 111, 196, 64, 170, 248, 64, 226, 153, 56, 140, 31, 209, 169,
