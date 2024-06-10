@@ -11,6 +11,6 @@ updates:
       interval: "weekly"
     target-branch: "develop"
     reviewers:
-      - "sudeepdino008"
+      - "rogarcia"
       - "noslav"
       
