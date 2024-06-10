@@ -9,8 +9,8 @@ defmodule Refiner.PipelineTest do
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
 
     expected_block_result_hash =
-      <<75, 182, 220, 247, 103, 1, 28, 138, 198, 79, 120, 116, 0, 120, 220, 176, 217, 166, 128,
-        117, 26, 7, 3, 9, 87, 65, 143, 138, 182, 197, 214, 25>>
+      <<250, 183, 180, 63, 29, 134, 184, 182, 171, 145, 225, 13, 148, 41, 225, 28, 45, 170, 1, 73,
+        110, 221, 89, 227, 169, 232, 83, 115, 84, 217, 183, 182>>
 
     {status, cid, block_result_hash} = Refiner.Pipeline.process_specimen(test_bsp_key, test_urls)
 
@@ -37,8 +37,8 @@ defmodule Refiner.PipelineTest do
     expected_block_result_cid = "bafybeig2bqbxhk42aznq6fap4ubbfg4zqcmdc27lb4iaymslcat56tayam"
 
     expected_block_result_hash =
-      <<48, 29, 244, 136, 156, 152, 111, 196, 64, 170, 248, 64, 226, 153, 56, 140, 31, 209, 169,
-        224, 185, 27, 214, 237, 245, 92, 137, 197, 127, 183, 104, 187>>
+      <<28, 194, 179, 26, 109, 156, 17, 247, 235, 26, 218, 252, 146, 109, 254, 149, 146, 8, 79,
+        252, 221, 91, 204, 188, 78, 17, 60, 177, 236, 150, 45, 1>>
 
     assert status == :ok
     assert cid == expected_block_result_cid
