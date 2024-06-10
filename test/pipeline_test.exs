@@ -2,10 +2,10 @@ defmodule Refiner.PipelineTest do
   use ExUnit.Case, async: true
 
   test "returns the cid and hash of the processed block hash", %{} do
-    # encoded specimen file: test-data/codec-0.36/encoded/1-19434485-replica-0x5800aab40ca1c9aedae3329ad82ad051099edaa293d68504b987a12acfa7b799 (codec-0.36)
-    test_urls = ["ipfs://bafybeich2doxzqmls5hrrdb4v4fibxqjqnhcvguamp5lmvyg45h2gz5xkm"]
+    # encoded specimen file: ./test-data/codec-0.37/segments/1-20063085 (codec-0.37)
+    test_urls = ["ipfs://bafybeidpfxf7czfkeaiszdciyvaeahnqhop6flcssqf6s4udb7jolgciky"]
     expected_block_result_cid = "bafybeib3xkzaxuldyiyadngetbd622wmj4zegwcnd4pl4unslqurxa4xi4"
-    test_block_specimen_hash = "3cf79c299079befbbf7852364921455e75d6b73cef1b559f6791fd0490160836"
+    test_block_specimen_hash = "0cfa8133a57504678b9003e1f6827ef5f394e41678a5336b6d4b6de4230596d9"
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
 
     expected_block_result_hash =
@@ -20,9 +20,9 @@ defmodule Refiner.PipelineTest do
   end
 
   test "pipeline spawner starts pipeline processes", %{} do
-    # encoded specimen file: test-data/codec-0.36/encoded/1-19434555-replica-0x3e6af5a88c6205e03364e4a8e4d6d558d53bbea0ed9398df0ee078e6bce3086e (codec-0.36)
-    test_urls = ["ipfs://bafybeiaroqslztoplmyyaduz2kfhfmqdeybkfx7sojbisj2rsoryvmmu3y"]
-    test_block_specimen_hash = "e8da96c1936beca082677f0a634f659970f1646b3a6ca2d555f038aeb076e006"
+    # encoded specimen file: ./test-data/codec-0.37/segments/1-20063050 (codec-0.37)
+    test_urls = ["ipfs://bafybeiegf53afgfamjfjips6gf4onap3ljayokjvmfux4uqmgmkxcig2ea"]
+    test_block_specimen_hash = "1a5c54be289b40e9f1b041393a02e3ff7dd37d963038904e3bcd04ad6135221e"
     test_bsp_key = "1_1_1_" <> test_block_specimen_hash
     {:ok, task} = Refiner.Pipeline.Spawner.push_hash(test_bsp_key, test_urls, true)
 
