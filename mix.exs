@@ -32,7 +32,7 @@ defmodule Refiner.MixProject do
   defp deps do
     [
       # system exec
-      {:poison, "~> 5.0"},
+      {:poison, "~> 6.0"},
       {:distillery, "~> 2.0"},
 
       # frameworks
