@@ -13,4 +13,10 @@ updates:
     reviewers:
       - "rogarcia"
       - "noslav"
-      
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "noslav"
+      - "rogarcia"
