@@ -22,11 +22,10 @@ defmodule Refiner.BlockSpecimenDecoderEncoderTest do
   test "Refiner.Avro.BlockSpecimen.decode_file/1 decodes binary specimen file", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    specimen_path =
-      "./test-data/codec-0.36/encoded/1-19434485-replica-0x5800aab40ca1c9aedae3329ad82ad051099edaa293d68504b987a12acfa7b799"
+    specimen_path = "./test-data/codec-0.37/encoded/1-19529630"
 
-    expected_start_block = 19_434_485
-    expected_hash = "0x3cf79c299079befbbf7852364921455e75d6b73cef1b559f6791fd0490160836"
+    expected_start_block = 19_529_630
+    expected_hash = "0x36354e6f5603ae907b1a1e38cfab9b937ff5efd0fe3651b95ea41b089871792d"
 
     {:ok, decoded_specimen} = Refiner.Avro.BlockSpecimen.decode_file(specimen_path)
 
@@ -43,13 +42,13 @@ defmodule Refiner.BlockSpecimenDecoderEncoderTest do
   test "Refiner.Avro.BlockSpecimen.decode_dir/1 streams directory binary files", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/codec-0.36/encoded/*"
+    dir_path = "./test-data/codec-0.37/encoded/*"
 
-    expected_start_block = 19_434_485
-    expected_last_block = 19_434_555
+    expected_start_block = 19_529_493
+    expected_last_block = 20_063_085
 
-    expected_start_hash = "0x3cf79c299079befbbf7852364921455e75d6b73cef1b559f6791fd0490160836"
-    expected_last_hash = "0xe8da96c1936beca082677f0a634f659970f1646b3a6ca2d555f038aeb076e006"
+    expected_start_hash = "0x313990d54795a7e251672161a5671a72bce4254e7f773cf86b309f772b548194"
+    expected_last_hash = "0x0cfa8133a57504678b9003e1f6827ef5f394e41678a5336b6d4b6de4230596d9"
 
     decode_specimen_stream = Refiner.Avro.BlockSpecimen.decode_dir(dir_path)
 
@@ -102,9 +101,9 @@ defmodule Refiner.BlockSpecimenDecoderEncoderTest do
   test "Refiner.Avro.BlockSpecimen.decode_dir/1 decodes all binary files", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/codec-0.36/encoded/*"
+    dir_path = "./test-data/codec-0.37/encoded/*"
 
-    expected_specimens = 3
+    expected_specimens = 5
 
     decode_specimen_stream = Refiner.Avro.BlockSpecimen.decode_dir(dir_path)
 
@@ -118,10 +117,10 @@ defmodule Refiner.BlockSpecimenDecoderEncoderTest do
   test "Refiner.Avro.BlockSpecimen.encode_file/1 encodes segment json file", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    segment_path = "./test-data/codec-0.36/segment/19434485.segment.json"
+    segment_path = "./test-data/codec-0.37/segment/19529630.segment.json"
 
-    expected_start_block = 19_434_485
-    expected_hash = "0x3cf79c299079befbbf7852364921455e75d6b73cef1b559f6791fd0490160836"
+    expected_start_block = 19_529_630
+    expected_hash = "0x36354e6f5603ae907b1a1e38cfab9b937ff5efd0fe3651b95ea41b089871792d"
 
     {:ok, encoded_segment_avro} = Refiner.Avro.BlockSpecimen.encode_file(segment_path)
 
@@ -141,10 +140,10 @@ defmodule Refiner.BlockSpecimenDecoderEncoderTest do
   test "Refiner.Avro.BlockSpecimen.encode_dir/1 streams encoded .json files", %{
     block_specimen_avro: _block_specimen_avro
   } do
-    dir_path = "./test-data/codec-0.36/segment/*"
+    dir_path = "./test-data/codec-0.37/segment/*"
 
-    expected_start_block = 19_434_485
-    expected_last_block = 19_434_555
+    expected_start_block = 19_529_493
+    expected_last_block = 19_529_630
 
     encoded_segment_stream = Refiner.Avro.BlockSpecimen.encode_dir(dir_path)
 

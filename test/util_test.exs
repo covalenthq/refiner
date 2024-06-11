@@ -35,13 +35,12 @@ defmodule Refiner.UtilTest do
   end
 
   test "returns 'map' for a map" do
-    result_path = "./test-data/codec-0.36/block-result/19434485.result.json"
+    result_path = "./test-data/codec-0.37/block-result/19529630.result.json"
 
     {:ok, result_binary} = File.read(result_path)
     {:ok, result_decoded_map} = Poison.decode(result_binary)
 
-    specimen_path =
-      "./test-data/codec-0.36/encoded/1-19434485-replica-0x5800aab40ca1c9aedae3329ad82ad051099edaa293d68504b987a12acfa7b799"
+    specimen_path = "./test-data/codec-0.37/encoded/1-19529630"
 
     {:ok, decoded_specimen} = Refiner.Avro.BlockSpecimen.decode_file(specimen_path)
 
@@ -64,9 +63,9 @@ defmodule Refiner.UtilTest do
   test "returns 'struct' for a struct" do
     block_result_metadata = %Refiner.BlockResultMetadata{
       chain_id: 1,
-      block_height: 19_434_485,
-      block_specimen_hash: 0x3CF79C299079BEFBBF7852364921455E75D6B73CEF1B559F6791FD0490160836,
-      file_path: "./test-data/codec-0.36/block-result/19434485.result.json"
+      block_height: 19_529_630,
+      block_specimen_hash: 0x36354E6F5603AE907B1A1E38CFAB9B937FF5EFD0FE3651B95EA41B089871792D,
+      file_path: "./test-data/codec-0.37/block-result/19529630.result.json"
     }
 
     assert Refiner.Util.typeof(block_result_metadata) == "struct"
@@ -87,10 +86,10 @@ defmodule Refiner.UtilTest do
   end
 
   test "get_file_paths returns a list of files in the given directory" do
-    assert Refiner.Util.get_file_paths("./test-data/codec-0.36/block-specimen/*") == [
-             "test-data/codec-0.36/block-specimen/19434485.specimen.json",
-             "test-data/codec-0.36/block-specimen/19434520.specimen.json",
-             "test-data/codec-0.36/block-specimen/19434555.specimen.json"
+    assert Refiner.Util.get_file_paths("./test-data/codec-0.37/block-specimen/*") == [
+             "test-data/codec-0.37/block-specimen/19529493.specimen.json",
+             "test-data/codec-0.37/block-specimen/19529499.specimen.json",
+             "test-data/codec-0.37/block-specimen/19529630.specimen.json"
            ]
   end
 
