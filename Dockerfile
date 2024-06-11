@@ -1,7 +1,7 @@
 #===========
 #(Elixir) Build Stage
 #===========
-FROM elixir:1.14.3-otp-24 as builder-elixir
+FROM elixir:1.16.2-otp-26 as builder-elixir
 RUN mkdir -p /mix
 WORKDIR /mix
 
@@ -24,7 +24,7 @@ RUN mix local.hex --force && \
 #================
 #Deployment Stage
 #================
-FROM elixir:1.14.3-otp-24 as deployer
+FROM elixir:1.16.2-otp-26 as deployer
 # RUN mkdir -p /app/test /app/prod
 
 RUN apt-get update && apt-get install -y git bash curl netcat-traditional && apt-get clean && rm -rf /var/lib/apt/lists/*
