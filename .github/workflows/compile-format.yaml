@@ -3,11 +3,11 @@ name: compile-format
 on:
   push:
     branches:
-    - "main"
+      - "main"
   pull_request:
-    branches: 
-    - "main"
-    - "develop"
+    branches:
+      - "main"
+      - "develop"
 
 env:
   MIX_ENV: test
@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        elixir: [1.14.3]
-        otp: [24]
+        elixir: [1.16.2]
+        otp: [26]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.6.0
@@ -44,7 +44,6 @@ jobs:
           mkdir einstall
           unzip elixir-otp-24.zip -d einstall
           echo "$PWD/einstall/bin" >> $GITHUB_PATH
-
 
       - name: Install hex
         run: mix local.hex --force
