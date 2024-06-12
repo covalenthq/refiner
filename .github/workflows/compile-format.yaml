@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        elixir: [1.16.2]
-        otp: [26]
+        elixir: [1.14.5]
+        otp: [25]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.6.0
@@ -40,9 +40,9 @@ jobs:
 
       - name: Install Elixir
         run: |
-          wget https://github.com/elixir-lang/elixir/releases/download/v1.14.3/elixir-otp-24.zip
+          wget https://github.com/elixir-lang/elixir/releases/download/v1.14.5/elixir-otp-25.zip
           mkdir einstall
-          unzip elixir-otp-24.zip -d einstall
+          unzip elixir-otp-25.zip -d einstall
           echo "$PWD/einstall/bin" >> $GITHUB_PATH
 
       - name: Install hex
@@ -53,7 +53,7 @@ jobs:
 
       - name: Install OTP
         run: |
-          wget -q -O otp.tar.gz https://repo.hex.pm/builds/otp/ubuntu-20.04/OTP-25.0.4.tar.gz
+          wget -q -O otp.tar.gz https://repo.hex.pm/builds/otp/ubuntu-20.04/OTP-25.0.tar.gz
           mkdir -p .setup-elixir/otp
           tar zxf otp.tar.gz -C .setup-elixir/otp --strip-components=1
           rm otp.tar.gz
