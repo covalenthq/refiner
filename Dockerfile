@@ -2,6 +2,10 @@
 #(Elixir) Build Stage
 #===========
 FROM elixir:1.14.5-otp-26-alpine as builder-elixir
+
+# Install git
+RUN apk add --no-cache git
+
 RUN mkdir -p /mix
 WORKDIR /mix
 
