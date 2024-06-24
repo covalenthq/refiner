@@ -3,8 +3,8 @@
 #===========
 FROM elixir:1.14.5-otp-26-alpine as builder-elixir
 
-# Install git
-RUN apk add --no-cache git
+# Install git and build essentials
+RUN apk add --no-cache git build-base
 
 RUN mkdir -p /mix
 WORKDIR /mix
