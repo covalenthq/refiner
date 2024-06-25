@@ -101,14 +101,14 @@ services:
         echo "evm-server-address:" $EVM_SERVER_URL;
         echo "code-test-coverage:" $CODECOV_TOKEN;
         echo Waiting for proof-chain to be deployed...;
-        while ! nc -v -l -k -p 8008;
+        while ! nc -l -p 8008;
         do
         sleep 1;
         done;
         echo Proof-chain contracts deployed!;
         echo Uploading test files to local .ipfs...;
-        curl -F "filedata=@/app/test-data/codec-0.37/encoded/1-20063050" http://ipfs-pinner:3001/upload;
-        curl -F "filedata=@/app/test-data/codec-0.37/encoded/1-20063085" http://ipfs-pinner:3001/upload;
+        curl -F "filedata=@/app/mix/test-data/codec-0.37/encoded/1-20063050" http://ipfs-pinner:3001/upload;
+        curl -F "filedata=@/app/mix/test-data/codec-0.37/encoded/1-20063085" http://ipfs-pinner:3001/upload;
         echo Test bsp files uploaded!;
         cd /mix;
         MIX_ENV=docker mix coveralls.json;
