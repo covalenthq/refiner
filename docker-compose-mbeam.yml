@@ -56,6 +56,7 @@ services:
         echo "evm-server:" $EVM_SERVER_URL;
         echo "ipfs-node:" $IPFS_PINNER_URL;
         cd /mix;
+        MIX_ENV=prod mix deps.get;
         MIX_ENV=prod mix release --overwrite;
         MIX_ENV=prod mix run --no-halt --eval 'Refiner.ProofChain.BlockSpecimenEventListener.start()';"
     environment:
