@@ -31,7 +31,7 @@ RUN mix local.hex --force && \
 FROM elixir:1.14-otp-25-alpine as deployer
 # RUN mkdir -p /app/test /app/prod
 
-RUN apk add --no-cache git bash curl netcat-openbsd && rm -rf /var/cache/apk/*
+RUN apk add --no-cache git bash curl netcat-openbsd build-base && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /mix/_build /mix/config /mix/deps /mix/lib /mix/priv node/test /mix/test-data
 
