@@ -32,9 +32,9 @@ jobs:
       - name: Build & Publish the Docker image
         run: |
 
-          docker buildx create --name builder --use --platform=linux/amd64 && docker buildx build --platform=linux/amd64 . -t  us-docker.pkg.dev/covalent-project/network/refiner:latest --push
+          # docker buildx create --name builder --use --platform=linux/amd64 && docker buildx build --platform=linux/amd64 . -t  us-docker.pkg.dev/covalent-project/network/refiner:latest --push
 
-          # docker buildx create --name builder --use --platform=linux/amd64,linux/arm64  && docker buildx build --platform=linux/amd64,linux/arm64 . -t  us-docker.pkg.dev/covalent-project/network/refiner:latest --push
+          docker buildx create --name builder --use --platform=linux/amd64,linux/arm64  && docker buildx build --platform=linux/amd64,linux/arm64 . -t  us-docker.pkg.dev/covalent-project/network/refiner:latest --push
 
       - name: Create .env file
         run: |

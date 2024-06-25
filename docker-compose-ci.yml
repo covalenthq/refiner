@@ -101,7 +101,7 @@ services:
         echo "evm-server-address:" $EVM_SERVER_URL;
         echo "code-test-coverage:" $CODECOV_TOKEN;
         echo Waiting for proof-chain to be deployed...;
-        while ! nc -v -l -k -p 8008;
+        while ! nc -l -p 8008;
         do
         sleep 1;
         done;
