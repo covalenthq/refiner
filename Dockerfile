@@ -1,7 +1,11 @@
 #===========
 #(Elixir) Build Stage
 #===========
-FROM elixir:1.14.3-otp-24 as builder-elixir
+FROM elixir:1.14-otp-25-alpine as builder-elixir
+
+# Install git and build essentials
+RUN apk add --no-cache git build-base
+
 RUN mkdir -p /mix
 WORKDIR /mix
 
@@ -24,14 +28,13 @@ RUN mix local.hex --force && \
 #================
 #Deployment Stage
 #================
-FROM elixir:1.14.3-otp-24 as deployer
+FROM elixir:1.14-otp-25-alpine as deployer
 # RUN mkdir -p /app/test /app/prod
 
-RUN apt-get update && apt-get install -y git bash curl netcat-traditional && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache git bash curl netcat-openbsd build-base && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /mix/_build /mix/config /mix/deps /mix/lib /mix/priv node/test /mix/test-data
-# used in case alpine image are used
-# RUN apk update && apk add --no-cache git=2.36.3-r0 bash=5.1.16-r2 curl=7.83.1-r4 go=1.18.7-r0 make=4.3-r0 gcc=11.2.1_git20220219-r2
+
 WORKDIR /app
 RUN mix local.hex --force
 RUN mix local.rebar --force
