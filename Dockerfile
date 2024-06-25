@@ -1,7 +1,7 @@
 #===========
 #(Elixir) Build Stage
 #===========
-FROM elixir:1.14.5-otp-26-alpine as builder-elixir
+FROM elixir:1.14-otp-25-alpine as builder-elixir
 
 # Install git and build essentials
 RUN apk add --no-cache git build-base
@@ -28,7 +28,7 @@ RUN mix local.hex --force && \
 #================
 #Deployment Stage
 #================
-FROM elixir:1.14.5-otp-26-alpine as deployer
+FROM elixir:1.14-otp-25-alpine as deployer
 # RUN mkdir -p /app/test /app/prod
 
 RUN apk add --no-cache git bash curl netcat-openbsd && rm -rf /var/cache/apk/*
