@@ -5,7 +5,7 @@ defmodule Refiner.MixProject do
     [
       app: :refiner,
       version: "0.5.2",
-      elixir: "~> 1.14.5",
+      elixir: "~> 1.17.1",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls, export: "cov"],
@@ -70,7 +70,7 @@ defmodule Refiner.MixProject do
 
       # static code analysis
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7.7", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: [:test, :docker], runtime: false},
 
       # avro tools
