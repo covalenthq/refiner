@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        elixir: [1.17.0]
+        elixir: [1.17.1]
         otp: [27]
     steps:
       - name: Cancel Previous Runs
@@ -40,7 +40,7 @@ jobs:
 
       - name: Install Elixir
         run: |
-          wget https://github.com/elixir-lang/elixir/releases/download/v1.17.0/elixir-otp-27.zip
+          wget https://github.com/elixir-lang/elixir/releases/download/v1.17.1/elixir-otp-27.zip
           mkdir einstall
           unzip elixir-otp-27.zip -d einstall
           echo "$PWD/einstall/bin" >> $GITHUB_PATH
