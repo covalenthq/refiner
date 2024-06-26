@@ -70,7 +70,7 @@ defmodule Refiner.MixProject do
 
       # static code analysis
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7.7", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: [:test, :docker], runtime: false},
 
       # avro tools
