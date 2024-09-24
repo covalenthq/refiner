@@ -1,8 +1,15 @@
 defmodule Refiner.IPFSInteractor do
   use GenServer
+  use Tesla
 
   alias Multipart.Part
   alias Refiner.Events
+
+  # Define the IPFS base URL from application config
+  @ipfs_base_url Application.get_env(:refiner, :ipfs_pinner_url)
+
+  plug Tesla.Middleware.BaseUrl, @ipfs_base_url
+  plug Tesla.Middleware.JSON
 
   require Logger
 
@@ -26,21 +33,14 @@ defmodule Refiner.IPFSInteractor do
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
     start_pin_ms = System.monotonic_time(:millisecond)
-    ipfs_url = Application.get_env(:refiner, :ipfs_pinner_url)
-    url = "#{ipfs_url}/upload"
 
-    multipart = Multipart.new() |> Multipart.add_part(Part.file_body(file_path))
-    body_stream = Multipart.body_stream(multipart)
-    content_length = Multipart.content_length(multipart)
-    content_type = Multipart.content_type(multipart, "multipart/form-data")
-    headers = [{"Content-Type", content_type}, {"Content-Length", to_string(content_length)}]
+    # Create a multipart request
+    multipart = Tesla.Multipart.new()
+    |> Tesla.Multipart.add_file(file_path, filename: Path.basename(file_path), headers: [
+      {"Content-Type", "multipart/form-data"}])
 
-    resp =
-      Finch.build("POST", url, headers, {:stream, body_stream})
-      |> Finch.request(Refiner.Finch)
-
-    case resp do
-      {:ok, %Finch.Response{body: body, headers: _, status: _}} ->
+    case post("/upload", multipart) do
+      {:ok, %Tesla.Env{body: body, headers: _, status: _}} ->
         body_map = body |> Poison.decode!()
 
         end_pin_ms = System.monotonic_time(:millisecond)
@@ -92,6 +92,8 @@ defmodule Refiner.IPFSInteractor do
         {:reply, {:error, err}, state}
     end
   end
+
+
 
   @spec pin(any) :: any
   def pin(path) do
