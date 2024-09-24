@@ -92,7 +92,7 @@ defmodule Refiner.MixProject do
 
       # Tesla for multipart
       {:tesla, "~> 1.12"},
-      {:hackney, "~> 1.17"},
+      {:hackney, "~> 1.17"}
 
       # Unused
       # {:erlexec, "~> 2.0"},

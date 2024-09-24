@@ -8,8 +8,8 @@ defmodule Refiner.IPFSInteractor do
   # Define the IPFS base URL from application config
   @ipfs_base_url Application.get_env(:refiner, :ipfs_pinner_url)
 
-  plug Tesla.Middleware.BaseUrl, @ipfs_base_url
-  plug Tesla.Middleware.JSON
+  plug(Tesla.Middleware.BaseUrl, @ipfs_base_url)
+  plug(Tesla.Middleware.JSON)
 
   require Logger
 
@@ -35,9 +35,14 @@ defmodule Refiner.IPFSInteractor do
     start_pin_ms = System.monotonic_time(:millisecond)
 
     # Create a multipart request
-    multipart = Tesla.Multipart.new()
-    |> Tesla.Multipart.add_file(file_path, filename: Path.basename(file_path), headers: [
-      {"Content-Type", "multipart/form-data"}])
+    multipart =
+      Tesla.Multipart.new()
+      |> Tesla.Multipart.add_file(file_path,
+        filename: Path.basename(file_path),
+        headers: [
+          {"Content-Type", "multipart/form-data"}
+        ]
+      )
 
     case post("/upload", multipart) do
       {:ok, %Tesla.Env{body: body, headers: _, status: _}} ->
@@ -92,8 +97,6 @@ defmodule Refiner.IPFSInteractor do
         {:reply, {:error, err}, state}
     end
   end
-
-
 
   @spec pin(any) :: any
   def pin(path) do
