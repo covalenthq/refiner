@@ -5,10 +5,6 @@ defmodule Refiner.IPFSInteractor do
   alias Multipart.Part
   alias Refiner.Events
 
-  # Define the IPFS base URL from application config
-  @ipfs_base_url Application.get_env(:refiner, :ipfs_pinner_url)
-
-  plug(Tesla.Middleware.BaseUrl, @ipfs_base_url)
   plug(Tesla.Middleware.JSON)
 
   require Logger
@@ -33,6 +29,7 @@ defmodule Refiner.IPFSInteractor do
   @impl true
   def handle_call({:pin, file_path}, _from, state) do
     start_pin_ms = System.monotonic_time(:millisecond)
+    ipfs_url = Application.get_env(:refiner, :ipfs_pinner_url)
 
     # Create a multipart request
     multipart =
@@ -44,7 +41,7 @@ defmodule Refiner.IPFSInteractor do
         ]
       )
 
-    case post("/upload", multipart) do
+    case post("#{ipfs_url}/upload", multipart) do
       {:ok, %Tesla.Env{body: body, headers: _, status: _}} ->
         body_map = body |> Poison.decode!()
 
