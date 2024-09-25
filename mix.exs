@@ -88,7 +88,11 @@ defmodule Refiner.MixProject do
 
       # utils
       {:briefly, "~> 0.5.0"},
-      {:rustler, ">= 0.0.0", optional: true}
+      {:rustler, ">= 0.0.0", optional: true},
+
+      # Tesla for multipart
+      {:tesla, "~> 1.12"},
+      {:hackney, "~> 1.17"}
 
       # Unused
       # {:erlexec, "~> 2.0"},
