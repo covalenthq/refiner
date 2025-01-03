@@ -4,7 +4,7 @@ defmodule Refiner.MixProject do
   def project do
     [
       app: :refiner,
-      version: "0.5.2",
+      version: "0.5.5",
       elixir: "~> 1.17.1",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -63,7 +63,7 @@ defmodule Refiner.MixProject do
       # networking
       {:certifi, "~> 2.9", override: true},
       {:cors_plug, "~> 3.0"},
-      {:finch, "~> 0.18.0"},
+      {:finch, "~> 0.19.0"},
       {:downstream, "~> 1.0"},
       {:websockex, "~> 0.4.3"},
       {:multipart, "~> 0.4.0"},
@@ -81,14 +81,18 @@ defmodule Refiner.MixProject do
       {:etfs, "~> 0.2.0"},
 
       # tracing metrics
-      {:telemetry, "~> 1.2.1", override: true},
+      {:telemetry, "~> 1.3.0", override: true},
       {:telemetry_metrics, "~> 0.3.0"},
       {:telemetry_metrics_prometheus, "~> 0.3.1"},
       {:telemetry_metrics_prometheus_core, "~>0.2.2"},
 
       # utils
       {:briefly, "~> 0.5.0"},
-      {:rustler, ">= 0.0.0", optional: true}
+      {:rustler, ">= 0.0.0", optional: true},
+
+      # Tesla for multipart
+      {:tesla, "~> 1.12"},
+      {:hackney, "~> 1.17"}
 
       # Unused
       # {:erlexec, "~> 2.0"},
