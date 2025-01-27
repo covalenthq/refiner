@@ -68,7 +68,7 @@ defmodule Refiner.IPFSInteractor do
     ipfs_url = Application.get_env(:refiner, :ipfs_pinner_url)
 
     resp =
-      Finch.build(:get, "#{ipfs_url}/get?cid=#{cid}")
+      Finch.build(:get, "#{ipfs_url}/download?cid=#{cid}")
       |> Finch.request(Refiner.Finch, receive_timeout: 150_000_000, pool_timeout: 150_000_000)
 
     case resp do
