@@ -42,7 +42,7 @@ defmodule Refiner.MixProject do
       {:phoenix_pubsub, "~> 1.1"},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
-      {:ranch, "~> 2.1.0",
+      {:ranch, "~> 2.2.0",
        [env: :prod, hex: "ranch", repo: "hexpm", optional: false, override: true]},
 
       # eth parsing and encoding
