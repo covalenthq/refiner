@@ -10,9 +10,12 @@ services:
     restart: always
     labels:
       "autoheal": "true"
+    entrypoint: |
+      /bin/bash -l -c "
+        ./usr/local/bin/pinner --addr :5080 --w3-agent-key $W3_AGENT_KEY --w3-delegation-proof-path $W3_DELEGATION_FILE;"
     expose:
       - "4001:4001"
-      - "3001:3001"
+      - "5080:5080"
     environment:
       - W3_AGENT_KEY=${W3_AGENT_KEY}
       - W3_DELEGATION_FILE=/root/.ipfs/proof.out
@@ -20,7 +23,7 @@ services:
       - cxt-net
     ports:
       - "4001:4001"
-      - "3001:3001"
+      - "5080:5080"
 
   evm-server:
     image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
