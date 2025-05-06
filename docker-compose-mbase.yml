@@ -25,6 +25,7 @@ services:
     ports:
       - "4001:4001"
       - "5080:5080"
+
   evm-server:
     image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"
     container_name: evm-server
@@ -71,6 +72,34 @@ services:
       - cxt-net
     ports:
       - "9568:9568" # prometheus metrics will be exported at http://localhost:9568/metrics etc.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9568/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  monitor:
+    image: alpine:latest
+    container_name: monitor
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: >
+      /bin/sh -c "
+        apk add --no-cache docker-cli curl;
+        while true; do
+          if curl -s http://refiner:9568/metrics | grep -q 'Mint.TransportError.*timeout'; then
+            echo 'Timeout error detected, restarting stack...';
+            docker compose -f /path/to/docker-compose-mbase.yml down;
+            sleep 5;
+            docker compose -f /path/to/docker-compose-mbase.yml up -d;
+          fi;
+          sleep 30;
+        done"
+    networks:
+      - cxt-net
+    depends_on:
+      - refiner
 
   autoheal:
     image: willfarrell/autoheal
