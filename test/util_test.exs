@@ -35,7 +35,7 @@ defmodule Refiner.UtilTest do
   end
 
   test "returns 'map' for a map" do
-    result_path = "./test-data/codec-0.38/block-result/19529630.result.json"
+    result_path = "./test-data/codec-0.38/block-result/22434160.result.json"
 
     {:ok, result_binary} = File.read(result_path)
     {:ok, result_decoded_map} = Poison.decode(result_binary)
@@ -64,7 +64,7 @@ defmodule Refiner.UtilTest do
     block_result_metadata = %Refiner.BlockResultMetadata{
       chain_id: 1,
       block_height: 22_434_160,
-      block_specimen_hash: 0x36354E6F5603AE907B1A1E38CFAB9B937FF5EFD0FE3651B95EA41B089871792D,
+      block_specimen_hash: 0xA8F265CAA9F4C340AEBCAC6A382E0D5422097FCF0E8A0F68E52EF90609D5FEDC,
       file_path: "./test-data/codec-0.38/block-result/22434160.result.json"
     }
 

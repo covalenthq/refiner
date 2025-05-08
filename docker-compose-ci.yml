@@ -109,8 +109,9 @@ services:
         done;
         echo Proof-chain contracts deployed!;
         echo Uploading test files to local .ipfs...;
-        curl -F "filedata=@/app/mix/test-data/codec-0.38/encoded/1-22433670" http://ewm-das:5080/upload;
-        curl -F "filedata=@/app/mix/test-data/codec-0.38/encoded/1-22434160" http://ewm-das:5080/upload;
+        curl -F "filedata=@/mix/test-data/codec-0.38/encoded/1-22433670" http://ewm-das:5080/upload;
+        curl -F "filedata=@/mix/test-data/codec-0.38/encoded/1-22433775" http://ewm-das:5080/upload;
+        curl -F "filedata=@/mix/test-data/codec-0.38/encoded/1-22434160" http://ewm-das:5080/upload;
         echo Test bsp files uploaded!;
         cd /mix;
         MIX_ENV=docker mix coveralls.json;
