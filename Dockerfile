@@ -35,7 +35,7 @@ RUN apk add --no-cache git bash curl netcat-openbsd build-base && rm -rf /var/ca
 
 RUN mkdir -p /mix/_build /mix/config /mix/deps /mix/lib /mix/priv node/test /mix/test-data
 
-WORKDIR /app
+WORKDIR /mix
 RUN mix local.hex --force
 RUN mix local.rebar --force
 
@@ -46,7 +46,6 @@ COPY --from=builder-elixir /mix/lib /mix/lib
 COPY --from=builder-elixir /mix/priv /mix/priv
 COPY --from=builder-elixir /mix/mix.exs /mix/
 COPY --from=builder-elixir /mix/mix.lock /mix/
-# COPY --from=builder-elixir /mix/_build/dev/rel/refiner/ /mix/prod/
 COPY --from=builder-elixir /mix/test/ /mix/test
 COPY --from=builder-elixir /mix/test-data/ /mix/test-data
 

@@ -35,12 +35,12 @@ defmodule Refiner.UtilTest do
   end
 
   test "returns 'map' for a map" do
-    result_path = "./test-data/codec-0.37/block-result/19529630.result.json"
+    result_path = "./test-data/codec-0.38/block-result/22434160.result.json"
 
     {:ok, result_binary} = File.read(result_path)
     {:ok, result_decoded_map} = Poison.decode(result_binary)
 
-    specimen_path = "./test-data/codec-0.37/encoded/1-19529630"
+    specimen_path = "./test-data/codec-0.38/encoded/1-22434160"
 
     {:ok, decoded_specimen} = Refiner.Avro.BlockSpecimen.decode_file(specimen_path)
 
@@ -63,9 +63,9 @@ defmodule Refiner.UtilTest do
   test "returns 'struct' for a struct" do
     block_result_metadata = %Refiner.BlockResultMetadata{
       chain_id: 1,
-      block_height: 19_529_630,
-      block_specimen_hash: 0x36354E6F5603AE907B1A1E38CFAB9B937FF5EFD0FE3651B95EA41B089871792D,
-      file_path: "./test-data/codec-0.37/block-result/19529630.result.json"
+      block_height: 22_434_160,
+      block_specimen_hash: 0xA8F265CAA9F4C340AEBCAC6A382E0D5422097FCF0E8A0F68E52EF90609D5FEDC,
+      file_path: "./test-data/codec-0.38/block-result/22434160.result.json"
     }
 
     assert Refiner.Util.typeof(block_result_metadata) == "struct"
@@ -86,10 +86,10 @@ defmodule Refiner.UtilTest do
   end
 
   test "get_file_paths returns a list of files in the given directory" do
-    assert Refiner.Util.get_file_paths("./test-data/codec-0.37/block-specimen/*") == [
-             "test-data/codec-0.37/block-specimen/19529493.specimen.json",
-             "test-data/codec-0.37/block-specimen/19529499.specimen.json",
-             "test-data/codec-0.37/block-specimen/19529630.specimen.json"
+    assert Refiner.Util.get_file_paths("./test-data/codec-0.38/block-specimen/*") == [
+             "test-data/codec-0.38/block-specimen/22433670.specimen.json",
+             "test-data/codec-0.38/block-specimen/22433775.specimen.json",
+             "test-data/codec-0.38/block-specimen/22434160.specimen.json"
            ]
   end
 
