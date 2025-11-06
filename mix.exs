@@ -4,8 +4,8 @@ defmodule Refiner.MixProject do
   def project do
     [
       app: :refiner,
-      version: "0.6.1",
-      elixir: "~> 1.18.0",
+      version: "0.7.0",
+      elixir: "~> 1.19.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls, export: "cov"],
