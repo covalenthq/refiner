@@ -65,7 +65,7 @@ defmodule Refiner.MixProject do
       {:cors_plug, "~> 3.0"},
       {:finch, "~> 0.19.0"},
       {:downstream, "~> 1.0"},
-      {:websockex, "~> 0.4.3"},
+      {:websockex, "~> 0.5.1"},
       {:multipart, "~> 0.4.0"},
 
       # static code analysis
