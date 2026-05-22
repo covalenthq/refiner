@@ -40,7 +40,7 @@ services:
       - "8008:8008"
 
   ewm-das:
-    image: "us-docker.pkg.dev/covalent-project/network/ewm-das:stable"
+    image: "us-docker.pkg.dev/covalent-project/network/ewm-das:latest"
     volumes:
       - ~/.ipfs:/root/.ipfs/
     container_name: ewm-das
