@@ -29,7 +29,6 @@ services:
       echo Waiting for hardhat-node to start up...;
       sleep 20;
       echo hard-hat node started!;
-      echo "web3-jwt:" $WEB3_JWT;
       npm run docker:deploy;
       nc -v refiner 8008;
       sleep 1000000;"

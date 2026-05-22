@@ -146,7 +146,7 @@ That will lead to the corresponding logs:
 
 Once the block results have been produced they need to be proved and uploaded. This ideally happens atomically for the refiner.
 
-Below is an example of how to interact with block result uploader that speaks to `ipfs-pinner` available with `export IPFS_PINNER_URL="http://127.0.0.1:3001"`. The file is directly uploaded to IPFS using the wrapped local IPFS node.
+Below is an example of how to interact with block result uploader that speaks to the `ewm-das` pinner available with `export IPFS_PINNER_URL="http://127.0.0.1:5080"`. The file is uploaded to IPFS via the wrapped local IPFS node and pinned through Filebase.
 
 ```elixir
   file_path = Path.expand(Path.absname(Path.relative_to_cwd("test-data/temp2.txt")))
@@ -277,8 +277,7 @@ refiner       | [info] found 0 bsps to process
 refiner       | [info] curr_block: 4168408 and latest_block_num:4168408
 refiner       | [info] listening for events at 4168408
 refiner       | [info] found 1 bsps to process
-ipfs-pinner  | 2023/04/17 22:12:49 unixfsApi.Get: getting the cid: bafybeigx7gwkso5iwikf3f2tv2jfgri5naipxavjntejrc24bfusxn6xju
-ipfs-pinner  | 2023/04/17 22:12:49 trying out https://w3s.link/ipfs/bafybeigx7gwkso5iwikf3f2tv2jfgri5naipxavjntejrc24bfusxn6xju
+ewm-das      | 2023/04/17 22:12:49 fetching cid: bafybeigx7gwkso5iwikf3f2tv2jfgri5naipxavjntejrc24bfusxn6xju
 refiner       | [info] Counter for ipfs_metrics - [fetch: 1]
 refiner       | [info] LastValue for ipfs_metrics - [fetch_last_exec_time: 0.001508]
 refiner       | [info] Sum for ipfs_metrics - [fetch_total_exec_time: 0.001508]
