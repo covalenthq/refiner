@@ -13,13 +13,12 @@ services:
       "autoheal": "true"
     entrypoint: |
       /bin/bash -l -c "
-        ./usr/local/bin/pinner --addr :5080 --w3-agent-key $W3_AGENT_KEY --w3-delegation-proof-path $W3_DELEGATION_FILE;"
+        ./usr/local/bin/pinner --log-level debug --addr :5080;"
     expose:
       - "4001:4001"
       - "5080:5080"
     environment:
-      - W3_AGENT_KEY=${W3_AGENT_KEY}
-      - W3_DELEGATION_FILE=/root/.ipfs/proof.out
+      - FILEBASE_RPC_TOKEN=${FILEBASE_RPC_TOKEN}
     networks:
       - cxt-net
     ports:

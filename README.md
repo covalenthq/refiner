@@ -198,14 +198,14 @@ source ~/.zshrc
 Create `envrc.local` file and add the following env vars.
 
 **Note**: When passing the private key into the env vars as above please remove the `0x` prefix so the private key env var has exactly 64 characters.
-**Note**: You can get the value for `W3_AGENT_KEY` by asking on discord. It has to be issued to you from Covalent.
+**Note**: `FILEBASE_RPC_TOKEN` is an IPFS RPC API token scoped to your Filebase IPFS bucket. Generate it from the bucket's settings page in the [Filebase console](https://filebase.com) (this is the RPC token, not the S3 access key).
 
 ```bash
 export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
 export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
-export IPFS_PINNER_URL="http://ipfs-pinner:3001"
+export IPFS_PINNER_URL="http://ewm-das:5080"
 export EVM_SERVER_URL="http://evm-server:3002"
-export W3_AGENT_KEY="<<W3_AGENT_KEY>>"
+export FILEBASE_RPC_TOKEN="<<FILEBASE_RPC_TOKEN>>"
 ```
 
 Load the env vars.
@@ -219,19 +219,14 @@ That will lead to the corresponding logs:
 ```bash
 direnv: loading ~/refiner/.envrc
 direnv: loading ~/refiner/.envrc.local
-direnv: export +BLOCK_RESULT_OPERATOR_PRIVATE_KEY +ERIGON_NODE +EVM_SERVER_URL +IPFS_PINNER_URL +NODE_ETHEREUM_MAINNET +W3_AGENT_KEY
+direnv: export +BLOCK_RESULT_OPERATOR_PRIVATE_KEY +ERIGON_NODE +EVM_SERVER_URL +FILEBASE_RPC_TOKEN +IPFS_PINNER_URL +NODE_ETHEREUM_MAINNET
 ```
 
 This shows that the shell is loaded correctly. You can check if they're what you expect.
 
 ```bash
 echo $IPFS_PINNER_URL
-http://ipfs-pinner:3001
-```
-
-Copy over the delegation proof file to ~/.ipfs repo. You should have gotten this from Covalent in addition to the `W3_AGENT_KEY` value.
-```bash
-mv path_to_delegation_file ~/.ipfs/proof.out
+http://ewm-das:5080
 ```
 
 ### <span id="refiner_docker_pull">Pull</span>
@@ -311,7 +306,7 @@ Hence there is a single binary per "Environment". To understand more about this 
  refiner       | moonbase-node: https://moonbeam-alphanet.web3.covalenthq.com/alphanet/direct-rpc
  refiner       | brp-operator: ecf0b636233c6580f60f50ee1d809336c3a76640dbd77f7cdd054a82c6fc0a31
  refiner       | evm-server: http://evm-server:3002
- refiner       | ipfs-node: http://ipfs-pinner:3001
+ refiner       | ipfs-node: http://ewm-das:5080
  ipfs-pinner  | 2023/04/19 16:53:31 Listening...
  refiner       | ==> nimble_options
  refiner       | Compiling 3 files (.ex)
@@ -354,8 +349,7 @@ Once the binary is compiled. Refiner can start to process block specimens into b
  refiner       | [info] starting event listener
  refiner       | [info] getting ids with status=discover
  refiner       | [info] found 1 bsps to process
- ipfs-pinner  | 2023/04/19 16:57:32 unixfsApi.Get: getting the cid: bafybeifkn67rc4lzoabvaglsifjitkhrnshhpwavutdhzeohzkxih25jpi
- ipfs-pinner  | 2023/04/19 16:57:32 trying out https://w3s.link/ipfs/bafybeifkn67rc4lzoabvaglsifjitkhrnshhpwavutdhzeohzkxih25jpi
+ ewm-das      | 2023/04/19 16:57:32 fetching cid: bafybeifkn67rc4lzoabvaglsifjitkhrnshhpwavutdhzeohzkxih25jpi
  refiner       | [info] Counter for ipfs_metrics - [fetch: 1]
  refiner       | [info] LastValue for ipfs_metrics - [fetch_last_exec_time: 0.0015149999999999999]
  refiner       | [info] Sum for ipfs_metrics - [fetch_total_exec_time: 0.0015149999999999999]
@@ -528,20 +522,21 @@ Run the generated binary
 INFO[04-17|11:03:07.516] Listening                                port=3002
 ```
 
-The IPFS-Pinner is an interface to the storage layer of the CQT network using a decentralized storage network underneath. Primarily it's a custom [IPFS (Inter Planetary File System)](https://ipfs.tech/) node with pinning service components for [Web3.storage](https://web3.storage/) and [Pinata](https://www.pinata.cloud/); content archive manipulation etc. Additionally there's support for fetching using `dweb.link`. It is meant for uploading/fetching artifacts (like Block Specimens and uploading Block Results or any other processed/transformed data asset) of the Covalent Decentralized Network.
+The `ewm-das` pinner is the interface to the storage layer of the CQT network. It's a custom [IPFS (Inter Planetary File System)](https://ipfs.tech/) node fronted by a direct-HTTPS client for [Filebase](https://filebase.com/) IPFS pinning. CAR files are uploaded via the Kubo-shaped `/api/v0/dag/import` endpoint with `pin-roots=true`, so every inner CID is recursively pinned and resolvable via the Filebase dedicated gateway and public IPFS gateways (DHT-discovered). It is used for uploading/fetching artifacts (like Block Specimens and uploading Block Results or any other processed/transformed data asset) of the Covalent Decentralized Network.
 
-Clone [covalenthq/ipfs-pinner](https://github.com/covalenthq/ipfs-pinner) and build the pinner server binary
+Clone [covalenthq/ewm-das](https://github.com/covalenthq/ewm-das) and build the pinner binary
 
 ```bash
-git clone https://github.com/covalenthq/ipfs-pinner.git --depth 1
-cd ipfs-pinner
-make server-dbg
+git clone https://github.com/covalenthq/ewm-das.git --depth 1
+cd ewm-das
+make pinner
 ```
 
-You should get the "w3 agent key" and "delegation proof file" from Covalent. After that, start the `ipfs-pinner` server.
+Generate an IPFS RPC API token from your Filebase IPFS bucket settings and export it. After that, start the pinner.
 
 ```bash
-./build/bin/server -w3-agent-key $W3_AGENT_KEY -w3-delegation-file $W3_DELEGATION_FILE
+export FILEBASE_RPC_TOKEN=<your-filebase-rpc-token>
+./bin/pinner --addr :5080
 
 generating 2048-bit RSA keypair...done
 peer identity: QmZQSGUEVKQuCmChKqTBGdavEKGheCQgKgo2rQpPiQp7F8
@@ -575,8 +570,9 @@ Copy paste the environment variables into this file
 ```bash
 export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
 export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
-export IPFS_PINNER_URL="http://127.0.0.1:3001"
+export IPFS_PINNER_URL="http://127.0.0.1:5080"
 export EVM_SERVER_URL="http://127.0.0.1:3002"
+export FILEBASE_RPC_TOKEN="<<FILEBASE_RPC_TOKEN>>"
 ```
 
 Call to load `.envrc.local + .envrc` files with the command below and observe the following output, make sure the environment variables are loaded into the shell.
@@ -611,7 +607,7 @@ MIX_ENV=dev mix release
 ..
 ....
 evm-server: http://127.0.0.1:3002
-ipfs-node: http://127.0.0.1:3001
+ipfs-node: http://127.0.0.1:5080
 * assembling refiner-0.2.12 on MIX_ENV=dev
 * skipping runtime configuration (config/runtime.exs not found)
 * skipping elixir.bat for windows (bin/elixir.bat not found in the Elixir installation)
@@ -643,9 +639,8 @@ MIX_ENV=dev mix run --no-halt --eval 'Refiner.ProofChain.BlockSpecimenEventListe
 ..
 ...
 refiner       | [info] found 1 bsps to process
-ipfs-pinner  | 2023/06/29 20:28:30 unixfsApi.Get: getting the cid: bafybeiaxl44nbafdmydaojz7krve6lcggvtysk6r3jaotrdhib3wpdb3di
-ipfs-pinner  | 2023/06/29 20:28:30 trying out https://w3s.link/ipfs/bafybeiaxl44nbafdmydaojz7krve6lcggvtysk6r3jaotrdhib3wpdb3di
-ipfs-pinner  | 2023/06/29 20:28:31 got the content!
+ewm-das      | 2023/06/29 20:28:30 fetching cid: bafybeiaxl44nbafdmydaojz7krve6lcggvtysk6r3jaotrdhib3wpdb3di
+ewm-das      | 2023/06/29 20:28:31 got the content!
 refiner       | [info] Counter for ipfs_metrics - [fetch: 1]
 refiner       | [info] LastValue for ipfs_metrics - [fetch_last_exec_time: 0.001604]
 refiner       | [info] Sum for ipfs_metrics - [fetch_total_exec_time: 0.001604]
@@ -767,14 +762,14 @@ docker run hello-world
 
 ### Appendix
 
-#### Run With Existing IPFS-Pinner Service
+#### Run With Existing Pinner Service
 
-On a system where an `ipfs-pinner` instance is already running, use this modified `.envrc.local` and `docker-compose-mbase.yml`
+On a system where an `ewm-das` pinner instance is already running on the host, use this modified `.envrc.local` and `docker-compose-mbase.yml`
 
 ```bash
 export BLOCK_RESULT_OPERATOR_PRIVATE_KEY="BRP-OPERATOR-PK-WITHOUT-0x-PREFIX"
 export NODE_ETHEREUM_MAINNET="<<ASK-ON-DISCORD>>"
-export IPFS_PINNER_URL="http://host.docker.internal:3001"
+export IPFS_PINNER_URL="http://host.docker.internal:5080"
 export EVM_SERVER_URL="http://evm-server:3002"
 ```
 
@@ -783,9 +778,9 @@ export EVM_SERVER_URL="http://evm-server:3002"
 ```bash
 version: '3'
 # runs the entire refiner pipeline with all supporting services (including refiner) in docker
-# set .env such that all services in docker are talking to each other only; ipfs-pinnern is assumed
-# to be hosted on the host machine. It's accessed through http://host.docker.internal:3001/ url from
-# inside refiner docker container.
+# set .env such that all services in docker are talking to each other only; the ewm-das pinner is
+# assumed to be hosted on the host machine. It's accessed through http://host.docker.internal:5080/
+# from inside the refiner docker container.
 services:
   evm-server:
     image: "us-docker.pkg.dev/covalent-project/network/evm-server:stable"

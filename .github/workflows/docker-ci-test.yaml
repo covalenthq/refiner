@@ -42,7 +42,6 @@ jobs:
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
           touch .env
           {
-            echo "WEB3_JWT=${{ secrets.WEB3_JWT }}"
             echo "IPFS_PINNER_URL=${{ secrets.IPFS_PINNER_URL }}"
             echo "ERIGON_NODE=${{ secrets.ERIGON_NODE }}"
             echo "NODE_ETHEREUM_MAINNET=${{ secrets.NODE_ETHEREUM_MAINNET }}"
@@ -55,9 +54,8 @@ jobs:
             echo "GITHUB_SHA=$GITHUB_SHA"
             echo "GITHUB_HEAD_REF=$GITHUB_HEAD_REF"
             echo "GITHUB_ENV=$GITHUB_ENV"
-            echo "W3_AGENT_KEY=${{ secrets.W3_AGENT_KEY }}"
+            echo "FILEBASE_RPC_TOKEN=${{ secrets.FILEBASE_RPC_TOKEN }}"
             echo "PROOF_OUT_HEX=${{ secrets.PROOF_OUT_HEX }}"
-            echo "W3_DELEGATION_FILE=${{ secrets.W3_DELEGATION_FILE }}"
           } >> .env
           cat .env
 
